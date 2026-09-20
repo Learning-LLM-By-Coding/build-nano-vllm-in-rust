@@ -1,0 +1,5 @@
+# Pin the exact toolchain so every learner compiles the same compiler output.
+# rustup reads this file and installs/uses this version automatically.
+[toolchain]
+channel = "1.98.0"
+components = ["rustfmt", "clippy"]

@@ -1,0 +1,116 @@
+/* "Rust used here" concept strips + the Comprehensive Rust side panel.
+   Behavior lives in rust-ref.js; both are wired up via book.toml. */
+
+:root {
+    --rust-ref-width: min(44vw, 620px);
+}
+
+.rust-concepts,
+.dl-concepts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35em 0.9em;
+    align-items: baseline;
+    margin: 1em 0;
+    padding: 0.55em 0.9em;
+    font-size: 0.9em;
+    border: 1px solid var(--quote-border, #ccc);
+    border-left: 4px solid var(--links, #4183c4);
+    border-radius: 4px;
+    background: var(--quote-bg, rgba(0, 0, 0, 0.04));
+}
+
+/* Deep-learning reference strips: teal edge, to tell theory from language. */
+.dl-concepts {
+    border-left-color: #178a9e;
+}
+
+.rust-concepts > span,
+.dl-concepts > span {
+    font-weight: 600;
+}
+
+.rust-concepts a,
+.dl-concepts a {
+    white-space: nowrap;
+}
+
+#rust-ref-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: var(--rust-ref-width);
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg, #fff);
+    border-left: 1px solid var(--theme-popup-border, #888);
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(110%);
+    transition: transform 0.2s ease;
+    z-index: 500;
+}
+
+body.rust-ref-open #rust-ref-panel {
+    transform: none;
+}
+
+#rust-ref-panel .rust-ref-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.45em 0.8em;
+    border-bottom: 1px solid var(--theme-popup-border, #888);
+    font-size: 0.9em;
+}
+
+#rust-ref-panel .rust-ref-title {
+    font-weight: 600;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#rust-ref-panel .rust-ref-close {
+    border: none;
+    background: none;
+    color: var(--fg, #000);
+    font-size: 1.3em;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 0.2em;
+}
+
+#rust-ref-panel iframe {
+    flex: 1;
+    width: 100%;
+    border: 0;
+    /* The embedded site controls its own theme; keep a light ground. */
+    background: #fff;
+}
+
+/* On wide screens, shove the page left so code and reference sit side by
+   side; on narrow screens the panel overlays instead. */
+@media (min-width: 1200px) {
+    body.rust-ref-open #mdbook-page-wrapper,
+    body.rust-ref-open #page-wrapper {
+        margin-right: var(--rust-ref-width);
+    }
+}
+
+/* Tip-style callouts (theory warnings, typing budgets, reading tips):
+   smaller and boxed, clearly an aside rather than body text. */
+.callout {
+    font-size: 0.85em;
+    line-height: 1.55;
+    background: rgba(127, 127, 127, 0.09);
+    border-left: 4px solid #178a9e;
+    border-radius: 0 6px 6px 0;
+    padding: 0.7em 1em;
+    margin: 1.2em 0;
+}
+.callout p:first-child { margin-top: 0; }
+.callout p:last-child { margin-bottom: 0; }
+.callout table { font-size: 1em; }

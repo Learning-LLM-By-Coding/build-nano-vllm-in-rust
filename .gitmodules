@@ -1,0 +1,4 @@
+[submodule "third_party/comprehensive-rust"]
+	path = third_party/comprehensive-rust
+	url = https://github.com/google/comprehensive-rust.git
+	shallow = true

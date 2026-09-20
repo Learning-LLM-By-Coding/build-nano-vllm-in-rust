@@ -1,0 +1,10 @@
+# Cargo build output
+/target
+
+# mdBook build output (book/book is generated from book/src)
+/book/book
+
+.DS_Store
+
+# Local staging for the Rust reference side panel (see scripts/vendor-rust-ref.sh)
+/book/src/comprehensive-rust/

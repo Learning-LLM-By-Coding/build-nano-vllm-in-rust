@@ -1,0 +1,8 @@
+[package]
+name = "nano-vllm-rs"
+version = "0.0.1"
+edition = "2024"
+license = "MIT"
+description = "A tiny LLM inference engine built from scratch in Rust, one day at a time"
+
+[dependencies]

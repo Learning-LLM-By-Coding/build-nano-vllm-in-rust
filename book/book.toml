@@ -1,0 +1,14 @@
+[book]
+title = "Build nano-vLLM in Rust"
+authors = ["Link"]
+language = "en"
+src = "src"
+
+# Code blocks in chapters are compiled/run by `mdbook test` with this edition.
+[rust]
+edition = "2024"
+
+[output.html]
+# "Rust used here" concept strips + the Comprehensive Rust side panel.
+additional-css = ["rust-ref.css"]
+additional-js = ["rust-ref.js"]
