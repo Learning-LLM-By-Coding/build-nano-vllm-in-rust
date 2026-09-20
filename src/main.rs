@@ -1,5 +1,7 @@
 use candle_core::{Device, Result, Tensor};
 
+mod tokenizer;
+
 fn main() -> Result<()> {
     let device = Device::Cpu;
 
@@ -14,6 +16,15 @@ fn main() -> Result<()> {
 
     println!("output shape: {:?}", output.dims());
     println!("{:?}", output.to_vec2::<f32>()?);
+
+    let text = "hi";
+    let ids = tokenizer::encode(text);
+    println!(
+        "vocab size {} -> text {text:?} -> token ids {ids:?}",
+        tokenizer::VOCAB_SIZE
+    );
+    let back = tokenizer::decode(&ids).expect("ids from valid text always decode");
+    println!("decoded back: {back:?}");
     Ok(())
 }
 
