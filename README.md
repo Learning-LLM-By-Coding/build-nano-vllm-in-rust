@@ -124,7 +124,7 @@ the per-section breakdown lives in the book's
 | Day | Theme | In plain words | ≈&nbsp;Time |
 |-----|-------|----------------|--------|
 | 0&nbsp;✅ | Setup: toolchain and the empty tested scaffold | Install the tools and end with a tested, running (if empty) program. | 0.5&nbsp;h |
-| 1 | From text to the next token | Text becomes numbers, numbers become scores, the top score becomes the next character. | 1.5–&#8288;2&nbsp;h |
+| 1&nbsp;✅ | From text to the next token | Text becomes numbers, numbers become scores, the top score becomes the next character. | 1.5–&#8288;2&nbsp;h |
 | 2 | A complete toy language model | The model learns from real text by counting, then writes one predicted character at a time. | 1–&#8288;1.5&nbsp;h |
 | 3 | The layers before attention | Each token trades its ID for a list of numbers with room for meaning — leveled, re-mixed, position-stamped. | 1.5–&#8288;2&nbsp;h |
 | 4 | Causal attention | Tokens finally look at each other — earlier ones only — and decide whom to listen to. | 1.5&nbsp;h |

@@ -10,5 +10,6 @@ edition = "2024"
 
 [output.html]
 # "Rust used here" concept strips + the Comprehensive Rust side panel.
-additional-css = ["rust-ref.css"]
-additional-js = ["rust-ref.js"]
+# Concept links to the story page open as floating reminders.
+additional-css = ["rust-ref.css", "story-tips.css"]
+additional-js = ["rust-ref.js", "story-tips.js"]
