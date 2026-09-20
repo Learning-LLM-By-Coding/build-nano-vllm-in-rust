@@ -1,0 +1,57 @@
+/* Concept links: dotted underline marks "click for a reminder". */
+main a[href*="story.html#"] {
+    text-decoration: underline dotted;
+    text-underline-offset: 3px;
+}
+
+/* The floating reminder card. */
+.story-tip {
+    position: absolute;
+    z-index: 200;
+    box-sizing: border-box;
+    width: min(440px, calc(100vw - 24px));
+    padding: 0.9em 1.1em 0.8em;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--theme-popup-border, var(--quote-border));
+    border-left: 4px solid var(--links);
+    border-radius: 6px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+.story-tip-body p {
+    margin: 0 0 0.55em;
+}
+.story-tip-close {
+    float: right;
+    margin: -0.35em -0.4em 0 0.6em;
+    border: none;
+    background: none;
+    color: var(--fg);
+    font-size: 1.4em;
+    line-height: 1;
+    cursor: pointer;
+}
+.story-tip-close:focus-visible,
+.story-tip-more:focus-visible {
+    outline: 2px solid var(--links);
+    outline-offset: 2px;
+}
+.story-tip-more {
+    display: inline-block;
+    margin-top: 0.2em;
+    font-size: 0.92em;
+}
+
+/* On the story page itself, each concept reads as a small card. */
+.concept {
+    margin: 0 0 1.1em;
+    padding: 0.7em 1em 0.1em;
+    border-left: 3px solid var(--quote-border);
+    background: var(--quote-bg);
+    border-radius: 4px;
+}
+.concept:target {
+    border-left-color: var(--links);
+}

@@ -32,6 +32,18 @@ know Rust, transformer math, or GPU programming — each is introduced when the
 engine first needs it. Everything through Day 8 runs on a plain CPU; a GPU
 first becomes useful on Day 9 and is never required for the tests.
 
+## One story holds it all together
+
+Every day adds a scene to one running story — a little restaurant, built
+one scene at a time — and each piece of the engine is one thing in it: a
+jar in the pantry, a guest at a table, a chef with a recipe book.
+[The restaurant: an analogy to help you build the right mental model](story.md) keeps the whole story on one page.
+Read it once before you start, for a map of the course, and come back
+whenever an earlier idea gets fuzzy. In the chapters, a concept name with
+a dotted underline links there: click it, and a short reminder of what the
+concept is, what it is in the story, and which day introduced it opens
+right where you are reading.
+
 ## How the course works
 
 Each day is one chapter and one theme, built as **two to four related

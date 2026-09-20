@@ -172,5 +172,5 @@ mdbook test book -L target/doctest-libs    # the book's own code blocks
 That last gate compiles and runs the Rust code blocks inside the book
 chapters themselves, so the prose can never silently rot away from the code.
 
-**Checkpoint reached: `v1-day-00`.** On Day 1 you build the whole skeleton
-of an LLM: text in, one greedily-chosen token out.
+**Checkpoint reached: `v1-day-00`.** On [Day 1](day-01-next-token.md) you
+build the whole skeleton of an LLM: text in, one greedily-chosen token out.
