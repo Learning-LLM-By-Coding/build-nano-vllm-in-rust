@@ -7,3 +7,4 @@
 # Phase 1 — A toy language model (Days 1–2)
 
 - [Day 1: From text to the next token](day-01-next-token.md)
+- [Day 2: A complete toy language model](day-02-toy-language-model.md)
