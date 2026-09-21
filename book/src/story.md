@@ -28,6 +28,7 @@ introduced it, if you want the full explanation again.
 | Day | Scene | Concepts it adds |
 |-----|-------|------------------|
 | 1 | [The kitchen](#day-1--the-kitchen) | token, tensor, matmul, logits, greedy pick |
+| 2 | [The cook learns](#day-2--the-cook-learns) | bigram model, training, autoregression |
 
 ## Day 1 — the kitchen
 
@@ -84,6 +85,43 @@ next piece, and choose one.
 *What it is:* choose the token with the highest logit. The same input always gives the same choice, which makes the engine easy to test.
 
 *In the story:* the judge always picks the highest-scoring dish. No dice involved.
+
+</div>
+
+
+## Day 2 — the cook learns
+
+On Day 1 the kitchen followed a made-up rulebook. On Day 2 the cook
+**learns from old order tickets** and then **serves course after course**,
+each one chosen from the one before — your first complete language model.
+
+<div class="concept" id="bigram">
+
+**Bigram model — the tally sheet** · [Day 2](day-02-toy-language-model.md)
+
+*What it is:* a model that predicts the next token from only the one token before it, using counts of which token followed which in real text.
+
+*In the story:* the cook keeps a tally sheet with one row per jar just used and one column per jar that came next, and adds a mark for every pair seen in old order tickets.
+
+</div>
+
+<div class="concept" id="training">
+
+**Training — learning from old tickets** · [Day 2](day-02-toy-language-model.md)
+
+*What it is:* adjusting a model's numbers based on example text. Real training uses gradient descent, a smarter version of the same idea.
+
+*In the story:* the cook reading old order tickets and updating the tally sheet: “+1 per sighting” is training in miniature.
+
+</div>
+
+<div class="concept" id="autoregression">
+
+**Autoregression — course after course** · [Day 2](day-02-toy-language-model.md)
+
+*What it is:* generating text one token at a time, feeding each chosen token back in as input for the next step.
+
+*In the story:* the cook serves a course, looks at what was just served, and uses it to choose the next one — again and again.
 
 </div>
 

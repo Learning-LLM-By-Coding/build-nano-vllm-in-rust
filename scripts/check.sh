@@ -7,7 +7,8 @@ cargo fmt --check
 cargo clippy --all-targets -- -D warnings
 cargo test
 cargo build
-cargo run --quiet
+# The day's smoke command — update it whenever the CLI's shape changes.
+cargo run --quiet -- generate "ru" 40
 
 # `mdbook test` compiles and runs the book's Rust code blocks against our
 # compiled dependencies. We stage only the actual libraries into a clean
