@@ -1,5 +1,6 @@
 use candle_core::{Device, Result, Tensor};
 
+mod layers;
 mod model;
 mod tokenizer;
 
@@ -33,6 +34,33 @@ fn generate(model: &model::Bigram, prompt: &str, steps: usize) -> Result<String>
     Ok(tokenizer::decode(&ids).expect("an ascii corpus only generates ascii bytes"))
 }
 
+/// Deterministic made-up weights: value = index * scale. Real, trained
+/// weights arrive on Day 6; until then the shapes are the lesson.
+fn ramp(rows: usize, cols: usize, scale: f32, device: &Device) -> Result<Tensor> {
+    let data: Vec<f32> = (0..rows * cols).map(|v| v as f32 * scale).collect();
+    Tensor::from_vec(data, (rows, cols), device)
+}
+
+/// Walk a tiny prompt through the pre-attention layers, printing shapes.
+fn run_layers_demo() -> Result<()> {
+    let device = Device::Cpu;
+    let embed = layers::Embedding::new(ramp(tokenizer::VOCAB_SIZE, 8, 0.01, &device)?);
+
+    let text = "aa";
+    let ids = tokenizer::encode(text);
+    println!("text {text:?} -> ids {ids:?}");
+
+    let x = embed.forward(&ids)?; // [seq, dim] = [2, 8]
+    println!("embed:  {:?}", x.dims());
+    let rows = x.to_vec2::<f32>()?;
+    println!(
+        "row 0 starts [{:.2}, {:.2}, {:.2}, ...]",
+        rows[0][0], rows[0][1], rows[0][2]
+    );
+    println!("rows equal: {}", rows[0] == rows[1]);
+    Ok(())
+}
+
 fn run_generate(prompt: &str, steps: usize) -> Result<()> {
     let device = Device::Cpu;
     let model = model::Bigram::from_text(model::CORPUS, &device)?;
@@ -50,8 +78,10 @@ fn main() -> Result<()> {
         ["generate", prompt, steps] => {
             run_generate(prompt, steps.parse().expect("steps must be a number"))
         }
+        ["layers"] => run_layers_demo(),
         _ => {
             eprintln!("usage: cargo run -- generate <prompt> [steps]");
+            eprintln!("       cargo run -- layers");
             std::process::exit(2);
         }
     }
