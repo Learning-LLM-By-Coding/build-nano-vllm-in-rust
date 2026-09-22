@@ -1,4 +1,4 @@
-use candle_core::{Device, Result, Tensor};
+use candle_core::{DType, Device, Result, Tensor};
 
 mod layers;
 mod model;
@@ -45,18 +45,30 @@ fn ramp(rows: usize, cols: usize, scale: f32, device: &Device) -> Result<Tensor>
 fn run_layers_demo() -> Result<()> {
     let device = Device::Cpu;
     let embed = layers::Embedding::new(ramp(tokenizer::VOCAB_SIZE, 8, 0.01, &device)?);
+    let norm = layers::RmsNorm::new(Tensor::ones(8, DType::F32, &device)?, 1e-5);
+    let proj = layers::Linear::new(ramp(8, 4, 0.1, &device)?);
 
     let text = "aa";
     let ids = tokenizer::encode(text);
     println!("text {text:?} -> ids {ids:?}");
 
     let x = embed.forward(&ids)?; // [seq, dim] = [2, 8]
-    println!("embed:  {:?}", x.dims());
+    println!("embed:   {:?}", x.dims());
     let rows = x.to_vec2::<f32>()?;
     println!(
         "row 0 starts [{:.2}, {:.2}, {:.2}, ...]",
         rows[0][0], rows[0][1], rows[0][2]
     );
+
+    let x = norm.forward(&x)?; // [2, 8], every row now at unit magnitude
+    let rows = x.to_vec2::<f32>()?;
+    let rms: f32 = (rows[0].iter().map(|v| v * v).sum::<f32>() / 8.0).sqrt();
+    println!("rmsnorm: {:?}  rms of row 0 = {rms:.3}", x.dims());
+
+    let x = proj.forward(&x)?; // [2, 8] x [8, 4] -> [2, 4]
+    println!("linear:  {:?}", x.dims());
+
+    let rows = x.to_vec2::<f32>()?;
     println!("rows equal: {}", rows[0] == rows[1]);
     Ok(())
 }
