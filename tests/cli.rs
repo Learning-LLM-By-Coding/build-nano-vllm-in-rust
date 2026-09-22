@@ -21,6 +21,17 @@ fn generate_cli_is_deterministic() {
 }
 
 #[test]
+fn layers_demo_is_deterministic() {
+    let first = run_cli(&["layers"]);
+    let second = run_cli(&["layers"]);
+    assert!(first.status.success());
+    assert_eq!(first.stdout, second.stdout);
+    let text = String::from_utf8(first.stdout).expect("stdout is text");
+    assert!(text.contains("before rope: true"));
+    assert!(text.contains("after rope: false"));
+}
+
+#[test]
 fn missing_subcommand_exits_nonzero_with_usage() {
     let out = run_cli(&[]);
     assert!(!out.status.success());

@@ -29,6 +29,7 @@ introduced it, if you want the full explanation again.
 |-----|-------|------------------|
 | 1 | [The kitchen](#day-1--the-kitchen) | token, tensor, matmul, logits, greedy pick |
 | 2 | [The cook learns](#day-2--the-cook-learns) | bigram model, training, autoregression |
+| 3 | [The dining room opens](#day-3--the-dining-room-opens) | guest, one-hot, embedding, RMSNorm, Linear, RoPE |
 
 ## Day 1 — the kitchen
 
@@ -122,6 +123,75 @@ each one chosen from the one before — your first complete language model.
 *What it is:* generating text one token at a time, feeding each chosen token back in as input for the next step.
 
 *In the story:* the cook serves a course, looks at what was just served, and uses it to choose the next one — again and again.
+
+</div>
+
+
+## Day 3 — the dining room opens
+
+The kitchen alone can only look one token back. So the **dining room**
+opens: your prompt becomes tonight's table of **guests**, and a host gets
+every guest ready before anyone talks — swapping number badges for
+profile cards, leveling voices, rewriting cards, and stamping seat
+numbers.
+
+<div class="concept" id="guest">
+
+**Guest — one token at the table** · [Day 3](day-03-layers-before-attention.md)
+
+*What it is:* one token of your prompt, seen from inside the model. A prompt of five tokens seats five guests. With the byte tokenizer a guest is one byte — one letter of plain English; from Day 7 it is a word piece.
+
+*In the story:* each guest carries a card of numbers describing them, and from Day 4 the guests talk to each other.
+
+</div>
+
+<div class="concept" id="one-hot">
+
+**One-hot — the numbered badge** · [Day 3](day-03-layers-before-attention.md)
+
+*What it is:* a row of zeros with a single 1 at the token's id. It says which token this is and nothing else.
+
+*In the story:* a guest walks in wearing only a numbered badge (`a` is badge 97). Two guests with the same badge are indistinguishable.
+
+</div>
+
+<div class="concept" id="embedding">
+
+**Embedding — the profile card** · [Day 3, section A](day-03-layers-before-attention.md)
+
+*What it is:* a lookup table that turns a token id into a short list of numbers describing that token. In a trained model, tokens used in similar ways carry similar numbers.
+
+*In the story:* at the door, the host swaps badge 97 for card 97 from a filing cabinet. The same badge always gets the same card.
+
+</div>
+
+<div class="concept" id="rmsnorm">
+
+**RMSNorm — the volume knob** · [Day 3, section B](day-03-layers-before-attention.md)
+
+*What it is:* rescales each token's numbers so their overall size is 1.0, keeping their proportions. It runs before every major step so numbers never grow or shrink out of control.
+
+*In the story:* every guest is turned to the same speaking volume before each activity. Loud cards get quieter, faint cards get louder, and nobody's message changes.
+
+</div>
+
+<div class="concept" id="linear">
+
+**Linear — the translator** · [Day 3, section B](day-03-layers-before-attention.md)
+
+*What it is:* a matmul by a weight matrix: each output number is a weighted blend of all the input numbers. The weights are what training learns.
+
+*In the story:* before each activity, a translator rewrites every card into the form that activity needs, following a recipe of how much of each old number goes into each new one.
+
+</div>
+
+<div class="concept" id="rope">
+
+**RoPE — the seat stamp** · [Day 3, section C](day-03-layers-before-attention.md)
+
+*What it is:* rotary position embedding: encodes each token's position by rotating pairs of its numbers by an angle that grows with the position.
+
+*In the story:* each pair of numbers on a card is a little dial, and sitting in seat N turns every dial N clicks. The first dial moves like a second hand, later ones like minute and hour hands, so comparing two guests' dials tells how many seats apart they sit.
 
 </div>
 

@@ -69,7 +69,15 @@ fn run_layers_demo() -> Result<()> {
     println!("linear:  {:?}", x.dims());
 
     let rows = x.to_vec2::<f32>()?;
-    println!("rows equal: {}", rows[0] == rows[1]);
+    let equal_before = rows[0] == rows[1];
+
+    let x = layers::rope(&x)?; // [2, 4], each row rotated by its position
+    println!("rope:    {:?}", x.dims());
+    let rows = x.to_vec2::<f32>()?;
+    println!(
+        "same token, same vector?  before rope: {equal_before}, after rope: {}",
+        rows[0] == rows[1]
+    );
     Ok(())
 }
 
