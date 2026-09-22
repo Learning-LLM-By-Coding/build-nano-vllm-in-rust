@@ -8,3 +8,7 @@
 
 - [Day 1: From text to the next token](day-01-next-token.md)
 - [Day 2: A complete toy language model](day-02-toy-language-model.md)
+
+# Phase 2 — A transformer from visible pieces (Days 3–5)
+
+- [Day 3: The layers before attention](day-03-layers-before-attention.md)
