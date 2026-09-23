@@ -12,3 +12,4 @@
 # Phase 2 — A transformer from visible pieces (Days 3–5)
 
 - [Day 3: The layers before attention](day-03-layers-before-attention.md)
+- [Day 4: Causal attention](day-04-causal-attention.md)

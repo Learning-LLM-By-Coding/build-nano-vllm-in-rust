@@ -128,6 +128,19 @@ fn run_attention_demo() -> Result<()> {
     // statements (v) by those shares — here the statements are the cards.
     let heard = attention::attend(&q, &k, &leveled)?;
     println!("heard:  {:?}", heard.dims());
+
+    // The packaged layer: the same round through real projections.
+    println!("q proj [8, 8]: 4 heads;  k,v proj [8, 4]: 2 SHARED heads (half the table space)");
+    let attn = attention::Attention::new(
+        layers::Linear::new(ramp(8, 8, 0.02, &device)?),
+        layers::Linear::new(ramp(8, 4, 0.03, &device)?),
+        layers::Linear::new(ramp(8, 4, 0.05, &device)?),
+        layers::Linear::new(ramp(8, 8, 0.02, &device)?),
+        4,
+        2,
+    );
+    let out = attn.forward(&leveled)?;
+    println!("attn:   {:?}", out.dims());
     Ok(())
 }
 

@@ -30,6 +30,7 @@ introduced it, if you want the full explanation again.
 | 1 | [The kitchen](#day-1--the-kitchen) | token, tensor, matmul, logits, greedy pick |
 | 2 | [The cook learns](#day-2--the-cook-learns) | bigram model, training, autoregression |
 | 3 | [The dining room opens](#day-3--the-dining-room-opens) | guest, one-hot, embedding, RMSNorm, Linear, RoPE |
+| 4 | [The table conversation](#day-4--the-table-conversation) | attention, q/k/v, causal mask, softmax, heads, GQA |
 
 ## Day 1 — the kitchen
 
@@ -192,6 +193,74 @@ numbers.
 *What it is:* rotary position embedding: encodes each token's position by rotating pairs of its numbers by an angle that grows with the position.
 
 *In the story:* each pair of numbers on a card is a little dial, and sitting in seat N turns every dial N clicks. The first dial moves like a second hand, later ones like minute and hour hands, so comparing two guests' dials tells how many seats apart they sit.
+
+</div>
+
+
+## Day 4 — the table conversation
+
+The scene everything has been building toward: the guests **talk**. Each
+guest looks at the guests seated before them and borrows what they need.
+That conversation is attention, and it is how a model connects an "it"
+back to the thing it refers to.
+
+<div class="concept" id="attention">
+
+**Attention — the table conversation** · [Day 4](day-04-causal-attention.md)
+
+*What it is:* the step where every token looks at the tokens before it, decides which matter right now, and takes a weighted blend of their information.
+
+*In the story:* each guest listens to the guests seated before them and walks away with a card full of borrowed information.
+
+</div>
+
+<div class="concept" id="qkv">
+
+**Query, key, value — question, topic card, statement** · [Day 4, section A](day-04-causal-attention.md)
+
+*What it is:* three vectors made from each token by three Linear layers: the query (what am I looking for?), the key (what can I be found by?), and the value (what do I contribute?).
+
+*In the story:* before talking, each guest prepares a question, a topic card, and a statement. A question is held up against every topic card; a good match means that guest's statement gets listened to.
+
+</div>
+
+<div class="concept" id="causal-mask">
+
+**Causal mask — the etiquette** · [Day 4, section A](day-04-causal-attention.md)
+
+*What it is:* sets every score that points at a later token to negative infinity, so no token can look ahead.
+
+*In the story:* only listen to guests who have already spoken: at the moment a guest speaks, the later guests have not arrived yet.
+
+</div>
+
+<div class="concept" id="softmax">
+
+**Softmax — sharing out attention** · [Day 4, section A](day-04-causal-attention.md)
+
+*What it is:* turns a row of scores into shares that are all positive and add up to 1. Bigger scores get much bigger shares; negative infinity gets exactly 0.
+
+*In the story:* every guest has exactly 100% of their attention to split among the guests they listen to.
+
+</div>
+
+<div class="concept" id="heads">
+
+**Attention heads — the ears** · [Day 4, section B](day-04-causal-attention.md)
+
+*What it is:* several attention computations running side by side, each on its own slice of the numbers, each free to look for a different kind of connection.
+
+*In the story:* every guest listens through several narrow ears at once — one might follow grammar, another which thing “it” refers to.
+
+</div>
+
+<div class="concept" id="gqa">
+
+**Grouped-query attention — shared topic cards** · [Day 4, section B](day-04-causal-attention.md)
+
+*What it is:* several query heads share one key/value pair, so fewer keys and values are stored.
+
+*In the story:* questions are asked once and thrown away, but topic cards and statements stay on the table for every future guest — so groups of ears share them to save table space.
 
 </div>
 
