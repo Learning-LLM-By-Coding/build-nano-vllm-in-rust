@@ -1,5 +1,6 @@
 use candle_core::{DType, Device, Result, Tensor};
 
+mod attention;
 mod layers;
 mod model;
 mod tokenizer;
@@ -81,6 +82,55 @@ fn run_layers_demo() -> Result<()> {
     Ok(())
 }
 
+/// Print a [seq, seq] table of the conversation: one row per listening
+/// guest, one column per guest being heard, labels kept clear of values.
+fn print_table(table: &Tensor) -> Result<()> {
+    let rows = table.to_vec2::<f32>()?;
+    let header: Vec<String> = (0..rows.len()).map(|s| format!("seat {s}")).collect();
+    println!("           {}", header.join("  "));
+    for (seat, row) in rows.iter().enumerate() {
+        let cells: Vec<String> = row.iter().map(|v| format!("{v:>6.3}")).collect();
+        println!("  seat {seat} | {}", cells.join("  "));
+    }
+    Ok(())
+}
+
+/// Analogy: seat tonight's guests and hold one round of the table
+/// conversation, printing the result of every step.
+fn run_attention_demo() -> Result<()> {
+    let device = Device::Cpu;
+    // Day 3's front door and volume knob, unchanged. No demo translator
+    // this time: the conversation carries its own re-mixing inside.
+    let embed = layers::Embedding::new(ramp(tokenizer::VOCAB_SIZE, 8, 0.01, &device)?);
+    let norm = layers::RmsNorm::new(Tensor::ones(8, DType::F32, &device)?, 1e-5);
+
+    let text = "abc";
+    let ids = tokenizer::encode(text);
+    println!("text {text:?} -> ids {ids:?}");
+    let cards = embed.forward(&ids)?; // [3, 8]: three guests' profile cards
+    println!("cards:  {:?}", cards.dims());
+
+    // One head over whole cards for now: level the volume, stamp the seats,
+    // then hold the listening round by hand — printing after every step.
+    let leveled = norm.forward(&cards)?;
+    let q = layers::rope(&leveled)?;
+    let k = layers::rope(&leveled)?;
+    let scores = attention::scaled_scores(&q, &k)?;
+    println!("scores (how well each question matches each topic card):");
+    print_table(&scores)?;
+    let masked = attention::mask_future(&scores)?;
+    println!("masked (etiquette: every score in the future becomes -inf):");
+    print_table(&masked)?;
+    let shares = attention::softmax_rows(&masked)?;
+    println!("who listens to whom (each row sums to 1; 0.000 = the future):");
+    print_table(&shares)?;
+    // attend() runs the same three steps in one call, then blends the
+    // statements (v) by those shares — here the statements are the cards.
+    let heard = attention::attend(&q, &k, &leveled)?;
+    println!("heard:  {:?}", heard.dims());
+    Ok(())
+}
+
 fn run_generate(prompt: &str, steps: usize) -> Result<()> {
     let device = Device::Cpu;
     let model = model::Bigram::from_text(model::CORPUS, &device)?;
@@ -99,9 +149,11 @@ fn main() -> Result<()> {
             run_generate(prompt, steps.parse().expect("steps must be a number"))
         }
         ["layers"] => run_layers_demo(),
+        ["attention"] => run_attention_demo(),
         _ => {
             eprintln!("usage: cargo run -- generate <prompt> [steps]");
             eprintln!("       cargo run -- layers");
+            eprintln!("       cargo run -- attention");
             std::process::exit(2);
         }
     }
