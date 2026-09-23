@@ -1,6 +1,7 @@
 use candle_core::{DType, Device, Result, Tensor};
 
 mod attention;
+mod block;
 mod layers;
 mod model;
 mod tokenizer;
@@ -141,6 +142,15 @@ fn run_attention_demo() -> Result<()> {
     );
     let out = attn.forward(&leveled)?;
     println!("attn:   {:?}", out.dims());
+
+    // The digest, alone for now: run what the guests carried away through
+    // one think-it-over step. Day 5 section B packages both into the block.
+    let mlp = block::Mlp::new(
+        layers::Linear::new(ramp(8, 16, 0.01, &device)?),
+        layers::Linear::new(ramp(8, 16, 0.02, &device)?),
+        layers::Linear::new(ramp(16, 8, 0.01, &device)?),
+    );
+    println!("mlp:    {:?}", mlp.forward(&out)?.dims());
     Ok(())
 }
 
