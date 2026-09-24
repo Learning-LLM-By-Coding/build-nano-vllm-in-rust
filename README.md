@@ -129,8 +129,8 @@ the per-section breakdown lives in the book's
 | 3&nbsp;✅ | The layers before attention | Each token trades its ID for a list of numbers with room for meaning — leveled, re-mixed, position-stamped. | 1.5–&#8288;2&nbsp;h |
 | 4&nbsp;✅ | Causal attention | Tokens finally look at each other — earlier ones only — and decide whom to listen to. | 1.5&nbsp;h |
 | 5&nbsp;✅ | The decoder block | Attention plus a think-it-over step, packaged into the unit real models stack dozens of times. | 1&nbsp;h |
-| 6&nbsp;🔒 | A real model skeleton | Stack the blocks and load real trained weights — the machine you built by hand speaks. | 2.5&nbsp;h |
-| 7&nbsp;🔒 | Real text, proven correct | A real tokenizer, and a Python referee confirming your output token for token. | 2&nbsp;h |
+| 6&nbsp;✅&#8288;🔒 | A real model skeleton | Stack the blocks and load real trained weights — the machine you built by hand speaks. | 2.5&nbsp;h |
+| 7&nbsp;✅&#8288;🔒 | Real text, proven correct | A real tokenizer, and a Python referee confirming your output token for token. | 2&nbsp;h |
 | 8&nbsp;🔒 | The KV cache | Stop redoing old work: keep what earlier tokens computed, and generation gets fast. | 2&nbsp;h |
 | 9&nbsp;🔒 | Measure it, then GPU it | Time everything honestly first, then move the math to a GPU and measure again. | 1.5&nbsp;h |
 | 10&nbsp;🔒 | Many requests, one engine | Several prompts share one engine, each with its own settings and place in line. | 2&nbsp;h |
@@ -141,6 +141,7 @@ the per-section breakdown lives in the book's
 | 15&nbsp;🔒 | Turn it into a service | An HTTP server streams tokens as they are born, refuses overload politely, and proves itself in a final benchmark. | 3&nbsp;h |
 
 ✅ = finished — the day's chapter and checkpoint tags are in this repository.
+✅&#8288;🔒 = finished, in the Pro edition — unlocked the moment you join.
 🔒 = Pro edition — see [Get the full course](#get-the-full-course).
 Days 0–5 are free in this repository.
 
@@ -169,6 +170,9 @@ to catch its launch too.
 One purchase, one seat: the invite to the private repository arrives
 automatically, with days 6–7 ready today, days 8–15 as they ship, and
 lifetime updates to Volume 1.
+
+**Launch offer:** the first 20 early adopters get $20 off with code
+`LAUNCH` — or [buy at $19 with the code pre-applied](https://buy.polar.sh/polar_cl_FtuqD869kNyzM6SuPqazhW2QPQjSW8adblmzE0aGZmM).
 
 ## How to follow the course
 
