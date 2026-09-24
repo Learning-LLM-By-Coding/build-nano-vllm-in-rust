@@ -31,6 +31,7 @@ introduced it, if you want the full explanation again.
 | 2 | [The cook learns](#day-2--the-cook-learns) | bigram model, training, autoregression |
 | 3 | [The dining room opens](#day-3--the-dining-room-opens) | guest, one-hot, embedding, RMSNorm, Linear, RoPE |
 | 4 | [The table conversation](#day-4--the-table-conversation) | attention, q/k/v, causal mask, softmax, heads, GQA |
+| 5 | [The evening, packaged](#day-5--the-evening-packaged) | feed-forward (SwiGLU), residual, pre-norm, decoder block |
 
 ## Day 1 — the kitchen
 
@@ -261,6 +262,54 @@ back to the thing it refers to.
 *What it is:* several query heads share one key/value pair, so fewer keys and values are stored.
 
 *In the story:* questions are asked once and thrown away, but topic cards and statements stay on the table for every future guest — so groups of ears share them to save table space.
+
+</div>
+
+
+## Day 5 — the evening, packaged
+
+After the conversation, each guest **thinks it over alone**, and nothing
+anyone does ever erases a guest's original card. Then the whole evening —
+level, talk, level, think — is packaged into one repeatable unit that a
+real model runs dozens of times in a row.
+
+<div class="concept" id="feed-forward">
+
+**Feed-forward (SwiGLU) — the digest** · [Day 5, section A](day-05-decoder-block.md)
+
+*What it is:* a small network applied to each token separately: two projections, one squashed into a 0-to-1 gate that decides how much of the other passes through, then a projection back down.
+
+*In the story:* after the conversation, each guest digests what they heard, alone, with no cross-talk.
+
+</div>
+
+<div class="concept" id="residual">
+
+**Residual connection — pencil, never rewrite** · [Day 5, section B](day-05-decoder-block.md)
+
+*What it is:* adding a step's output to its input instead of replacing the input, so the original information always survives.
+
+*In the story:* neither talking nor thinking replaces a guest's card; their conclusions are penciled onto it, so after forty rounds each guest is still recognizably themselves.
+
+</div>
+
+<div class="concept" id="pre-norm">
+
+**Pre-norm — the knob turns first** · [Day 5, section B](day-05-decoder-block.md)
+
+*What it is:* running RMSNorm before each attention and feed-forward step rather than after.
+
+*In the story:* the volume knob levels every card right before the conversation and again right before the digest.
+
+</div>
+
+<div class="concept" id="block">
+
+**Decoder block — one evening** · [Day 5, section B](day-05-decoder-block.md)
+
+*What it is:* one full round: norm, attention, residual add, norm, feed-forward, residual add. A real model stacks many blocks, each with its own weights.
+
+*In the story:* the whole evening packaged into one repeatable routine — the choreography never changes, but every round looks for something new.
 
 </div>
 
