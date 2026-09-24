@@ -32,6 +32,17 @@ fn layers_demo_is_deterministic() {
 }
 
 #[test]
+fn block_demo_shows_causality() {
+    let first = run_cli(&["block"]);
+    let second = run_cli(&["block"]);
+    assert!(first.status.success());
+    assert_eq!(first.stdout, second.stdout);
+    let text = String::from_utf8(first.stdout).expect("stdout is text");
+    assert!(text.contains("row 0 moved: false"));
+    assert!(text.contains("row 2 moved: true"));
+}
+
+#[test]
 fn missing_subcommand_exits_nonzero_with_usage() {
     let out = run_cli(&[]);
     assert!(!out.status.success());
