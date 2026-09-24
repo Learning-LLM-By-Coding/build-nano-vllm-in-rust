@@ -13,3 +13,4 @@
 
 - [Day 3: The layers before attention](day-03-layers-before-attention.md)
 - [Day 4: Causal attention](day-04-causal-attention.md)
+- [Day 5: The decoder block](day-05-decoder-block.md)

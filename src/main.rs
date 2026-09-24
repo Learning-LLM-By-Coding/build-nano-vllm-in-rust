@@ -98,7 +98,7 @@ fn print_table(table: &Tensor) -> Result<()> {
 
 /// Analogy: seat tonight's guests and hold one round of the table
 /// conversation, printing the result of every step.
-fn run_attention_demo() -> Result<()> {
+fn run_block_demo() -> Result<()> {
     let device = Device::Cpu;
     // Day 3's front door and volume knob, unchanged. No demo translator
     // this time: the conversation carries its own re-mixing inside.
@@ -143,14 +143,33 @@ fn run_attention_demo() -> Result<()> {
     let out = attn.forward(&leveled)?;
     println!("attn:   {:?}", out.dims());
 
-    // The digest, alone for now: run what the guests carried away through
-    // one think-it-over step. Day 5 section B packages both into the block.
+    // The digest — built here, run inside the block below.
     let mlp = block::Mlp::new(
         layers::Linear::new(ramp(8, 16, 0.01, &device)?),
         layers::Linear::new(ramp(8, 16, 0.02, &device)?),
         layers::Linear::new(ramp(16, 8, 0.01, &device)?),
     );
-    println!("mlp:    {:?}", mlp.forward(&out)?.dims());
+
+    // The full round of dinner: both knobs, the conversation, reflection.
+    let block = block::Block::new(
+        layers::RmsNorm::new(Tensor::ones(8, DType::F32, &device)?, 1e-5),
+        attn,
+        layers::RmsNorm::new(Tensor::ones(8, DType::F32, &device)?, 1e-5),
+        mlp,
+    );
+    let out = block.forward(&cards)?;
+    println!("block:  {:?}", out.dims());
+
+    // The day's headline, live: swap only the LAST guest — the earlier
+    // rows must not move, because the future cannot reach back.
+    let swapped = block.forward(&embed.forward(&tokenizer::encode("abz"))?)?;
+    let (a, b) = (out.to_vec2::<f32>()?, swapped.to_vec2::<f32>()?);
+    println!(
+        "swap guest 3 \"c\"->\"z\": row 0 moved: {}, row 1 moved: {}, row 2 moved: {}",
+        a[0] != b[0],
+        a[1] != b[1],
+        a[2] != b[2]
+    );
     Ok(())
 }
 
@@ -172,11 +191,11 @@ fn main() -> Result<()> {
             run_generate(prompt, steps.parse().expect("steps must be a number"))
         }
         ["layers"] => run_layers_demo(),
-        ["attention"] => run_attention_demo(),
+        ["block"] => run_block_demo(),
         _ => {
             eprintln!("usage: cargo run -- generate <prompt> [steps]");
             eprintln!("       cargo run -- layers");
-            eprintln!("       cargo run -- attention");
+            eprintln!("       cargo run -- block");
             std::process::exit(2);
         }
     }

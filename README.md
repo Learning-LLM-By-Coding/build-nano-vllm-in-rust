@@ -128,7 +128,7 @@ the per-section breakdown lives in the book's
 | 2&nbsp;✅ | A complete toy language model | The model learns from real text by counting, then writes one predicted character at a time. | 1–&#8288;1.5&nbsp;h |
 | 3&nbsp;✅ | The layers before attention | Each token trades its ID for a list of numbers with room for meaning — leveled, re-mixed, position-stamped. | 1.5–&#8288;2&nbsp;h |
 | 4&nbsp;✅ | Causal attention | Tokens finally look at each other — earlier ones only — and decide whom to listen to. | 1.5&nbsp;h |
-| 5 | The decoder block | Attention plus a think-it-over step, packaged into the unit real models stack dozens of times. | 1&nbsp;h |
+| 5&nbsp;✅ | The decoder block | Attention plus a think-it-over step, packaged into the unit real models stack dozens of times. | 1&nbsp;h |
 | 6&nbsp;🔒 | A real model skeleton | Stack the blocks and load real trained weights — the machine you built by hand speaks. | 2.5&nbsp;h |
 | 7&nbsp;🔒 | Real text, proven correct | A real tokenizer, and a Python referee confirming your output token for token. | 2&nbsp;h |
 | 8&nbsp;🔒 | The KV cache | Stop redoing old work: keep what earlier tokens computed, and generation gets fast. | 2&nbsp;h |

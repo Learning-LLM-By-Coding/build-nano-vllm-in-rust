@@ -10,7 +10,7 @@ cargo build
 # The day's smoke commands — update them whenever the CLI's shape changes.
 cargo run --quiet -- generate "ru" 40
 cargo run --quiet -- layers
-cargo run --quiet -- attention
+cargo run --quiet -- block
 
 # `mdbook test` compiles and runs the book's Rust code blocks against our
 # compiled dependencies. We stage only the actual libraries into a clean
