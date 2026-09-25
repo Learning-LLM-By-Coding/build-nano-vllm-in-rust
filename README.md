@@ -1,5 +1,7 @@
 # Build nano-vLLM in Rust
 
+![A page from the book: Day 5, "The decoder block", explaining pre-norm, residual connections, and the SwiGLU feed-forward through an everyday analogy](assets/book-preview.png)
+
 An executable book. Over 15 days you build a single-GPU, text-only LLM
 inference engine in Rust — from your first tensor to a streaming HTTP server
 with real continuous batching, a paged KV cache, and honest benchmarks.
