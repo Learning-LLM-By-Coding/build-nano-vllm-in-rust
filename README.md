@@ -112,8 +112,11 @@ memory lifts the ceiling — and then makes admission a question of
 bookkeeping. By the end you have not only built the parts; you have built
 the interactions between them, which is what every real engine is made of.
 
-The first six days, free in this repository, let you try that
-experience end to end on a working transformer. The
+The whole book runs on one story — a little restaurant, built one scene at
+a time — and [The restaurant: an analogy to help you build the right mental model](book/src/story.md) maps every
+concept onto it on a single page. Read it first for a ten-minute tour of
+where the course goes. Then the first six days, free in this repository,
+let you try building it yourself, end to end, on a working transformer. The
 [Pro edition](#get-the-full-course) carries the same engine the rest of
 the way: the KV cache, continuous batching, paged memory, and a real
 streaming service.
