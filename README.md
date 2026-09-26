@@ -23,6 +23,65 @@ plain-English analogy and a ▶ video, and the math is never required to
 progress (see "What this course is — and isn't — about" below). No GPU is
 needed until Day 9, and never for the tests.
 
+## Why this course?
+
+Knowing what each part of an inference engine does is not the same as
+knowing how the parts behave *together* — and the second kind of
+knowledge is the one you need when a deployment slows down, runs out of
+memory, or needs changing. There are three common ways to learn vLLM, and
+each one stops short of it:
+
+- **Using vLLM shows you the outside.** You learn which flags exist and
+  which settings are safe. But when throughput collapses under load, the
+  dashboard only shows the symptom. The cause lives in how the scheduler,
+  the KV cache, and the running batch affect each other — and hiding that
+  is exactly what a good engine is designed to do.
+
+- **Tutorials teach one part at a time.** There are excellent
+  walkthroughs of attention, of the KV cache, of paged memory. Each is
+  right on its own, but the hard questions sit *between* the parts. Why
+  does one long prompt delay every other user's next token? Why does
+  freeing one request's memory let three waiting requests in? Why does
+  prefix caching change which request the scheduler should admit next? No
+  single-part tutorial can show you those answers, because each answer
+  involves several parts at once.
+
+- **Reading the real source is a second job.** vLLM is well over a
+  hundred thousand lines, built for many GPUs, many model families, and
+  many kinds of hardware. The core ideas are all in there, surrounded by
+  everything production needs, and it is hard to tell the load-bearing
+  code from the rest.
+
+This course takes a fourth path: **build a nano version from scratch**,
+keeping only the load-bearing parts. You write every one of them, one day
+at a time, and each new part lands in an engine that already runs. So you
+watch every new part change how the old ones behave. The KV cache makes
+decoding fast — and then becomes the memory ceiling. Batching multiplies
+throughput — and then forces the scheduler to decide who waits. Paged
+memory lifts the ceiling — and then makes admission a question of
+bookkeeping. By the end you have not only built the parts; you have built
+the interactions between them, which is what every real engine is made of.
+
+**And one story carries you through the hard parts.** An inference engine
+has to run a real model, so some days are full of deep-learning machinery
+— attention, normalization, rotary positions. This course is not about
+that math, and you do not need to master it to finish. Instead, every
+concept arrives as part of one running story: a little restaurant, built
+one scene at a time. A token is a guest at a table. Attention is the table
+conversation. Normalization is a volume knob that levels every guest's
+voice. So you meet each idea first as something you can picture, and only
+then as code — which is how the deep-learning parts stay understandable
+even for readers who have never studied them.
+[The restaurant: an analogy to help you build the right mental model](book/src/story.md)
+keeps the whole story on one page: read it first for a ten-minute tour of
+where the course goes, and come back whenever an idea gets fuzzy.
+
+The first six days, free in this repository,
+let you try building it yourself, end to end, on a working transformer. The
+[Pro edition](#get-the-full-course) carries the same engine the rest of
+the way: the KV cache, continuous batching, paged memory, and a real
+streaming service.
+
 ## Why vLLM?
 
 [vLLM](https://github.com/vllm-project/vllm) is the engine that serves
@@ -72,54 +131,6 @@ Fair question — the ML world speaks Python. Three honest reasons:
 
 And since the language is taught as you go (see Prerequisites), you get
 a working knowledge of Rust as a side effect — arguably a fourth reason.
-
-## Why this course?
-
-Knowing what each part of an inference engine does is not the same as
-knowing how the parts behave *together* — and the second kind of
-knowledge is the one you need when a deployment slows down, runs out of
-memory, or needs changing. There are three common ways to learn vLLM, and
-each one stops short of it:
-
-- **Using vLLM shows you the outside.** You learn which flags exist and
-  which settings are safe. But when throughput collapses under load, the
-  dashboard only shows the symptom. The cause lives in how the scheduler,
-  the KV cache, and the running batch affect each other — and hiding that
-  is exactly what a good engine is designed to do.
-
-- **Tutorials teach one part at a time.** There are excellent
-  walkthroughs of attention, of the KV cache, of paged memory. Each is
-  right on its own, but the hard questions sit *between* the parts. Why
-  does one long prompt delay every other user's next token? Why does
-  freeing one request's memory let three waiting requests in? Why does
-  prefix caching change which request the scheduler should admit next? No
-  single-part tutorial can show you those answers, because each answer
-  involves several parts at once.
-
-- **Reading the real source is a second job.** vLLM is well over a
-  hundred thousand lines, built for many GPUs, many model families, and
-  many kinds of hardware. The core ideas are all in there, surrounded by
-  everything production needs, and it is hard to tell the load-bearing
-  code from the rest.
-
-This course takes a fourth path: **build a nano version from scratch**,
-keeping only the load-bearing parts. You write every one of them, one day
-at a time, and each new part lands in an engine that already runs. So you
-watch every new part change how the old ones behave. The KV cache makes
-decoding fast — and then becomes the memory ceiling. Batching multiplies
-throughput — and then forces the scheduler to decide who waits. Paged
-memory lifts the ceiling — and then makes admission a question of
-bookkeeping. By the end you have not only built the parts; you have built
-the interactions between them, which is what every real engine is made of.
-
-The whole book runs on one story — a little restaurant, built one scene at
-a time — and [The restaurant: an analogy to help you build the right mental model](book/src/story.md) maps every
-concept onto it on a single page. Read it first for a ten-minute tour of
-where the course goes. Then the first six days, free in this repository,
-let you try building it yourself, end to end, on a working transformer. The
-[Pro edition](#get-the-full-course) carries the same engine the rest of
-the way: the KV cache, continuous batching, paged memory, and a real
-streaming service.
 
 ## What you build (Volume 1)
 
