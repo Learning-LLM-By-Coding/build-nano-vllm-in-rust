@@ -192,7 +192,7 @@ the per-section breakdown lives in the book's
 | 5&nbsp;✅ | The decoder block | Attention plus a think-it-over step, packaged into the unit real models stack dozens of times. | 1&nbsp;h |
 | 6&nbsp;✅&#8288;🔒 | A real model skeleton | Stack the blocks and load real trained weights — the machine you built by hand speaks. | 2.5&nbsp;h |
 | 7&nbsp;✅&#8288;🔒 | Real text, proven correct | A real tokenizer, and a Python referee confirming your output token for token. | 2&nbsp;h |
-| 8&nbsp;🔒 | The KV cache | Stop redoing old work: keep what earlier tokens computed, and generation gets fast. | 2&nbsp;h |
+| 8&nbsp;✅&#8288;🔒 | The KV cache | Stop redoing old work: keep what earlier tokens computed, and generation gets fast. | 2&nbsp;h |
 | 9&nbsp;🔒 | Measure it, then GPU it | Time everything honestly first, then move the math to a GPU and measure again. | 1.5&nbsp;h |
 | 10&nbsp;🔒 | Many requests, one engine | Several prompts share one engine, each with its own settings and place in line. | 2&nbsp;h |
 | 11&nbsp;🔒 | Continuous batching | New requests hop into the running batch as old ones finish — no waiting for a full bus. | 2&nbsp;h |
