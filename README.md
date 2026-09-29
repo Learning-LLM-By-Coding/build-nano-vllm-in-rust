@@ -141,8 +141,8 @@ One engine — single GPU, text only — built in four arcs:
   outputs are verified token-for-token against a Python oracle.
 
 - **Fast single-user inference (Days 8–9):** prefill/decode separation, a KV
-  cache with correctness tests, honest TTFT/TPOT benchmarks, and a CUDA
-  backend that always keeps a CPU fallback.
+  cache with correctness tests, honest TTFT/TPOT benchmarks, and a GPU
+  backend (Apple Metal or NVIDIA CUDA) that always keeps a CPU fallback.
 
 - **Many users at once (Days 10–14):** continuous batching, paged KV-cache
   management, and survival under pressure — admission control, preemption,
@@ -193,7 +193,7 @@ the per-section breakdown lives in the book's
 | 6&nbsp;✅&#8288;🔒 | A real model skeleton | Stack the blocks and load real trained weights — the machine you built by hand speaks. | 2.5&nbsp;h |
 | 7&nbsp;✅&#8288;🔒 | Real text, proven correct | A real tokenizer, and a Python referee confirming your output token for token. | 2&nbsp;h |
 | 8&nbsp;✅&#8288;🔒 | The KV cache | Stop redoing old work: keep what earlier tokens computed, and generation gets fast. | 2&nbsp;h |
-| 9&nbsp;🔒 | Measure it, then GPU it | Time everything honestly first, then move the math to a GPU and measure again. | 1.5&nbsp;h |
+| 9&nbsp;✅&#8288;🔒 | Measure it, then GPU it | Time everything honestly first, then move the math to a GPU and measure again. | 2.5&nbsp;h |
 | 10&nbsp;🔒 | Many requests, one engine | Several prompts share one engine, each with its own settings and place in line. | 2&nbsp;h |
 | 11&nbsp;🔒 | Continuous batching | New requests hop into the running batch as old ones finish — no waiting for a full bus. | 2&nbsp;h |
 | 12&nbsp;🔒 | Paged KV memory | Memory managed like a library: fixed-size pages, checked out, shared, returned. | 2&nbsp;h |
