@@ -194,7 +194,7 @@ the per-section breakdown lives in the book's
 | 7&nbsp;✅&#8288;🔒 | Real text, proven correct | A real tokenizer, and a Python referee confirming your output token for token. | 2&nbsp;h |
 | 8&nbsp;✅&#8288;🔒 | The KV cache | Stop redoing old work: keep what earlier tokens computed, and generation gets fast. | 2&nbsp;h |
 | 9&nbsp;✅&#8288;🔒 | Measure it, then GPU it | Time everything honestly first, then move the math to a GPU and measure again. | 2.5&nbsp;h |
-| 10&nbsp;🔒 | Many requests, one engine | Several prompts share one engine, each with its own settings and place in line. | 2&nbsp;h |
+| 10&nbsp;✅&#8288;🔒 | Many requests, one engine | Several prompts share one engine, each with its own settings and place in line. | 2&nbsp;h |
 | 11&nbsp;🔒 | Continuous batching | New requests hop into the running batch as old ones finish — no waiting for a full bus. | 2&nbsp;h |
 | 12&nbsp;🔒 | Paged KV memory | Memory managed like a library: fixed-size pages, checked out, shared, returned. | 2&nbsp;h |
 | 13&nbsp;🔒 | Attention over pages | Attention learns to read from those scattered pages, with the pool sized by real measurement. | 2&nbsp;h |
