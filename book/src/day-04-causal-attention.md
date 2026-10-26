@@ -250,7 +250,100 @@ Walk one round of the conversation, move by move:
   Where you sit should shape *whom you listen to* (the dials make nearby
   guests match louder), not *what you say* once heard.
 
-One round, end to end:
+One round, end to end — first for **one guest**, then for the whole
+table. Follow guest 2, the last of three guests. Its prepped card is one
+row of 8 numbers, `[1, 8]` (1 guest × 8 numbers), and here is everything
+that happens to it. The numbers are made up and rounded, and the walk
+skips two small adjustments — the seat stamp and one rescaling, both
+built in Section A — that nudge the numbers without changing the flow:
+
+```text
+guest 2's prepped card            x2 = [0.3, -1.2, 0.8, 0.5, -0.4, 1.1, 0.2, -0.7]      [1, 8]
+        │
+        │ 1. three translators (each is a matmul: every output number
+        │    is a blend of all 8 input numbers)
+        │      q translator [8, 8]:  8 numbers in → 8 out
+        │      k translator [8, 4]:  8 numbers in → 4 out
+        │      v translator [8, 4]:  8 numbers in → 4 out
+        ▼
+question      q2 = [1, 1 │ 0.4, -0.2 │ 0.9, 0.1 │ -0.5, 0.3]      [1, 8] = 4 ears × 2
+topic card    k2 = [1, 1 │ 0.2, 0.6]                              [1, 4] = 2 shared pairs × 2
+statement     v2 = [5, 5 │ -1, 3]                                 [1, 4] = 2 shared pairs × 2
+        │
+        │ 2. cut into ears. Ear 0 takes question slice 0; ears 0 and 1
+        │    share pair 0 of the topic card and statement
+        ▼
+ear 0 holds   question [1, 1]   topic card [1, 1]   statement [5, 5]     each [1, 2]
+        │
+        │ 3. MEET THE OTHERS — the only step that needs other guests.
+        │    Ear 0's question is matched against every guest's pair-0
+        │    topic card (guest 0: [1, 0], guest 1: [0, 1], itself: [1, 1])
+        ▼
+scores        [1, 1, 2]           one score per guest it can hear        [1, 3]
+        │ mask the future (nobody sits after guest 2: nothing hidden)
+        │ softmax
+        ▼
+shares        [0.21, 0.21, 0.58]  how much to listen to each guest       [1, 3]
+        │
+        │ 4. blend everyone's pair-0 statements by those shares
+        │    0.21×[10, 0] + 0.21×[0, 10] + 0.58×[5, 5]
+        ▼
+ear 0 heard   [5.0, 5.0]                                                 [1, 2]
+        │
+        │ the other 3 ears do steps 2–4 with their own question slices:
+        │   ear 1 (question [0.4, -0.2], also pair 0) → shares [0.42, 0.23, 0.35] → [5.95, 4.05]
+        │   ears 2 and 3 (pair 1) → two more [1, 2] results, computed the same way
+        ▼
+stitched      [5.0, 5.0 │ 5.95, 4.05 │ ·, · │ ·, ·]                    [1, 8] = 4 ears × 2
+        │
+        │ 5. o translator [8, 8]: re-mix the 4 ears' findings into one card
+        ▼
+guest 2 carries away   a new [1, 8] card                                 same shape it started with
+```
+
+Read it as a hand-off, each step feeding the next:
+
+1. **Step 1 turns one card into three.** The question is 8 numbers (4
+   ears × 2); the topic card and statement are only 4 (2 shared pairs ×
+   2), because pairs of ears share them.
+
+2. **Step 2 is bookkeeping.** It picks out ear 0's 2-number slices;
+   nothing is computed.
+
+3. **Step 3 is the moment guest 2 looks at the others.** Its question
+   meets *their* topic cards: one score per guest, which softmax turns
+   into one share per guest.
+
+4. **Step 4 uses those shares to mix *their* statements** into 2 numbers
+   — what this ear heard.
+
+5. **Step 5 collects the 4 ears' 2-number results back into 8 numbers**,
+   and one last translator tidies them into the finished card.
+
+Only steps 3 and 4 involve anyone else. Everything before and after is
+guest 2 working on its own card:
+
+| Step | What it uses | Guests touched |
+|------|--------------|----------------|
+| 1–2 translate, cut into ears | your own card | only you |
+| 3 match → shares | **your** question × **everyone's** topic cards | you + earlier guests |
+| 4 blend | **your** shares × **everyone's** statements | you + earlier guests |
+| 5 stitch, re-mix | your own 4 ears' results | only you |
+
+Now the whole table at once. All three guests run steps 1, 2 and 5 side
+by side, as the three rows of one table. Step 3 needs every guest's topic
+card together, so each ear's shares come out as a `[3, 3]` table: one row
+like guest 2's `[0.21, 0.21, 0.58]` per guest. For ear 0, with the same
+made-up numbers:
+
+```text
+               hears guest 0   guest 1   guest 2
+guest 0            1.00          0         0        (nobody before it)
+guest 1            0.27         0.73       0        (guest 2 masked: future)
+guest 2            0.21         0.21      0.58
+```
+
+There are four such tables per round, one per ear. In shapes:
 
 ```text
 x [3, 8]           3 guests × 8 numbers on each prepped card
@@ -260,7 +353,7 @@ q [3, 8]           4 ears × 2 numbers of question per guest
 k, v [3, 4]        only 2 SHARED topic/statement pairs — half the table space
     │ per ear: stamp seats onto q and k, match, mask the future, split shares
     ▼
-shares [3, 3]      who listens to whom — every row sums to 1, zeros above the diagonal
+shares [3, 3] ×4   who listens to whom, one table per ear — rows sum to 1, zeros above the diagonal
     │ blend each ear's statements by its shares, stitch the ears, re-mix (o)
     ▼
 [3, 8]             what each guest carries away from the conversation
