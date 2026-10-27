@@ -196,7 +196,7 @@ the per-section breakdown lives in the book's
 | 9&nbsp;✅&#8288;🔒 | Measure it, then GPU it | Time everything honestly first, then move the math to a GPU and measure again. | 2.5&nbsp;h |
 | 10&nbsp;✅&#8288;🔒 | Many requests, one engine | Several prompts share one engine, each with its own settings and place in line. | 2&nbsp;h |
 | 11&nbsp;✅&#8288;🔒 | Continuous batching | New requests hop into the running batch as old ones finish — no waiting for a full bus. | 2&nbsp;h |
-| 12&nbsp;🔒 | Paged KV memory | Memory managed like a library: fixed-size pages, checked out, shared, returned. | 2&nbsp;h |
+| 12&nbsp;✅&#8288;🔒 | Paged KV memory | Memory managed like a library: fixed-size pages, checked out, shared, returned. | 2&nbsp;h |
 | 13&nbsp;🔒 | Attention over pages | Attention learns to read from those scattered pages, with the pool sized by real measurement. | 2&nbsp;h |
 | 14&nbsp;🔒 | Survive pressure | Too many requests? Bump, pause, resume, split, cancel — without leaking a byte. | 2.5&nbsp;h |
 | 15&nbsp;🔒 | Turn it into a service | An HTTP server streams tokens as they are born, refuses overload politely, and proves itself in a final benchmark. | 3&nbsp;h |
