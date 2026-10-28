@@ -30,24 +30,24 @@ git switch --detach v1-day-05a         # then 05b as you pass the section
 
 Two sections are two natural sittings, and every checkpoint is a save
 point — nothing says a "day" must fit in one. After yesterday's climb,
-today is a short walk downhill: two small structs that snap everything
-you already built into one unit.
+today is a short walk downhill. You write two small structs that snap
+everything you already built into one unit.
 
 </div>
 
 ## 1. What you will have running
 
 Yesterday ended with tokens that can finally listen to each other. Today
-you finish the machine around that: `cargo run -- block` sends the
-three-token prompt through one complete **transformer decoder block** —
+you finish the machine around them. `cargo run -- block` sends the
+three-token prompt through one complete **transformer decoder block**,
 the unit real LLMs are made of.
 
 Where does that unit sit in a finished model? Follow a prompt through the
-whole machine: tokens walk in through Day 3's embedding, pass through
-dozens of identical blocks — copies of the one you build today — and leave
-through a single scoring layer that names the next token. Day 6 builds
-that entrance and that exit; today is all about the block itself. Here is
-the whole machine, with the day each part arrives:
+whole machine. Tokens walk in through Day 3's embedding. They pass through
+dozens of identical blocks, copies of the one you build today. Then they
+leave through a single scoring layer that names the next token. Day 6
+builds that entrance and that exit, so today is all about the block
+itself. Here is the whole machine, with the day each part arrives:
 
 ```text
 token ids           the prompt as numbers (Day 1's tokenizer)
@@ -64,26 +64,27 @@ next token          highest score wins (Day 1's greedy pick) — and
                     Day 2's loop feeds it back in for the token after
 ```
 
-And the block is closer than you might think: yesterday already built its
-biggest part, the conversation. Only two pieces of the block are missing,
+You are closer to the block than you might think. Yesterday you already
+built its biggest part, the conversation. Only two pieces are missing,
 and you build one per section:
 
-- **The digest** — a small per-token network (the SwiGLU **feed-forward**)
-  that lets each token quietly make something of what attention just
-  handed it. No token sees any other token during this step.
+- **The digest** is a small per-token network (the SwiGLU
+  **feed-forward**). It lets each token quietly make something of what
+  attention handed it. No token sees any other token during this step.
 
-- **The packaging** — the `Block` that runs the evening's whole ritual in
-  order: level the volume, hold the conversation, add what was heard;
-  level again, digest, add the conclusions. Each step's result is *added
-  onto* the token instead of replacing it — a **residual connection**.
+- **The packaging** is the `Block`, which runs the evening's whole ritual
+  in order. It levels the volume, holds the conversation, and adds what
+  was heard. Then it levels again, digests, and adds the conclusions. Each
+  step's result is *added onto* the token instead of replacing it, and
+  that is called a **residual connection**.
 
-And the demo saves the best for last — a tiny experiment. It runs the
-block twice: once on `"abc"`, once on `"abz"` — the same prompt except for
-the last token — and compares the two outputs, token by token. The first
-two tokens come out identical, down to the last bit: changing a token can
-never affect the tokens *before* it. That one-way-street rule is called
-**causality**, and today you watch the whole block prove it on your
-screen.
+The demo saves the best for last: a tiny experiment. It runs the block
+twice, once on `"abc"` and once on `"abz"`, the same prompt except for
+the last token. Then it compares the two outputs, token by token. The
+first two tokens come out identical, down to the last bit, because
+changing a token can never affect the tokens *before* it. That
+one-way-street rule is called **causality**, and today you watch the
+whole block prove it on your screen.
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=aircAruvnKk">▶ what a per-token network is (3Blue1Brown)</a>
@@ -92,10 +93,10 @@ screen.
 
 ## 2. What you will be seeing in the output
 
-A sneak peek before anything else: today's run keeps everything from
-Day 4 and adds exactly two new lines at the very end. Here is the full
-run, with a plain-English note under each new line — if they don't fully
-click yet, that's exactly what the day is for:
+Here is a sneak peek. Today's run keeps everything from Day 4 and adds
+exactly two new lines at the very end. Below is the full run, with a
+plain-English note under each new line. If the notes don't fully click
+yet, that's fine. The rest of the day is there to make them click:
 
 ```text
 text "abc" -> ids [97, 98, 99]
@@ -123,83 +124,85 @@ block:  [3, 8]
 swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2 moved: true
 ```
 
-- `block:  [3, 8]` — the complete unit runs end to end: 3 tokens in, 3
-  tokens out, each still carrying 8 numbers. Same size in, same size out —
-  which is exactly what lets a real model stack this unit dozens of times.
+- `block:  [3, 8]` — the complete unit runs end to end. 3 tokens go in
+  and 3 tokens come out, each still carrying 8 numbers. The size never
+  changes, and that is exactly what lets a real model stack this unit
+  dozens of times.
 
-- the swap line — the day's proof, and worth a moment. The model reads
-  strictly left to right, the way you read a sentence one word at a time:
-  everything it makes of `a` is finished before it has even seen `c`. If
-  that is *really* true, then editing the ending must leave the beginning
-  untouched — the way changing a novel's last page cannot rewrite its
-  first chapter. So the demo tests exactly that: it runs the block on
-  `"abc"`, runs it again on `"abz"` — same prompt, different last token —
-  and compares the outputs token by token. The first two tokens come out
-  identical to the bit; only the swapped token's own output moved. And
-  here is why the engine cares: generation adds one token at a time, so if
-  earlier tokens' work stays valid no matter what comes next, that work
-  can be computed once and *kept* instead of redone — Day 8 turns exactly
-  that into the engine's biggest speed trick.
+- The swap line is the day's proof, and it is worth a moment. The model
+  reads strictly left to right, the way you read a sentence one word at a
+  time. Everything it makes of `a` is finished before it has even seen
+  `c`. If that is *really* true, then editing the ending must leave the
+  beginning untouched, the way changing a novel's last page cannot
+  rewrite its first chapter. So the demo tests exactly that. It runs the
+  block on `"abc"`, runs it again on `"abz"` (same prompt, different last
+  token), and compares the outputs token by token. The first two tokens
+  come out identical to the bit, and only the swapped token's own output
+  moved. Here is why the engine cares. Generation adds one token at a
+  time. If earlier tokens' work stays valid no matter what comes next,
+  the engine can compute that work once and *keep* it instead of redoing
+  it. Day 8 turns exactly that into the engine's biggest speed trick.
 
 ## 3. Why we need it
 
 **The story so far** — remember [the restaurant](story.md): the kitchen (Day 1), the
-cook who learns from old tickets (Day 2), the dining room where [guests](story.md#guest) — one per token of your
-prompt — got their [profile cards](story.md#embedding) (Day 3) — and last
-night, at last, the [table conversation](story.md#attention): every guest walked away with a card full of borrowed
+cook who learns from old tickets (Day 2), the dining room where [guests](story.md#guest) (one per token of your
+prompt) got their [profile cards](story.md#embedding) (Day 3). And last
+night, at last, came the [table conversation](story.md#attention): every guest walked away with a card full of borrowed
 information (Day 4). Today the evening becomes something the restaurant
 can *repeat*, night after night, forty rounds deep.
 
 Two things stand between yesterday's conversation and a repeatable
 evening:
 
-- **Everything so far is re-mixing.** Embedding, `Linear`, attention's
-  blend — each is a weighted sum. And stacked weighted sums collapse:
-  algebra can fold any number of purely linear steps into a single
-  equivalent one, so forty rounds of them would teach the model nothing a
-  single round couldn't. The digest brings the one ingredient no matmul
-  can imitate — a **nonlinearity** (the gate) — and that is what makes
-  round two able to learn something round one could not.
+- **Everything so far is re-mixing.** Embedding, `Linear`, and
+  attention's blend are each a weighted sum, and stacked weighted sums
+  collapse. Algebra can fold any number of purely linear steps into a
+  single equivalent one. So forty rounds of them would teach the model
+  nothing a single round couldn't. The digest brings the one ingredient no
+  matmul can imitate, a **nonlinearity** (the gate). That is what lets
+  round two learn something round one could not.
 
-- **Nothing protects the cards.** If every round *replaced* each guest's
-  card with that round's output, the original guest would be gone within a
-  few rounds — forty rounds deep, the model would long ago have erased its
-  own input. Residual connections make every round an *annotation* on the
-  card instead of a rewrite, and the [volume knob](story.md#rmsnorm) (Day 3's `RmsNorm`)
-  re-levels before every step so the annotations can't snowball.
+- **Nothing protects the cards.** Suppose every round *replaced* each
+  guest's card with that round's output. The original guest would be gone
+  within a few rounds, and forty rounds deep, the model would long ago
+  have erased its own input. Residual connections make every round an
+  *annotation* on the card instead of a rewrite. The [volume knob](story.md#rmsnorm) (Day 3's `RmsNorm`)
+  re-levels before every step, so the annotations can't snowball.
 
 ## 4. Mental model
 
 Tonight the evening earns its rhythm. Walk its last two rituals, then
 watch the whole thing get packaged:
 
-- **Think it over, alone.** After the conversation, each guest digests:
-  two fresh readings of their card, one squashed into a 0-to-1 **gate**
-  that decides how much of the other gets through, mixed back down to
-  card size. That is the SwiGLU feed-forward — all per-guest, no
-  cross-talk. (The conversation decides *where* information flows; the
-  digest is where each guest *makes something of it*.)
+- **Think it over, alone.** After the conversation, each guest digests.
+  They take two fresh readings of their card and squash one into a 0-to-1
+  **gate**. The gate decides how much of the other reading gets through,
+  and the result is mixed back down to card size. That is the SwiGLU
+  feed-forward, all per-guest, with no cross-talk. (The conversation
+  decides *where* information flows. The digest is where each guest
+  *makes something of it*.)
 
 - **Pencil, never rewrite.** Neither the conversation nor the digestion
-  *replaces* a guest's card. Their output is *added on*: notes penciled
-  onto the original. These **residual connections** mean the card always
-  survives — after forty rounds each guest is still recognizably
-  themselves, just heavily annotated.
+  *replaces* a guest's card. Their output is *added on*, like notes
+  penciled onto the original. These **residual connections** mean the
+  card always survives. After forty rounds, each guest is still
+  recognizably themselves, only heavily annotated.
 
-- **The knob turns before every activity.** Before the conversation and
+- **The knob turns before every activity.** Before the conversation, and
   again before the digestion, the familiar volume knob levels the card.
   Knob-first is called **pre-norm**, and it is what the Llama/Qwen family
   actually runs.
 
-- **One evening, packaged.** A **block** is that whole sequence — knob,
-  conversation, pencil; knob, digestion, pencil — as a single struct. And
-  a real model? It runs this same evening dozens of times in a row — that
-  is the whole trick. The choreography never changes, but every round carries its own
+- **One evening, packaged.** A **block** is that whole sequence (knob,
+  conversation, pencil; knob, digestion, pencil) as a single struct. And a
+  real model? It runs this same evening dozens of times in a row, and
+  that is the whole trick. The choreography never changes, but every round carries its own
   learned weights, so every round looks for something new. If you could
   watch one card travel down the stack, you would see it grow richer
-  round by round: the early rounds pick up surface things — spellings,
-  word endings — and the later rounds begin to catch meaning. Today you
-  build one round; Day 6 stacks them.
+  round by round. The early rounds pick up surface things, like spellings
+  and word endings, and the later rounds begin to catch meaning. Today you
+  build one round, and Day 6 stacks them.
 
 ```text
 x [3, 8]            3 guests × 8 numbers on each card
@@ -213,9 +216,9 @@ x + notes [3, 8]    what each guest heard, penciled onto their own card
 x + more [3, 8]     conclusions penciled in too — same card size as it arrived
 ```
 
-Same reading rule as always: every shape is `[how many guests, how many
-numbers each]`. A block never changes the shape — that is exactly what
-makes it stackable.
+The reading rule is the same as always: every shape is `[how many
+guests, how many numbers each]`. A block never changes the shape, and
+that is exactly what makes it stackable.
 
 ## 5. Inference concepts introduced
 
@@ -225,30 +228,30 @@ makes it stackable.
 </div>
 
 - **Nonlinearity is why depth exists.** Without it, stacking layers is
-  cosmetic — any pile of linear steps collapses into one. The `silu` gate
-  is the block's only nonlinear moment, and it is what lets each stacked
-  block capture patterns the previous one couldn't.
+  cosmetic, because any pile of linear steps collapses into one. The
+  `silu` gate is the block's only nonlinear moment. It is what lets each
+  stacked block capture patterns the previous one couldn't.
 
 - **Residuals + pre-norm are why depth survives.** Each sublayer only
-  *adds* its contribution to an already-leveled input, so signals can't
-  explode or vanish across dozens of blocks — the same reason RMSNorm
-  existed at all, now applied at the block scale.
+  *adds* its contribution to an already-leveled input. So signals can't
+  explode or vanish across dozens of blocks. That is the same reason
+  RMSNorm existed at all, now applied at the block scale.
 
 - **The feed-forward is where most of the model lives.** It expands each
-  card to a wider hidden size and back (8 → 16 → 8 here), and those two
-  fat matrices dominate the parameter count — in today's toy the digest
-  holds 384 weights against attention's 192, and real models keep
-  roughly that ratio. When Day 9 measures where the time goes, remember
-  where the weights are.
+  card to a wider hidden size and back (8 → 16 → 8 here). Those two fat
+  matrices dominate the parameter count. In today's toy, the digest holds
+  384 weights against attention's 192, and real models keep roughly that
+  ratio. When Day 9 measures where the time goes, remember where the
+  weights are.
 
-- **"A 28-layer model" means 28 of these blocks.** The block is the unit
-  the whole engine will be organized around — Day 6 stacks them, and Day
-  8's KV cache will be bookkept *per block*.
+- **"A 28-layer model" means 28 of these blocks.** The whole engine will
+  be organized around the block. Day 6 stacks them, and Day 8's KV cache
+  will be bookkept *per block*.
 
 ## 6. Build it, section by section
 
-One new file today — `src/block.rs`, the digestion and the packaging —
-composed entirely of pieces you already built.
+Today you add one new file, `src/block.rs`, which holds the digestion and
+the packaging. You compose it entirely from pieces you already built.
 
 ### Section A — the SwiGLU feed-forward
 
@@ -260,9 +263,9 @@ struct, three fields, straight-line tensor calls.</div>
 </div>
 
 After all that listening, every guest needs a quiet moment to think.
-Create `src/block.rs` and give them one — the private thinking step:
+Create `src/block.rs` and give them one, the private thinking step:
 
-*(Typing it out builds finger-memory — but copying it straight from here is
+*(Typing it out builds finger-memory, but copying it straight from here is
 just as legitimate.)*
 
 ```rust,ignore
@@ -302,32 +305,32 @@ impl Mlp {
 }
 ```
 
-You just typed three translators — let's meet them properly. `up_proj`
-widens each card into a bigger scratch space — in today's demo, 8 numbers
-become 16 — room to think. `gate_proj` reads the *same* card and produces
+You typed three translators there, so meet them properly. `up_proj`
+widens each card into a bigger scratch space, room to think. In today's
+demo, 8 numbers become 16. `gate_proj` reads the *same* card and produces
 one control value per scratch slot. And `down_proj` shrinks the finished
 thought back to card size. The flow in `forward` is exactly that: widen,
 gate, shrink.
 
-So why a *gate*, instead of just squashing the widened card with some
-fixed function? Because a fixed squash treats every slot the same way,
-every time. The gate decides *per slot, per card*: `silu` sends a strongly
-negative gate reading toward zero — and multiplying by nearly-zero erases
-that slot's thought — while a confident reading lets its thought through
-almost unchanged. So the network learns not just *what to compute* but
-*what to keep*. That gate-times-value pattern is the "GLU" family; the
-`silu`-gated variant is the one the Llama/Qwen models actually ship, and
-Candle provides `silu()` ready-made.
+So why a *gate*, instead of squashing the widened card with some fixed
+function? A fixed squash treats every slot the same way, every time. The
+gate decides *per slot, per card*. `silu` sends a strongly negative gate
+reading toward zero, and multiplying by nearly-zero erases that slot's
+thought. A confident reading lets its thought through almost unchanged.
+So the network learns not just *what to compute* but *what to keep*.
+That gate-times-value pattern is the "GLU" family. The `silu`-gated
+variant is the one the Llama/Qwen models actually ship, and Candle
+provides `silu()` ready-made.
 
-The file is new, so declare it — in `src/main.rs`, between
+The file is new, so declare it. In `src/main.rs`, add this line between
 `mod attention;` and `mod layers;`:
 
 ```rust,ignore
 mod block;
 ```
 
-Pin it with one hand-checked test at the bottom of `src/block.rs` — the
-numbers small enough to verify on a napkin:
+Pin it with one hand-checked test at the bottom of `src/block.rs`. The
+numbers are small enough to verify on a napkin:
 
 ```rust,ignore
 #[cfg(test)]
@@ -353,12 +356,12 @@ mod tests {
 }
 ```
 
-Back to **wiring** — copy freely. Now watch the digest run: in
+Now you are back to **wiring**, so copy freely. Watch the digest run. In
 `src/main.rs`, at the end
-of `run_attention_demo` — after the `attn:` print, before `Ok(())` — build
+of `run_attention_demo` (after the `attn:` print, before `Ok(())`), build
 one and push the conversation's output through it. The `⋮` and the framing
-lines are already in your file — type only what sits between the two
-markers (and if you type the marker comments too, no harm done):
+lines are already in your file. Type only what sits between the two
+markers. If you type the marker comments too, no harm done:
 
 ```rust,ignore
 fn run_attention_demo() -> Result<()> {
@@ -381,9 +384,9 @@ fn run_attention_demo() -> Result<()> {
 }
 ```
 
-Note the widths: `8 → 16` up, `16 → 8` back down — the expansion is where
-the digest gets room to work, and where most of a real model's weights
-live. `cargo run -- attention` now ends with one more line:
+Look at the widths: `8 → 16` up, then `16 → 8` back down. The expansion
+gives the digest room to work, and it is where most of a real model's
+weights live. `cargo run -- attention` now ends with one more line:
 
 ```text
 text "abc" -> ids [97, 98, 99]
@@ -421,9 +424,9 @@ one struct composed of everything already built.</div>
 <a href="https://www.youtube.com/watch?v=aircAruvnKk">▶ what the per-token network is (3Blue1Brown)</a>
 </div>
 
-Now for the payoff of five days of parts: boxing up the evening. The
+Now comes the payoff of five days of parts: boxing up the evening. The
 `Block` owns Day 4's `Attention`, today's `Mlp`, and two volume knobs of
-its own — so first widen the imports: at the top of `src/block.rs`,
+its own. So first widen the imports. At the top of `src/block.rs`,
 replace the `use crate::layers::Linear;` line with these two, so the code
 below can name all three:
 
@@ -432,11 +435,12 @@ use crate::attention::Attention;
 use crate::layers::{Linear, RmsNorm};
 ```
 
-Then the block itself. It goes between `Mlp`'s closing brace and the
-`#[cfg(test)]` tests module — the frame shows both neighbors, and the
+Next comes the block itself. It goes between `Mlp`'s closing brace and
+the `#[cfg(test)]` tests module. The frame shows both neighbors, and the
 markers bracket what you type:
 
-*(Short and load-bearing: two lines of `forward` carry the residual idea.)*
+*(It is short and load-bearing: two lines of `forward` carry the residual
+idea.)*
 
 ```rust,ignore
 ⋮
@@ -485,21 +489,22 @@ mod tests {
 ```
 
 Look at the shape of both lines in `forward`: `x + something`. That little
-`+` is the residual — the pencil. Whatever the conversation or the digest
-produces gets *added onto* the card; the card itself is never replaced.
+`+` is the residual, the pencil. Whatever the conversation or the digest
+produces gets *added onto* the card, and the card itself is never
+replaced.
 
-And one subtlety is worth slowing down for. Each sublayer *reads* a
-leveled copy of the card — that is the `self.attn_norm.forward(x)?` tucked
-inside the parentheses — but its result is added onto the *original*,
+One subtlety is worth slowing down for. Each sublayer *reads* a leveled
+copy of the card. That is the `self.attn_norm.forward(x)?` tucked inside
+the parentheses. But the sublayer's result is added onto the *original*,
 un-leveled `x`. The volume knob only ever changes what a sublayer *sees*,
-never what the card *is*. That arrangement — level the copy you read, add
-onto the original — is called **pre-norm**, and it is exactly what the
-Llama/Qwen family runs.
+never what the card *is*. This arrangement, leveling the copy you read
+and adding onto the original, is called **pre-norm**. It is exactly what
+the Llama/Qwen family runs.
 
-Three tests pin the block — the residual guarantee, the shape guarantee,
+Three tests pin the block: the residual guarantee, the shape guarantee,
 and causality end to end. They live in the existing `tests` module, below
-`silu_gate_matches_hand_math`, with two small helpers they share. One tiny
-edit first: the module's `use` line gains `DType` — make it
+`silu_gate_matches_hand_math`, with two small helpers they share. Make one
+tiny edit first: the module's `use` line gains `DType`, so make it
 `use candle_core::{DType, Device};`. Then add:
 
 ```rust,ignore
@@ -582,14 +587,15 @@ mod tests {
 }
 ```
 
-`a_silent_conversation_changes_nobody` is the residual idea made testable:
-zero out every sublayer and the block is a perfect no-op, because the
+`a_silent_conversation_changes_nobody` makes the residual idea testable.
+Zero out every sublayer, and the block is a perfect no-op, because the
 card's own path through `forward` is a bare `+`. Depth can only ever *add*.
 
-One last stretch of **wiring** — copy freely. Your demo has outgrown its
-name — it shows a full block now — so five small edits, in order:
+Here comes one last stretch of **wiring**, so copy freely. Your demo shows
+a full block now and has outgrown its name. Make five small edits, in
+order:
 
-1. In `src/main.rs`, rename `run_attention_demo` to `run_block_demo` —
+1. In `src/main.rs`, rename `run_attention_demo` to `run_block_demo`, in
    both its definition and the call in the `match` arm.
 
 2. In the same `match`, change the arm's pattern `["attention"]` to
@@ -601,12 +607,12 @@ name — it shows a full block now — so five small edits, in order:
 4. In `scripts/check.sh`, make the same swap in the smoke command:
    `cargo run --quiet -- block`.
 
-5. Back in `run_block_demo`: replace the `mlp:` print line — keeping the
-   `let mlp = …` construction above it — with the block assembly and the
-   day's headline, shown next.
+5. Back in `run_block_demo`, replace the `mlp:` print line with the block
+   assembly and the day's headline, shown next. Keep the `let mlp = …`
+   construction above it.
 
 The `⋮`, the framing lines, and the `let mlp` construction are already in
-your file — the markers bracket what's new:
+your file. The markers bracket what's new:
 
 ```rust,ignore
 fn run_block_demo() -> Result<()> {
@@ -645,16 +651,16 @@ fn run_block_demo() -> Result<()> {
 }
 ```
 
-Two small things worth noticing in that code. First, the block is fed the
-raw `cards`, not `leveled`: turning the volume knobs is the block's own
-job now, so the demo hands it untouched cards and lets it do its own
-leveling inside. Second, an ownership detail: `Block::new(…)` *moves*
-`attn` and `mlp` into the block — after that line they belong to the
-block, and the old variables can't be used again. That is why the demo
-builds the block *after* the `attn:` print: one last use, then hand them
-over.
+Two small things in that code are worth noticing. First, the demo feeds
+the block the raw `cards`, not `leveled`. Turning the volume knobs is the
+block's own job now, so the demo hands it untouched cards and lets it
+level them inside. Second, there is an ownership detail. `Block::new(…)`
+*moves* `attn` and `mlp` into the block. After that line they belong to
+the block, and the old variables can't be used again. That is why the
+demo builds the block *after* the `attn:` print: one last use, then the
+demo hands them over.
 
-And since the headline is now user-facing behavior, pin it from
+The headline is now user-facing behavior, so pin it from
 the outside in `tests/cli.rs`, above
 `missing_subcommand_exits_nonzero_with_usage`:
 
@@ -672,7 +678,7 @@ fn block_demo_shows_causality() {
 ```
 
 **Section checkpoint:** `./scripts/compare.sh v1-day-05b` (identical to
-`v1-day-05` — the last section of a day *is* the day).
+`v1-day-05`, because the last section of a day *is* the day).
 
 ## 7. Run it
 
@@ -707,24 +713,25 @@ block:  [3, 8]
 swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2 moved: true
 ```
 
-Everything from Day 4 still holds — scores, mask, shares, the GQA shapes.
-Read the two new lines against what you just built:
+Everything from Day 4 still holds: scores, mask, shares, and the GQA
+shapes. Read the two new lines against what you built:
 
-- `block:  [3, 8]` — `Block::forward` ran the whole evening — knob,
-  conversation, pencil; knob, digest, pencil — and handed back cards the
-  same size they arrived: the stackability guarantee, live.
+- `block:  [3, 8]` — `Block::forward` ran the whole evening (knob,
+  conversation, pencil; knob, digest, pencil). It handed back cards the
+  same size they arrived, which is the stackability guarantee, live.
 
 - `swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2
-  moved: true` — the demo ran the block twice on prompts differing only in
-  the last guest, then compared rows. Rows 0 and 1 are bit-identical
+  moved: true` — the demo ran the block twice on prompts that differ only
+  in the last guest, then compared rows. Rows 0 and 1 are bit-identical
   across the two runs, because `mask_future` gives the changed guest
-  exactly zero share in them; only the swapped guest's own row moved.
-  Causality observed through the complete block, not just asserted.
+  exactly zero share in them. Only the swapped guest's own row moved. You
+  observed causality through the complete block instead of taking it on
+  faith.
 
 ## 9. Test it
 
-Five new tests — one for the digest, three for the block, one CLI pin —
-bring the suite to 36 (32 unit, 4 integration):
+Your five new tests (one for the digest, three for the block, one CLI
+pin) bring the suite to 36 (32 unit, 4 integration):
 
 ```bash
 cargo test block
@@ -747,8 +754,8 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; fini
 
 ## 10. Break it deliberately
 
-Remove one pencil. In `Block::forward`, drop the second residual — return
-the digest's output *instead of* adding it on:
+Now remove one pencil. In `Block::forward`, drop the second residual, so
+the block returns the digest's output *instead of* adding it on:
 
 ```diff
 -        &x + self.mlp.forward(&self.mlp_norm.forward(&x)?)?
@@ -765,20 +772,20 @@ test block::tests::a_silent_conversation_changes_nobody ... FAILED
 ```
 
 The guests were erased. With zero weights, a digest that *replaces* the
-card hands back all zeros — the original cards (`right`) are gone
+card hands back all zeros, and the original cards (`right`) are gone
 entirely.
-That is precisely what "rewrite instead of annotate" does, and a 28-block
+That is precisely what "rewrite instead of annotate" does. A 28-block
 model built this way would overwrite its own input 28 times before
-predicting anything. Notice what stayed green, too: the causality test
-still passes, because erasing every guest uniformly is still per-guest —
-one property can be perfectly healthy while another is catastrophically
-broken, which is why the block carries three independent guarantees
+predicting anything. Notice what stayed green, too. The causality test
+still passes, because erasing every guest uniformly is still per-guest.
+One property can be perfectly healthy while another is catastrophically
+broken. That is why the block carries three independent guarantees
 instead of one. Restore the `&x +` and confirm `cargo test` is green.
 
 ## 11. Checkpoint
 
-Every checkpoint — each section and the day — is done only when the full
-green bar passes:
+Every checkpoint, each section and the day alike, is done only when the
+full green bar passes:
 
 ```bash
 ./scripts/check.sh
@@ -787,7 +794,7 @@ green bar passes:
 Then close out the day in whichever mode you are following:
 
 **Built along on your own branch?** Confirm your code matches the finished
-day — the final ✓ line means it does:
+day. The final ✓ line means it does:
 
 ```bash
 ./scripts/compare.sh v1-day-05
@@ -802,7 +809,7 @@ cargo test
 git switch -          # back to where you were
 ```
 
-**Either way**, today's complete change set — docs included — reads as one
+**Either way**, today's complete change set, docs included, reads as one
 diff:
 
 ```bash
@@ -811,21 +818,23 @@ git diff v1-day-04 v1-day-05
 
 ## 12. Recap
 
-**What changed today:** `src/block.rs` — the SwiGLU `Mlp`
-(`down(silu(gate(x)) * up(x))`, the model's only nonlinearity) and the
-pre-norm decoder `Block` with residual connections; the demo grew into
-`cargo run -- block` and now demonstrates causality through the complete
-block, pinned by a CLI test; five tests, including the residual no-op
-guarantee (zero weights leave every card bit-identical).
+**What changed today:** you wrote `src/block.rs`. It holds the SwiGLU
+`Mlp` (`down(silu(gate(x)) * up(x))`, the model's only nonlinearity) and
+the pre-norm decoder `Block` with residual connections. The demo grew
+into `cargo run -- block`, and it now demonstrates causality through the
+complete block, pinned by a CLI test. You also wrote five tests, including
+the residual no-op guarantee (zero weights leave every card
+bit-identical).
 
-**Deliberately naive:** one block stands alone (real models stack dozens —
-Day 6); the weights are still ramp-filled fakes (Day 6); and Qwen's extra
-per-head q/k normalization waits for the real checkpoint (Day 6).
+**Deliberately naive:** one block stands alone, while real models stack
+dozens (Day 6). The weights are still ramp-filled fakes (Day 6). Qwen's
+extra per-head q/k normalization also waits for the real checkpoint
+(Day 6).
 
-**Tomorrow's limitation, resolved on Day 6:** the machine is complete but
-the mind is fake — ramp weights make grammatical-looking shapes and
-meaningless content. Day 6 hires the trained chef: stack the blocks,
+**Tomorrow's limitation, resolved on Day 6:** the machine is complete,
+but the mind is fake. Ramp weights make grammatical-looking shapes and
+meaningless content. Day 6 hires the trained chef. You stack the blocks,
 download a real checkpoint, and load its actual weights into these exact
-structs — a real mind in the machine you built by hand. (One piece stays
-borrowed a day longer: real *text* needs the real tokenizer, and that is
-Day 7's opening move.)
+structs, putting a real mind in the machine you built by hand. (One
+piece stays borrowed a day longer: real *text* needs the real tokenizer,
+and that is Day 7's opening move.)

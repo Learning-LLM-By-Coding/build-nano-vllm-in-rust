@@ -25,15 +25,15 @@ git switch --detach v1-day-03a         # then 03b, 03c as you pass each section
 **Theory-density warning — and a promise.** Today is the most
 concept-heavy day so far: embeddings, normalization, rotary positions.
 Remember what this course is about: *inference engineering*, not deep
-learning math — today's formulas are cargo the engine needs, not material
-you will be tested on. You will always be told *what* each block is and
-*why* the engine needs it — what's optional is the math of *how* it works
-inside. Type the blocks out anyway (fingers build a familiarity that
-reading skips) — or copy them straight from this page; both are legitimate,
-the code just has to compile. Every concept comes with an everyday
-analogy in the mental model below, and the teal **LLM concepts used
-here** chips open a short video (▶) or the formal write-up in a side
-panel whenever you want more. Understanding compounds: Day 4 is where
+learning math. Today's formulas are cargo the engine needs, not material
+you will be tested on. You will always learn *what* each block is and
+*why* the engine needs it. Only the math of *how* it works inside is
+optional. Type the blocks out anyway, because your fingers build a
+familiarity that reading skips. Or copy them straight from this page. Both
+are legitimate, and the code only has to compile. Every concept comes with
+an everyday analogy in the mental model below. Whenever you want more, the
+teal **LLM concepts used here** chips open a short video (▶) or the formal
+write-up in a side panel. Understanding compounds, and Day 4 is where
 today's pieces click together.
 
 </div>
@@ -55,15 +55,16 @@ point — nothing says a "day" must fit in one.
 
 ## 1. What you will have running
 
-A new `cargo run -- layers` subcommand that walks a tiny prompt through
-every *layer* — every processing station the data flows through on its way
-to a prediction — that a **transformer** applies *before* **attention**.
-Two more words worth defining on first contact: a *transformer* is the neural-network
-design behind every modern LLM — a stack of identical blocks in which
-tokens first exchange information, then each token thinks over what it
-collected. *Attention* is the exchanging step: every token looks at the
-tokens before it and decides which ones matter to it right now. Attention
-is Day 4's whole subject — today builds what it consumes.
+You will have a new `cargo run -- layers` subcommand. It walks a tiny
+prompt through every *layer* that a **transformer** applies *before*
+**attention**. A layer is a processing station the data flows through on
+its way to a prediction. Two more words deserve a definition right away. A
+*transformer* is the neural-network design behind every modern LLM. It is a
+stack of identical blocks: in each one, tokens first exchange information,
+then each token thinks over what it collected. *Attention* is the
+exchanging step. Every token looks at the tokens before it and decides
+which ones matter to it right now. Attention is Day 4's whole subject, and
+today you build what it consumes.
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=wjZofJX0v4M">▶ Transformers, visually (3Blue1Brown)</a>
@@ -73,11 +74,10 @@ is Day 4's whole subject — today builds what it consumes.
 
 ## 2. What you will be seeing in the output
 
-A sneak peek before anything else: here is the exact output you will
-produce today, with a plain-English note under each line. Don't worry if a
-note doesn't fully click yet — the rest of the day builds each piece, and
-when you run this yourself at the end, every line will read like an old
-friend:
+Here is a sneak peek: the exact output you will produce today, with a
+plain-English note under each line. Don't worry if a note doesn't fully
+click yet. The rest of the day builds each piece, and when you run this
+yourself at the end, every line will read like an old friend:
 
 ```text
 text "aa" -> ids [97, 97]
@@ -89,69 +89,70 @@ rope:    [2, 4]
 same token, same vector?  before rope: true, after rope: false
 ```
 
-- `text "aa" -> ids [97, 97]` — the same letter twice, on purpose: two
+- `text "aa" -> ids [97, 97]` — the same letter twice, on purpose. Two
   identical tokens make today's problem visible.
 
-- `embed:   [2, 8]` — each token's single number is traded for a *list of
-  8 numbers* — room to carry meaning instead of just identity. Read
+- `embed:   [2, 8]` — each token trades its single number for a *list of
+  8 numbers*. That list has room to carry meaning, not only identity. Read
   `[2, 8]` as 2 tokens × 8 numbers each.
 
 - `row 0 starts [7.76, ...]` — a peek at the first token's numbers.
   (Made-up today; real learned numbers arrive on Day 6.)
 
-- `rmsnorm: [2, 8]  rms of row 0 = 1.000` — a volume control: every
-  token's numbers are rescaled to the same overall loudness, so stacking
+- `rmsnorm: [2, 8]  rms of row 0 = 1.000` — this is a volume control. It
+  rescales every token's numbers to the same overall loudness, so stacking
   many steps can't blow the numbers up or fade them out.
 
-- `linear:  [2, 4]` — a re-mixer: each token's 8 numbers are blended down
-  into 4 new ones. The shape change is the visible part; the *why* comes
-  in the chapter.
+- `linear:  [2, 4]` — this is a re-mixer. It blends each token's 8 numbers
+  down into 4 new ones. The shape change is the visible part, and the
+  chapter explains the *why*.
 
-- `rope:    [2, 4]` — same shape, new information: each token's numbers
-  are twisted by *where that token sits* in the sentence.
+- `rope:    [2, 4]` — the shape stays the same, but the information is new.
+  Each token's numbers are twisted by *where that token sits* in the
+  sentence.
 
-- `before rope: true, after rope: false` — the punch line: until that last
-  step, the two identical letters carried *identical* numbers — the model
-  literally could not tell first from second. Position fixed it.
+- `before rope: true, after rope: false` — here is the punch line. Until
+  that last step, the two identical letters carried *identical* numbers, so
+  the model literally could not tell first from second. Position fixed it.
 
 ## 3. Why we need it
 
-Day 2's [bigram](story.md#bigram) sees exactly **one token of context**, and the root cause is
+Your Day 2 [bigram](story.md#bigram) works, but it sees exactly **one token of context**. The root cause is
 its representation. A one-hot row is an ID badge: it says *which* token this
 is, and nothing else.
 
 **The story so far** — remember [the restaurant](story.md): Day 1 built the kitchen,
-Day 2 taught the cook to choose each course from the last. Today the
-**dining room** opens. Your prompt is tonight's table of guests — **one
+and Day 2 taught the cook to choose each course from the last. Today the
+**dining room** opens. Your prompt is tonight's table of guests, with **one
 guest per token**, so a prompt of five tokens seats five guests. (With our
-byte tokenizer, one token is one byte, which for plain English text is one
+byte tokenizer, one token is one byte. For plain English text, that is one
 letter: the prompt `"hi"` seats two guests, `h` and `i`. On Day 7 the real
 tokenizer arrives, and a guest becomes a word piece instead.) The engine
-is the host seating them, and the conversation the guests will eventually
-have at the table is *attention* — that's Day 4. Now picture the badge
+is the host seating them. The conversation the guests will eventually have
+at the table is *attention*, and that is Day 4. Now picture the badge
 problem in that dining room: a table where every guest wears only a number.
-Nobody can hold a conversation with that. Today is everything the host must
-do *before* anyone can talk, and each of today's layers is one of the
+Nobody can hold a conversation with that. Today covers everything the host
+must do *before* anyone can talk, and each of today's layers is one of the
 host's moves.
 
-At tomorrow's conversation, every guest gets to
-look around at the guests seated before them and borrow information from
-the ones that matter; that is how a model connects an "it" back to "the
-cat" from twenty words ago. But organized looking-around only helps if
-each guest carries something worth looking *at*. Today builds that carrier,
-one section per ingredient:
+At tomorrow's conversation, every guest gets to look around at the guests
+seated before them and borrow information from the ones that matter. That
+is how a model connects an "it" back to "the cat" from twenty words ago.
+But organized looking-around only helps if each guest carries something
+worth looking *at*. Today you build that carrier, one section per
+ingredient:
 
-- **A. Embeddings** — swap the ID badge for a *profile card*: a short list
-  of numbers with room for meaning, where similar tokens can carry similar
-  numbers.
+- **A. Embeddings** swap the ID badge for a *profile card*. A card is a
+  short list of numbers with room for meaning, where similar tokens can
+  carry similar numbers.
 
-- **B. Linear + RMSNorm** — a learnable *translator* that re-mixes a card's
-  numbers into more useful ones, plus a *volume knob* that resets every
-  card to the same loudness — so that dozens of re-mixing steps stacked on
-  top of each other can't blow the numbers up to infinity or shrink them
-  to nothing.
+- **B. Linear + RMSNorm** add a learnable *translator* that re-mixes a
+  card's numbers into more useful ones. They also add a *volume knob* that
+  resets every card to the same loudness. That way, dozens of re-mixing
+  steps stacked on top of each other can't blow the numbers up to infinity
+  or shrink them to nothing.
 
-- **C. RoPE** — stamp each guest's *position* onto their card, so "dog bites
+- **C. RoPE** stamps each guest's *position* onto their card, so "dog bites
   man" finally stops being the same input as "man bites dog".
 
 ## 4. Mental model
@@ -159,14 +160,14 @@ one section per ingredient:
 <div class="callout">
 
 **Reading tip:** this walk and the "Inference concepts" section after it
-are the day's densest reading — all ideas, no code. If they start to
-blur, that is normal and nothing is lost: jump ahead to section 6 and
-*build* the thing, then come back — the ideas are far easier to hold
-once you have watched the demo print them.
+are the day's densest reading: all ideas, no code. If they start to blur,
+that is normal, and nothing is lost. Jump ahead to section 6 and *build*
+the thing, then come back. The ideas are far easier to hold once you have
+watched the demo print them.
 
 </div>
 
-Now walk the dining room in order — one host's move per layer:
+Now walk the dining room in order, one host's move per layer:
 
 - **Arrival — the badge problem.** Each guest walks in wearing only a
   numbered badge (`a` is badge 97). Two guests with the same badge are
@@ -174,16 +175,15 @@ Now walk the dining room in order — one host's move per layer:
   That badge is Day 2's one-hot representation, and it is why the bigram
   was so limited.
 
-- **Embedding — swap the badge for a profile card.** Right now each guest
-  wears only a numbered badge: the letter `a` is badge 97, and that number
-  says *which* letter it is, nothing more. At the door, the host takes the
-  badge and hands back a profile card from a filing cabinet — card 97 for
-  badge 97. The card holds eight numbers that describe the guest, and the
-  same badge always gets the same card. Today our cards hold made-up
-  numbers. In a trained model (you will load one on Day 6), the numbers
-  were learned, so that guests used in similar ways carry similar numbers.
-  That is all an embedding is: a lookup table that turns a token's id into
-  a short list of numbers describing it.
+- **Embedding — swap the badge for a profile card.** The badge number
+  says *which* letter a guest is, and nothing more. So at the door, the
+  host takes the badge and hands back a profile card from a filing
+  cabinet: card 97 for badge 97. The card holds eight numbers that describe
+  the guest, and the same badge always gets the same card. Today our cards
+  hold made-up numbers. In a trained model (you will load one on Day 6),
+  the numbers were learned, so that guests used in similar ways carry
+  similar numbers. That is all an embedding is: a lookup table that turns
+  a token's id into a short list of numbers describing it.
 
 - **RMSNorm — set everyone to the same volume.** Think of a card's numbers
   as how loudly its guest speaks. Some cards arrive loud (big numbers) and
@@ -198,27 +198,27 @@ Now walk the dining room in order — one host's move per layer:
   Leveling everyone before every round keeps both from happening.
 
 - **Linear — the translator.** Each activity later in the evening needs a
-  card's information arranged differently — the way the same dish is
+  card's information arranged differently. Think of how the same dish is
   described one way on the menu and another way in the recipe. So before
   each activity, a translator rewrites every card. Each number on the new
   card is a blend of all the numbers on the old one: a bit of the first, a
   lot of the third, none of the fifth, all added up. How much of each to
-  take — the *blend weights* — is the recipe the translator follows. Today
-  those weights are made up, so only the *shapes* of the cards are real; on
-  Day 6, a trained chef brings the real weights.
+  take is the recipe the translator follows, and those amounts are the
+  *blend weights*. Today the weights are made up, so only the *shapes* of
+  the cards are real. On Day 6, a trained chef brings the real weights.
 
 - **RoPE — stamp the seat number, as clock dials.** Identical twins still
-  carry identical cards, so the host records *where each guest sits*: every
-  pair of numbers on the card is a little dial, and sitting in seat N winds
-  each dial forward N clicks — the first dial spins fast, later dials
-  slower, like second, minute, and hour hands. The clever part: comparing
-  two guests' dials reveals only *how many seats apart* they are, never the
-  absolute row number — and "how far apart" is precisely what a
-  conversation cares about.
+  carry identical cards, so the host records *where each guest sits*.
+  Every pair of numbers on the card is a little dial. Sitting in seat N
+  winds each dial forward N clicks. The first dial spins fast and later
+  dials spin slower, like second, minute, and hour hands. Here is the
+  clever part. Comparing two guests' dials reveals only *how many seats
+  apart* they are, never the absolute row number. And "how far apart" is
+  precisely what a conversation cares about.
 
-Tomorrow, **attention** is the conversation itself: every guest compares
-cards with everyone seated before them and decides whom to listen to. Today
-ends with the cards ready:
+Tomorrow, **attention** is the conversation itself. Every guest compares
+cards with everyone seated before them and decides whom to listen to.
+Today ends with the cards ready:
 
 ```text
 ids [97, 97]     two guests — so far just badge numbers
@@ -237,7 +237,7 @@ ids [97, 97]     two guests — so far just badge numbers
 ```
 
 Read every shape the same way all course long: `[how many guests, how many
-numbers each]` — or in engine terms, `[sequence length, features]`.
+numbers each]`. In engine terms, that is `[sequence length, features]`.
 
 ## 5. Inference concepts introduced
 
@@ -247,29 +247,29 @@ numbers each]` — or in engine terms, `[sequence length, features]`.
 <a href="https://www.youtube.com/watch?v=o29P0Kpobz0">▶ RoPE (Efficient NLP)</a>
 </div>
 
-- **Dense representations.** A one-hot badge needs 256 slots just to say
-  "I am token 97", and says nothing else. A profile card says more with
+- **Dense representations.** A one-hot badge needs 256 slots only to say
+  "I am token 97", and it says nothing else. A profile card says more with
   less: eight numbers here, thousands in real models. Those numbers are
-  *learnable*, and that is the whole point — everything a model "knows"
+  *learnable*, and that is the whole point. Everything a model "knows"
   about a token is literally stored in that short list of numbers.
 
 - **Normalization.** A deep model is the same mixing step repeated dozens
-  of times, and repeated multiplication snowballs: numbers either grow
+  of times, and repeated multiplication snowballs. Numbers either grow
   without bound or fade toward zero. Re-leveling every token to volume 1.0
   between steps is what makes depth survivable. RMSNorm is the lighter
   cousin of LayerNorm, and it is what the Llama/Qwen family actually ships.
 
 - **Positional information.** Attention on its own treats a sentence as a
-  *bag* of words — shuffle them and nothing would change. RoPE adds order
-  by winding each card's dials, engineered so that when attention compares
-  two tokens, only the *distance between them* shows through — a property
-  today's tests prove rather than assume.
+  *bag* of words: shuffle them, and nothing would change. RoPE adds order
+  by winding each card's dials. The winding is engineered so that when
+  attention compares two tokens, only the *distance between them* shows
+  through. Today's tests prove that property rather than assume it.
 
 ## 6. Build it, section by section
 
-Almost no new Rust today — Day 3's difficulty is math, not language (only
-section C's strip has entries). All three layers accumulate in one new
-file, `src/layers.rs`, built up section by section.
+You will see almost no new Rust today. Day 3's difficulty is math, not
+language (only section C's strip has entries). All three layers accumulate
+in one new file, `src/layers.rs`, which you build up section by section.
 
 ### Section A — token embeddings
 
@@ -277,11 +277,11 @@ file, `src/layers.rs`, built up section by section.
 <a href="https://www.youtube.com/watch?v=viZrOnJclY0">▶ word embeddings, clearly explained (StatQuest)</a>
 </div>
 
-Section A is the dining room's front door — the filing cabinet where badge
-numbers are swapped for profile cards. Start `src/layers.rs` with that
-cabinet, the lookup table:
+Section A is the dining room's front door, with the filing cabinet where
+the host swaps badge numbers for profile cards. Start `src/layers.rs` with
+that cabinet, the lookup table:
 
-*(Typing it out builds finger-memory — but copying it straight from here is
+*(Typing it out builds finger-memory, but copying it straight from here is
 just as legitimate.)*
 
 ```rust
@@ -311,20 +311,20 @@ impl Embedding {
 }
 ```
 
-The file is brand new, so wire it into the crate —
-in `src/main.rs`, add the declaration next to the existing modules; without
-it, nothing in `layers.rs` even compiles:
+The file is brand new, so wire it into the crate. In `src/main.rs`, add the
+declaration next to the existing modules. Without it, nothing in
+`layers.rs` even compiles:
 
 ```rust,ignore
 mod layers;
 ```
 
-You have *already used* an embedding twice without
-the name: Day 1's `one_hot(id) × weights` and Day 2's bigram forward are row
-lookups performed by multiplication. `index_select(ids, 0)` — "pick these
-rows along dimension 0" — is the honest, fast version. That equivalence is
-too good a claim to leave untested, so the section's tests pin it — add
-this test module at the bottom of `src/layers.rs`:
+You have *already used* an embedding twice without the name. Day 1's
+`one_hot(id) × weights` and Day 2's bigram forward are row lookups
+performed by multiplication. `index_select(ids, 0)` means "pick these rows
+along dimension 0", and it is the honest, fast version. That equivalence is
+too good a claim to leave untested, so the section's tests pin it. Add this
+test module at the bottom of `src/layers.rs`:
 
 ```rust,ignore
 #[cfg(test)]
@@ -363,10 +363,11 @@ mod tests {
 }
 ```
 
-And that's the heart of the section — everything below is **wiring**,
-honest plumbing you're welcome to copy. Now let's actually *see* some
-vectors: give `src/main.rs` a demo subcommand. Two helpers above `main` (weights are a deterministic ramp —
-fake on purpose; real trained weights arrive on Day 6):
+That's the heart of the section. Everything below is **wiring**, honest
+plumbing you're welcome to copy. Now let's actually *see* some vectors by
+giving `src/main.rs` a demo subcommand. Add two helpers above `main`. The
+weights are a deterministic ramp, fake on purpose; real trained weights
+arrive on Day 6:
 
 ```rust,ignore
 /// Deterministic made-up weights: value = index * scale. Real, trained
@@ -397,14 +398,14 @@ fn run_layers_demo() -> Result<()> {
 }
 ```
 
-Wire it into the CLI `match` (and add the line to the usage message):
+Wire it into the CLI `match`, and add the line to the usage message:
 
 ```rust,ignore
         ["layers"] => run_layers_demo(),
 ```
 
 Add `cargo run --quiet -- layers` as a second smoke command in
-`scripts/check.sh` — from today on, the green bar exercises both
+`scripts/check.sh`. From today on, the green bar exercises both
 subcommands. Then run it:
 
 ```bash
@@ -420,52 +421,54 @@ rows equal: true
 
 Read it line by line, against the code you just typed:
 
-- `text "aa" -> ids [97, 97]` — Day 1's `encode`: the same guest (`a`,
-  badge 97) arrives twice, on purpose.
+- `text "aa" -> ids [97, 97]` — this is Day 1's `encode`. The same guest
+  (`a`, badge 97) arrives twice, on purpose.
 
 - `embed:  [2, 8]` — `Embedding::forward` swapped each badge for a profile
   card: 2 guests × 8 numbers each.
 
-- `row 0 starts [7.76, 7.77, 7.78, ...]` — the ramp table is fake but
-  checkable by hand: row 97 starts at `97 × 8 × 0.01 = 7.76`.
+- `row 0 starts [7.76, 7.77, 7.78, ...]` — the ramp table is fake, but you
+  can check it by hand. Row 97 starts at `97 × 8 × 0.01 = 7.76`.
 
-- `rows equal: true` — the section's real finding: same badge, same card.
-  The embedding has **no idea where a token sits**. Hold that thought
-  until section C.
+- `rows equal: true` — this is the section's real finding: same badge,
+  same card. The embedding has **no idea where a token sits**. Hold that
+  thought until section C.
 
 **Section checkpoint:** `./scripts/compare.sh v1-day-03a`
 
 ### Section B — linear layers and RMSNorm
 
-<div class="rust-concepts"><span>Rust used here:</span> nothing new — this
-section is pure tensor math (and the course's first tolerance-based test).</div>
+<div class="rust-concepts"><span>Rust used here:</span> nothing new. This
+section is pure tensor math, plus the course's first tolerance-based test.</div>
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=aircAruvnKk">▶ neural nets &amp; weights, visually (3Blue1Brown)</a>
 <a href="https://nn.labml.ai/normalization/layer_norm/index.html">LayerNorm — RMSNorm's parent (labml)</a>
 </div>
 
-Next you build the middle two stations of the day's pipeline — and both
-are old friends from the dining room walk: `Linear`, the translator that
-re-mixes a card's numbers, and `RmsNorm`, the volume knob that resets every
-card to the same loudness. Each is only a few lines of Rust.
+Your guests now have cards, but nothing re-mixes or levels them yet. Next
+you build the middle two stations of the day's pipeline. Both are old
+friends from the dining room walk. `Linear` is the translator that re-mixes
+a card's numbers. `RmsNorm` is the volume knob that resets every card to
+the same loudness. Each is only a few lines of Rust.
 
 One new name appears in that code: `D`, candle's *dimension picker*.
-`RmsNorm` must answer the question *"average over which direction?"* — a
+`RmsNorm` must answer the question *"average over which direction?"*. A
 `[2, 8]` tensor could be averaged down its 2 rows or across its 8
-features — and it answers with `D::Minus1`, "the last dimension" (the
-`-1` works like Python's negative indexing), which is where a token's
-features live. Add `D` to the import at the top of `src/layers.rs` so the
-code below compiles:
+features. `RmsNorm` answers with `D::Minus1`, "the last dimension", which
+is where a token's features live. (The `-1` works like Python's negative
+indexing.) Add `D` to the import at the top of `src/layers.rs` so the code
+below compiles:
 
 ```rust,ignore
 use candle_core::{D, Result, Tensor};
 ```
 
-Then the two layers. They go in `src/layers.rs`, between the `Embedding`
-impl's closing `}` and the `#[cfg(test)]` tests module — around line 23:
+Then add the two layers. They go in `src/layers.rs`, between the
+`Embedding` impl's closing `}` and the `#[cfg(test)]` tests module, around
+line 23:
 
-*(Typing them out builds finger-memory — but copying them straight from here
+*(Typing them out builds finger-memory, but copying them straight from here
 is just as legitimate.)*
 
 ```rust
@@ -515,19 +518,20 @@ impl RmsNorm {
 }
 ```
 
-`Linear` is literally Day 1's [matmul](story.md#matmul) wearing a struct. `RmsNorm` reads off
-its own formula: square, mean along the last dimension (`D::Minus1`,
-keeping the dimension so the shape is `[seq, 1]`), add `eps`, square root —
-then divide each row by its own rms (`broadcast_div` stretches the `[seq,
-1]` divisor across the row) and multiply by the learned per-feature `scale`.
-`eps` is a guard rail: with it, a row of zeros divides by `sqrt(eps)`
-instead of by zero.
+`Linear` is literally Day 1's [matmul](story.md#matmul) wearing a struct. `RmsNorm` follows
+its own formula step by step. It squares, then takes the mean along the
+last dimension (`D::Minus1`, keeping the dimension so the shape is
+`[seq, 1]`). It adds `eps` and takes the square root. Then it divides
+each row by its own rms and multiplies by the learned per-feature `scale`.
+(`broadcast_div` stretches the `[seq, 1]` divisor across the row.) `eps`
+is a guard rail: with it, a row of zeros divides by `sqrt(eps)` instead of
+by zero.
 
-The tests reuse Day 1's arithmetic for `Linear` — and introduce something
-new for `RmsNorm`: a **tolerance**. The moment `sqrt` enters, exact float
-equality is over; from here to the Day 7 oracle, math is verified as "close
-within epsilon". Add all three inside the `tests` module at the bottom of
-`src/layers.rs`, below section A's tests:
+The tests reuse Day 1's arithmetic for `Linear`. For `RmsNorm`, they
+introduce something new: a **tolerance**. The moment `sqrt` enters, exact
+float equality is over. From here to the Day 7 oracle, we verify math as
+"close within epsilon". Add all three inside the `tests` module at the
+bottom of `src/layers.rs`, below section A's tests:
 
 ```rust,ignore
 #[cfg(test)]
@@ -578,8 +582,8 @@ mod tests {
 }
 ```
 
-That's the learning done — the rest of the section is **wiring**, yours
-to copy freely. The demo in `src/main.rs` grows by three small edits.
+That's the learning done. The rest of the section is **wiring**, yours to
+copy freely. The demo in `src/main.rs` grows by three small edits.
 
 **First**, `Tensor::ones` (below) needs candle's `DType`, so add it to the
 import at the top of the file:
@@ -596,8 +600,9 @@ build the two new stations:
     let proj = layers::Linear::new(ramp(8, 4, 0.1, &device)?);
 ```
 
-**Third**, lower in the same function — between the `row 0 starts …` print
-and the final `rows equal` print — thread `x` through both stations:
+**Third**, lower in the same function, thread `x` through both stations.
+This goes between the `row 0 starts …` print and the final `rows equal`
+print:
 
 ```rust,ignore
     let x = norm.forward(&x)?; // [2, 8], every row now at unit magnitude
@@ -609,10 +614,10 @@ and the final `rows equal` print — thread `x` through both stations:
     println!("linear:  {:?}", x.dims());
 ```
 
-(One cosmetic touch: give the `embed:` label one extra space —
-`"embed:   {:?}"` — so its column lines up with `rmsnorm:`.) Note the
-`let x =` shadowing — reusing the name for each stage is idiomatic Rust
-for pipelines. Run it:
+(One cosmetic touch: give the `embed:` label one extra space,
+`"embed:   {:?}"`, so its column lines up with `rmsnorm:`.) Notice the
+`let x =` shadowing. Reusing the name for each stage is idiomatic Rust for
+pipelines. Run it:
 
 ```text
 text "aa" -> ids [97, 97]
@@ -626,15 +631,17 @@ rows equal: true
 Read the two new lines against the two layers you just built:
 
 - `rmsnorm: [2, 8]  rms of row 0 = 1.000` — `RmsNorm::forward` leveled
-  every card to loudness 1.000: the volume knob doing its one job. Same
-  shape as before — normalizing changes values, never sizes.
+  every card to loudness 1.000. That is the volume knob doing its one job.
+  The shape is the same as before, because normalizing changes values,
+  never sizes.
 
 - `linear:  [2, 4]` — `Linear::forward` re-mixed each 8-number card into
-  4 numbers: `[2, 8] × [8, 4] → [2, 4]`, Day 1's shape rule at work.
+  4 numbers: `[2, 8] × [8, 4] → [2, 4]`. That is Day 1's shape rule at
+  work.
 
-And `rows equal: true` still closes the transcript: leveled and translated,
-the twins carry identical cards *yet again*. Two more layers, and position
-is still nowhere in sight.
+And `rows equal: true` still closes the transcript. Leveled and
+translated, the twins carry identical cards *yet again*. You have added two
+more layers, and position is still nowhere in sight.
 
 **Section checkpoint:** `./scripts/compare.sh v1-day-03b`
 
@@ -651,35 +658,36 @@ is still nowhere in sight.
 </div>
 
 This is the host's final move before the conversation: recording where
-each guest sits. Without it, a sentence is just a *bag* of tokens — feed
-"dog bites man" and "man bites dog" through everything built so far and
+each guest sits. Without it, a sentence is only a *bag* of tokens. Feed
+"dog bites man" and "man bites dog" through everything built so far, and
 the model sees the same evening twice.
 
-The obvious fix first. Write the seat number straight onto the card: keep
-a second filing cabinet of *position* cards — one learned vector for seat
-0, one for seat 1, … — and add the right one to each guest's card. Early
-transformers (GPT-2 included) did exactly that, and it has two real
-problems. The cabinet is printed in advance, so the restaurant can never
-seat a guest past its last position card — a hard maximum prompt length.
-And it stamps *absolute* seats, when a conversation mostly cares about
-*distance*: "the cat … sat" should connect the same way whether that pair
-sits at seats 2 and 5 or seats 42 and 45.
+Start with the obvious fix. Write the seat number straight onto the card.
+Keep a second filing cabinet of *position* cards, with one learned vector
+for seat 0, one for seat 1, and so on. Then add the right one to each
+guest's card. Early transformers (GPT-2 included) did exactly that, and it
+has two real problems. First, the cabinet is printed in advance, so the
+restaurant can never seat a guest past its last position card. That sets
+a hard maximum prompt length. Second, it stamps *absolute* seats, but a
+conversation mostly cares about *distance*. "The cat … sat" should connect
+the same way whether that pair sits at seats 2 and 5 or seats 42 and 45.
 
-**RoPE** — rotary position embeddings, what the Llama/Qwen family actually
-ships — fixes both by *winding the card's dials* instead of adding a seat
-card: rotate each pair of features `(2i, 2i+1)` by an angle proportional
-to the seat number, the multi-speed clock from the dining room. Rotation
-has exactly the property the naive stamp lacks: compare two wound cards (a
-dot product — tomorrow's attention score) and the result depends only on
-how far apart the seats are, never on the raw seat numbers. No cabinet to
-run out of, and relative distance falls out of the math for free — the
-section's last test proves that claim. Append to `src/layers.rs`, between
-the `RmsNorm` impl's closing `}` and the `#[cfg(test)]` tests module —
-around line 65:
+**RoPE** (rotary position embeddings) is what the Llama/Qwen family
+actually ships. It fixes both problems by *winding the card's dials*
+instead of adding a seat card. It rotates each pair of features
+`(2i, 2i+1)` by an angle proportional to the seat number, like the
+multi-speed clock from the dining room. Rotation has exactly the property
+the naive stamp lacks. Compare two wound cards with a dot product
+(tomorrow's attention score), and the result depends only on how far apart
+the seats are, never on the raw seat numbers. There is no cabinet to run
+out of, and relative distance falls out of the math for free. The
+section's last test proves that claim. Append `rope` to `src/layers.rs`,
+between the `RmsNorm` impl's closing `}` and the `#[cfg(test)]` tests
+module, around line 65:
 
-*(Today's densest block. Typing it out builds finger-memory — but copying it
-straight from here is just as legitimate; the line comments walk you
-through either way.)*
+*(This is today's densest block. Typing it out builds finger-memory, but
+copying it straight from here is just as legitimate. The line comments
+walk you through either way.)*
 
 ```rust
 # extern crate candle_core;
@@ -727,13 +735,13 @@ Read it line by line, against what each piece does:
 
 - The math runs in `f64` so repeated trig doesn't erode `f32` precision.
 
-It is a slow scalar loop **on purpose** — you can read every operation. It
-gets vectorized only when a benchmark says it hurts.
+It is a slow scalar loop **on purpose**, so you can read every operation.
+It gets vectorized only when a benchmark says it hurts.
 
-The four tests are the section's real content — each pins one property you
-would otherwise take on faith. They go inside the same `tests` module at
-the bottom of `src/layers.rs`, below section B's tests, along with the two
-small helpers after them:
+The four tests are the section's real content. Each one pins a property
+you would otherwise take on faith. They go inside the same `tests` module
+at the bottom of `src/layers.rs`, below section B's tests, along with the
+three small helpers after them:
 
 ```rust,ignore
 #[cfg(test)]
@@ -801,16 +809,16 @@ mod tests {
 }
 ```
 
-The last one is *the* reason RoPE exists: shift both tokens three positions
-to the right, and the score attention would compute between them stays the
-same. Position is encoded, but only *relative* position leaks into dot
-products.
+The last test is *the* reason RoPE exists. Shift both tokens three
+positions to the right, and the score attention would compute between them
+stays the same. Position is encoded, but only *relative* position leaks
+into dot products.
 
-One last stretch of **wiring** — copy freely. Time to finish the demo:
-in `src/main.rs`, at the end of `run_layers_demo`, replace
-the final `rows equal` print — its last two lines before `Ok(())` — with a
-remember-then-compare ending: capture whether the rows match *before* the
-rotation, then print one verdict line after it:
+One last stretch of **wiring** remains, so copy freely. Time to finish the
+demo. In `src/main.rs`, at the end of `run_layers_demo`, find the final
+`rows equal` print: its last two lines before `Ok(())`. Replace them with
+a remember-then-compare ending. It captures whether the rows match
+*before* the rotation, then prints one verdict line after it:
 
 ```rust,ignore
     let rows = x.to_vec2::<f32>()?;
@@ -825,8 +833,8 @@ rotation, then print one verdict line after it:
     );
 ```
 
-And since the demo is now a user-facing behavior, pin it from the outside, at the
-bottom of `tests/cli.rs`:
+The demo is now a user-facing behavior, so pin it from the outside. Add
+this test at the bottom of `tests/cli.rs`:
 
 ```rust,ignore
 #[test]
@@ -841,8 +849,8 @@ fn layers_demo_is_deterministic() {
 }
 ```
 
-**Section checkpoint:** `./scripts/compare.sh v1-day-03c` (identical to
-`v1-day-03` — the last section of a day *is* the day).
+**Section checkpoint:** `./scripts/compare.sh v1-day-03c`. It is identical
+to `v1-day-03`, because the last section of a day *is* the day.
 
 ## 7. Run it
 
@@ -862,31 +870,35 @@ rope:    [2, 4]
 same token, same vector?  before rope: true, after rope: false
 ```
 
-Read it line by line — every number is checkable:
+Read it line by line. You can check every number:
 
-- `ids [97, 97]` — `a` is byte 97; the twin-guest prompt, on purpose.
+- `ids [97, 97]` — `a` is byte 97. This is the twin-guest prompt, on
+  purpose.
 
-- `embed:   [2, 8]` — badge → profile card (`Embedding`): 2 guests × 8
-  numbers each.
+- `embed:   [2, 8]` — `Embedding` swapped each badge for a profile card:
+  2 guests × 8 numbers each.
 
-- `row 0 starts [7.76, ...]` — the ramp table's row 97: `97 × 8 × 0.01`.
+- `row 0 starts [7.76, ...]` — this is the ramp table's row 97:
+  `97 × 8 × 0.01`.
 
-- `rmsnorm: [2, 8]  rms of row 0 = 1.000` — the volume knob's entire job,
-  done.
+- `rmsnorm: [2, 8]  rms of row 0 = 1.000` — the volume knob has done its
+  entire job.
 
-- `linear:  [2, 4]` — the translator: `[2, 8] × [8, 4] → [2, 4]`.
+- `linear:  [2, 4]` — the translator re-mixed each card:
+  `[2, 8] × [8, 4] → [2, 4]`.
 
-- `rope:    [2, 4]` — same shape: `rope` only *rotates* the dials, never
-  resizes the card.
+- `rope:    [2, 4]` — the shape stays the same, because `rope` only
+  *rotates* the dials and never resizes the card.
 
-- `before rope: true, after rope: false` — the day's headline: the seat
-  stamp finally told the twins apart. Position has entered the
+- `before rope: true, after rope: false` — this is the day's headline. The
+  seat stamp finally told the twins apart, and position has entered the
   representation.
 
 ## 9. Test it
 
-Nine new tests — two per layer plus four for RoPE's properties — bring the
-suite to 24 (21 unit, 3 integration):
+Ten new tests bring the suite to 24 (21 unit, 3 integration): two for the
+lookup, one for `Linear`, two for RMSNorm, four for RoPE's properties,
+and one command-line test:
 
 ```bash
 cargo test layers
@@ -909,8 +921,8 @@ test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; fin
 
 ## 10. Break it deliberately
 
-Flip one sign in `rope` — the classic transcription slip when copying a
-rotation matrix from paper:
+Flip one sign in `rope`. It is the classic transcription slip when you
+copy a rotation matrix from paper:
 
 ```diff
 -            row[2 * i + 1] = (a * sin + b * cos) as f32;
@@ -927,15 +939,16 @@ assertion `left == right` failed
  right: [[1.0, 2.0, 3.0, 4.0]]
 ```
 
-Here is what makes math bugs dangerous: the broken version still *runs*,
+This is what makes math bugs dangerous. The broken version still *runs*,
 still produces plausible-looking numbers, and even still preserves vector
-lengths (a sign flip turns the rotation into a reflection, which is also
-length-preserving — so `rotation_preserves_vector_length` alone would have
-stayed green!). Only the *identity-at-position-zero* property catches it
-instantly. That is why section C pinned four independent properties instead
-of one: math code does not crash when it is wrong, it just quietly computes
-the wrong thing, and a set of property tests is the only tripwire. Flip the
-sign back by hand and confirm `cargo test` is green again.
+lengths. A sign flip turns the rotation into a reflection, which is also
+length-preserving. So `rotation_preserves_vector_length` alone would have
+stayed green! Only the *identity-at-position-zero* property catches the bug
+instantly. That is why section C pinned four independent properties
+instead of one. Math code does not crash when it is wrong. It quietly
+computes the wrong thing, and a set of property tests is the only
+tripwire. Flip the sign back by hand and confirm `cargo test` is green
+again.
 
 ## 11. Checkpoint
 
@@ -948,15 +961,15 @@ green bar passes:
 
 Then close out the day in whichever mode you are following:
 
-**Built along on your own branch?** Confirm your code matches the finished
-day — the final ✓ line means it does:
+**Built along on your own branch?** Confirm that your code matches the
+finished day. The final ✓ line means it does:
 
 ```bash
 ./scripts/compare.sh v1-day-03
 ```
 
 **Inspecting instead of typing?** Jump to today's exact finished state,
-poke at it, and come back:
+explore it, and come back:
 
 ```bash
 git switch --detach v1-day-03
@@ -964,8 +977,8 @@ cargo test
 git switch -          # back to where you were
 ```
 
-**Either way**, today's complete change set — docs included — reads as one
-diff:
+**Either way**, you can read today's complete change set, docs included,
+as one diff:
 
 ```bash
 git diff v1-day-02 v1-day-03
@@ -973,21 +986,30 @@ git diff v1-day-02 v1-day-03
 
 ## 12. Recap
 
-**What changed today:** a new `src/layers.rs` with the four pre-attention
-building blocks — `Embedding` (provably the one-hot trick, done honestly),
-`Linear` (Day 1's matmul in a struct), `RmsNorm` (unit-magnitude rows, with
-the course's first tolerance-based tests), and `rope` (position as
-multi-speed rotation, with four property tests) — plus a `layers` CLI demo,
-a third integration test, and a second smoke command in the green bar.
+**What changed today:** you added a new `src/layers.rs` with the four
+pre-attention building blocks:
 
-**Deliberately naive:** the weights are ramp-filled fakes (real checkpoints
-load on Day 6); `rope` is a scalar loop that revisits every element (it
-gets vectorized when a benchmark demands it); the demo runs layers one at a
-time on a two-token prompt; and nothing yet *looks at* any other token.
+- `Embedding`, provably the one-hot trick, done honestly;
+
+- `Linear`, Day 1's matmul in a struct;
+
+- `RmsNorm`, which levels rows to unit magnitude, with the course's first
+  tolerance-based tests;
+
+- and `rope`, position as multi-speed rotation, with four property tests.
+
+You also added a `layers` CLI demo, a third integration test, and a second
+smoke command in the green bar.
+
+**Deliberately naive:** the weights are ramp-filled fakes, and real
+checkpoints load on Day 6. `rope` is a scalar loop that revisits every
+element; it gets vectorized when a benchmark demands it. The demo runs
+layers one at a time on a two-token prompt. And nothing yet *looks at* any
+other token.
 
 **Tomorrow's limitation, resolved on Day 4:** the cards are written,
-leveled, re-mixed, and seat-stamped — but each guest still stands alone;
-nobody has spoken. Day 4 is the conversation itself — causal self-attention
-with grouped KV heads (GQA) — and Day 5 packages it, with the SwiGLU
-feed-forward, into the complete decoder block: the machine that finally
-lets "man bites dog" mean something different from "dog bites man".
+leveled, re-mixed, and seat-stamped, but each guest still stands alone.
+Nobody has spoken. Day 4 is the conversation itself: causal self-attention
+with grouped KV heads (GQA). Day 5 then packages it, with the SwiGLU
+feed-forward, into the complete decoder block. That is the machine that
+finally lets "man bites dog" mean something different from "dog bites man".
