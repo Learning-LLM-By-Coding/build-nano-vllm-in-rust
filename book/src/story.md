@@ -57,7 +57,7 @@ next piece, and choose one.
 
 *What it is:* a grid of numbers plus its *shape*: `[1, 256]` means 1 row of 256 numbers. Every value inside the engine is a tensor.
 
-*In the story:* the numbers written on the recipe board and on every dish score.
+*In the story:* tensors are the numbers written on the recipe board and on every dish score.
 
 </div>
 
@@ -65,7 +65,7 @@ next piece, and choose one.
 
 **Matrix multiplication — the recipe board** · [Day 1](day-01-next-token.md)
 
-*What it is:* multiply-and-sum between two tensors; the shapes must line up (`[1, 3] × [3, 2] → [1, 2]`). It is the operation a model spends nearly all its time on.
+*What it is:* multiply-and-sum between two tensors. Their shapes must line up (`[1, 3] × [3, 2] → [1, 2]`). A model spends nearly all its time on this one operation.
 
 *In the story:* a recipe is a column of amounts: this much from jar A, this much from jar B. One matmul cooks every recipe on the board at once.
 
@@ -87,16 +87,16 @@ next piece, and choose one.
 
 *What it is:* choose the token with the highest logit. The same input always gives the same choice, which makes the engine easy to test.
 
-*In the story:* the judge always picks the highest-scoring dish. No dice involved.
+*In the story:* the judge always picks the highest-scoring dish. No dice are involved.
 
 </div>
-
 
 ## Day 2 — the cook learns
 
 On Day 1 the kitchen followed a made-up rulebook. On Day 2 the cook
 **learns from old order tickets** and then **serves course after course**,
-each one chosen from the one before — your first complete language model.
+choosing each one from the one before. That is your first complete
+language model.
 
 <div class="concept" id="bigram">
 
@@ -104,7 +104,7 @@ each one chosen from the one before — your first complete language model.
 
 *What it is:* a model that predicts the next token from only the one token before it, using counts of which token followed which in real text.
 
-*In the story:* the cook keeps a tally sheet with one row per jar just used and one column per jar that came next, and adds a mark for every pair seen in old order tickets.
+*In the story:* the cook keeps a tally sheet with one row per jar just used and one column per jar that came next. For every pair seen in old order tickets, the cook adds a mark.
 
 </div>
 
@@ -114,7 +114,7 @@ each one chosen from the one before — your first complete language model.
 
 *What it is:* adjusting a model's numbers based on example text. Real training uses gradient descent, a smarter version of the same idea.
 
-*In the story:* the cook reading old order tickets and updating the tally sheet: “+1 per sighting” is training in miniature.
+*In the story:* the cook reads old order tickets and updates the tally sheet. “+1 per sighting” is training in miniature.
 
 </div>
 
@@ -128,20 +128,18 @@ each one chosen from the one before — your first complete language model.
 
 </div>
 
-
 ## Day 3 — the dining room opens
 
 The kitchen alone can only look one token back. So the **dining room**
-opens: your prompt becomes tonight's table of **guests**, and a host gets
-every guest ready before anyone talks — swapping number badges for
-profile cards, leveling voices, rewriting cards, and stamping seat
-numbers.
+opens, and your prompt becomes tonight's table of **guests**. Before anyone
+talks, a host gets every guest ready. The host swaps number badges for
+profile cards, levels voices, rewrites cards, and stamps seat numbers.
 
 <div class="concept" id="guest">
 
 **Guest — one token at the table** · [Day 3](day-03-layers-before-attention.md)
 
-*What it is:* one token of your prompt, seen from inside the model. A prompt of five tokens seats five guests. With the byte tokenizer a guest is one byte — one letter of plain English; from Day 7 it is a word piece.
+*What it is:* one token of your prompt, seen from inside the model. A prompt of five tokens seats five guests. With the byte tokenizer, a guest is one byte, which is one letter of plain English. From Day 7, a guest is a word piece.
 
 *In the story:* each guest carries a card of numbers describing them, and from Day 4 the guests talk to each other.
 
@@ -171,7 +169,7 @@ numbers.
 
 **RMSNorm — the volume knob** · [Day 3, section B](day-03-layers-before-attention.md)
 
-*What it is:* rescales each token's numbers so their overall size is 1.0, keeping their proportions. It runs before every major step so numbers never grow or shrink out of control.
+*What it is:* it rescales each token's numbers so their overall size is 1.0, keeping their proportions. It runs before every major step, so numbers never grow or shrink out of control.
 
 *In the story:* every guest is turned to the same speaking volume before each activity. Loud cards get quieter, faint cards get louder, and nobody's message changes.
 
@@ -191,25 +189,24 @@ numbers.
 
 **RoPE — the seat stamp** · [Day 3, section C](day-03-layers-before-attention.md)
 
-*What it is:* rotary position embedding: encodes each token's position by rotating pairs of its numbers by an angle that grows with the position.
+*What it is:* rotary position embedding. It encodes each token's position by rotating pairs of its numbers by an angle that grows with the position.
 
 *In the story:* each pair of numbers on a card is a little dial, and sitting in seat N turns every dial N clicks. The first dial moves like a second hand, later ones like minute and hour hands, so comparing two guests' dials tells how many seats apart they sit.
 
 </div>
 
-
 ## Day 4 — the table conversation
 
-The scene everything has been building toward: the guests **talk**. Each
-guest looks at the guests seated before them and borrows what they need.
-That conversation is attention, and it is how a model connects an "it"
-back to the thing it refers to.
+Tonight comes the scene everything has been building toward: the guests
+**talk**. Each guest looks at the guests seated before them and borrows
+what they need. That conversation is attention, and it is how a model
+connects an "it" back to the thing it refers to.
 
 <div class="concept" id="attention">
 
 **Attention — the table conversation** · [Day 4](day-04-causal-attention.md)
 
-*What it is:* the step where every token looks at the tokens before it, decides which matter right now, and takes a weighted blend of their information.
+*What it is:* the step where every token looks at the tokens before it. It decides which ones matter right now and takes a weighted blend of their information.
 
 *In the story:* each guest listens to the guests seated before them and walks away with a card full of borrowed information.
 
@@ -221,7 +218,7 @@ back to the thing it refers to.
 
 *What it is:* three vectors made from each token by three Linear layers: the query (what am I looking for?), the key (what can I be found by?), and the value (what do I contribute?).
 
-*In the story:* before talking, each guest prepares a question, a topic card, and a statement. A question is held up against every topic card; a good match means that guest's statement gets listened to.
+*In the story:* before talking, each guest prepares a question, a topic card, and a statement. A guest holds their question up against every topic card. A good match means that card's owner gets their statement listened to.
 
 </div>
 
@@ -229,9 +226,9 @@ back to the thing it refers to.
 
 **Causal mask — the etiquette** · [Day 4, section A](day-04-causal-attention.md)
 
-*What it is:* sets every score that points at a later token to negative infinity, so no token can look ahead.
+*What it is:* the rule that sets every score pointing at a later token to negative infinity, so no token can look ahead.
 
-*In the story:* only listen to guests who have already spoken: at the moment a guest speaks, the later guests have not arrived yet.
+*In the story:* you only listen to guests who have already spoken. At the moment a guest speaks, the later guests have not arrived yet.
 
 </div>
 
@@ -239,7 +236,7 @@ back to the thing it refers to.
 
 **Softmax — sharing out attention** · [Day 4, section A](day-04-causal-attention.md)
 
-*What it is:* turns a row of scores into shares that are all positive and add up to 1. Bigger scores get much bigger shares; negative infinity gets exactly 0.
+*What it is:* the step that turns a row of scores into shares that are all positive and add up to 1. Bigger scores get much bigger shares, and negative infinity gets exactly 0.
 
 *In the story:* every guest has exactly 100% of their attention to split among the guests they listen to.
 
@@ -249,9 +246,9 @@ back to the thing it refers to.
 
 **Attention heads — the ears** · [Day 4, section B](day-04-causal-attention.md)
 
-*What it is:* several attention computations running side by side, each on its own slice of the numbers, each free to look for a different kind of connection.
+*What it is:* several attention computations running side by side. Each runs on its own slice of the numbers and is free to look for a different kind of connection.
 
-*In the story:* every guest listens through several narrow ears at once — one might follow grammar, another which thing “it” refers to.
+*In the story:* every guest listens through several narrow ears at once. One ear might follow grammar, and another which thing “it” refers to.
 
 </div>
 
@@ -261,25 +258,24 @@ back to the thing it refers to.
 
 *What it is:* several query heads share one key/value pair, so fewer keys and values are stored.
 
-*In the story:* questions are asked once and thrown away, but topic cards and statements stay on the table for every future guest — so groups of ears share them to save table space.
+*In the story:* questions are asked once and thrown away. Topic cards and statements, though, stay on the table for every future guest, so groups of ears share them to save table space.
 
 </div>
-
 
 ## Day 5 — the evening, packaged
 
 After the conversation, each guest **thinks it over alone**, and nothing
-anyone does ever erases a guest's original card. Then the whole evening —
-level, talk, level, think — is packaged into one repeatable unit that a
-real model runs dozens of times in a row.
+anyone does ever erases a guest's original card. Then the whole evening
+(level, talk, level, think) is packaged into one repeatable unit, and a
+real model runs that unit dozens of times in a row.
 
 <div class="concept" id="feed-forward">
 
 **Feed-forward (SwiGLU) — the digest** · [Day 5, section A](day-05-decoder-block.md)
 
-*What it is:* a small network applied to each token separately: two projections, one squashed into a 0-to-1 gate that decides how much of the other passes through, then a projection back down.
+*What it is:* a small network applied to each token separately. It makes two projections and squashes one into a 0-to-1 gate that decides how much of the other passes through. A final projection brings the result back down.
 
-*In the story:* after the conversation, each guest digests what they heard, alone, with no cross-talk.
+*In the story:* after the conversation, each guest digests what they heard alone, with no cross-talk.
 
 </div>
 
@@ -289,7 +285,7 @@ real model runs dozens of times in a row.
 
 *What it is:* adding a step's output to its input instead of replacing the input, so the original information always survives.
 
-*In the story:* neither talking nor thinking replaces a guest's card; their conclusions are penciled onto it, so after forty rounds each guest is still recognizably themselves.
+*In the story:* neither talking nor thinking replaces a guest's card. Their conclusions are penciled onto it, so after forty rounds each guest is still recognizably themselves.
 
 </div>
 
@@ -307,9 +303,9 @@ real model runs dozens of times in a row.
 
 **Decoder block — one evening** · [Day 5, section B](day-05-decoder-block.md)
 
-*What it is:* one full round: norm, attention, residual add, norm, feed-forward, residual add. A real model stacks many blocks, each with its own weights.
+*What it is:* one full round of norm, attention, residual add, norm, feed-forward, and residual add. A real model stacks many blocks, each with its own weights.
 
-*In the story:* the whole evening packaged into one repeatable routine — the choreography never changes, but every round looks for something new.
+*In the story:* the whole evening, packaged into one repeatable routine. The choreography never changes, but every round looks for something new.
 
 </div>
 

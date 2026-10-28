@@ -1,9 +1,9 @@
 # Introduction
 
 You are going to build an LLM inference engine in Rust, from scratch, in 15
-days — the kind of program that sits behind an API endpoint, accepts many
-concurrent prompts, and streams generated tokens back while carefully juggling
-GPU memory.
+days. It is the kind of program that sits behind an API endpoint. It accepts
+many prompts at once and streams the generated tokens back, while it carefully
+juggles GPU memory.
 
 By Day 15 your engine will have:
 
@@ -28,62 +28,65 @@ By Day 15 your engine will have:
 ## Who this is for
 
 You need some programming experience in any language. You do **not** need to
-know Rust, transformer math, or GPU programming — each is introduced when the
-engine first needs it. Everything through Day 8 runs on a plain CPU; a GPU
-first becomes useful on Day 9 and is never required for the tests.
+know Rust, transformer math, or GPU programming. You meet each one when the
+engine first needs it. Everything through Day 8 runs on a plain CPU. A GPU
+first becomes useful on Day 9, and the tests never require one.
 
 ## One story holds it all together
 
-Every day adds a scene to one running story — a little restaurant, built
-one scene at a time — and each piece of the engine is one thing in it: a
-jar in the pantry, a guest at a table, a chef with a recipe book.
+Every day adds a scene to one running story: a little restaurant. Each
+piece of the engine is one thing in it — a jar in the pantry, a guest at a
+table, a chef with a recipe book.
 [The restaurant: an analogy to help you build the right mental model](story.md) keeps the whole story on one page.
-Read it once before you start, for a map of the course, and come back
-whenever an earlier idea gets fuzzy. In the chapters, a concept name with
-a dotted underline links there: click it, and a short reminder of what the
-concept is, what it is in the story, and which day introduced it opens
-right where you are reading. In the code, the story rides
-along too: every `Analogy:` comment is highlighted, so you can spot where a
-scene from the story meets the code that builds it.
+Read it once before you start, as a map of the course. Come back to it
+whenever an earlier idea gets fuzzy. In the chapters, a concept name with a
+dotted underline links to that page. Click it, and a short reminder opens
+right where you are reading. It tells you what the concept is, what it is in
+the story, and which day introduced it. The story rides along in the code,
+too. Every `Analogy:` comment is highlighted, so you can spot where a scene
+from the story meets the code that builds it.
 
 ## How the course works
 
 Each day is one chapter and one theme, built as **two to four related
-sections** — each section is one focused capability with its own runnable
-finish, and a day's sections always tell a single story. Every section is one
-git commit with its own checkpoint tag (`v1-day-03a`, `v1-day-03b`, …), and
-the day's last section doubles as the day tag (`v1-day-03`). After finishing
-a section, `./scripts/compare.sh <tag>` checks your code — and only your
-code (`src/`, `tests/`, `Cargo.toml`; never chapters or README) — against
-that checkpoint, ignoring comments, blank lines, and the order of top-level
-items, so its ✓ means the section is done.
+sections**. Each section adds one focused capability that you can run when
+you finish it, and a day's sections always tell a single story. Every
+section is one git commit with its own checkpoint tag (`v1-day-03a`,
+`v1-day-03b`, …). The day's last section doubles as the day tag
+(`v1-day-03`). When you finish a section, `./scripts/compare.sh <tag>`
+checks your code against that checkpoint. It looks only at your code
+(`src/`, `tests/`, `Cargo.toml`), never at chapters or the README. It
+ignores comments, blank lines, and the order of top-level items, so its ✓
+means the section is done.
 
-Each section introduces at most one new *systems* concept. The Rust language
-itself is taught by reference instead of by detour: every code section opens
-with a small **Rust used here** strip linking exactly the concepts its code
-leans on (borrowing, `Option`, iterators, …) to the matching pages of
+Each section introduces at most one new *systems* concept. You learn the
+Rust language by reference instead of by detour. Every code section opens
+with a small **Rust used here** strip. It links exactly the concepts its
+code leans on (borrowing, `Option`, iterators, …) to the matching pages of
 Google's [Comprehensive Rust](https://google.github.io/comprehensive-rust/)
-course — and those links open in a side panel *next to* the code, so you can
-fill a gap without leaving the page (Esc closes the panel). The exact
-upstream revision the course references is pinned as a git submodule
-(`third_party/comprehensive-rust`), and one optional script stages the
-linked pages locally for fully offline reading — see
-[Setup](setup.md). No prior Rust is assumed; read only the strips you need.
+course. Those links open in a side panel *next to* the code, so you can fill
+a gap without leaving the page (Esc closes the panel). A git submodule
+(`third_party/comprehensive-rust`) pins the exact upstream revision the
+course references. One optional script stages the linked pages locally for
+fully offline reading — see [Setup](setup.md). The course assumes no prior
+Rust, so read only the strips you need.
 
-The same deal for deep-learning theory. Sections that introduce ML machinery
-(embeddings, normalization, attention, …) carry a teal **LLM concepts used
-here** strip: short, excellent teaching videos (3Blue1Brown, StatQuest,
-Andrej Karpathy — marked ▶, and they play right inside the panel) for
-intuition, plus [labml.ai's annotated
-implementations](https://nn.labml.ai/) for formal depth. **It is fine not to
-fully understand a concept the day you meet it**: every one arrives with an
+Deep-learning theory gets the same deal. Sections that introduce ML
+machinery (embeddings, normalization, attention, …) carry a teal **LLM
+concepts used here** strip. For intuition, it offers short, excellent
+teaching videos (3Blue1Brown, StatQuest, Andrej Karpathy). They are marked
+▶ and play right inside the panel. For formal depth, it links [labml.ai's
+annotated implementations](https://nn.labml.ai/). **It is fine not to fully
+understand a concept the day you meet it.** Every one arrives with an
 everyday analogy, the code is small and tested, and a good explanation is
 one click away whenever you are ready.
 
-Every chapter has the same shape: what you will have running, what its output will show, why yesterday's
-engine is not enough, a mental model, the code section by section, the exact
-commands to run, the output you should see, tests, one deliberate way to
-break it, and a checkpoint.
+Every chapter follows the same shape, so you always know where you are.
+It shows what you will have running and what its output will show. It
+explains why yesterday's engine is not enough and gives you a mental model.
+Then come the code section by section, the exact commands to run, the
+output you should see, tests, one deliberate way to break it, and a
+checkpoint.
 
 ## The 15 days
 
@@ -105,15 +108,15 @@ break it, and a checkpoint.
 | 14 | Survive pressure | Preemption with recomputation · chunked prefill · prefix caching · zero-leak cancellation | 2.5 h |
 | 15 | Turn it into a service | HTTP endpoint · SSE streaming · backpressure & 429s · observability · final benchmark & v0.1 | 3 h |
 
-Roughly 25–30 hours end to end.
+Plan on roughly 25–30 hours end to end.
 
 Two rules keep the course honest:
 
 1. **Every day ends green.** At every tag, formatting, lints, tests, the
    day's smoke command, and the book's own code examples all pass.
 
-2. **Naive before optimized.** Every optimization arrives after a slow,
-   obviously-correct version you already understand — and keeps an off-switch
-   so you can measure the difference yourself.
+2. **Naive before optimized.** Every optimization arrives after a slow
+   version you already understand and can see is correct. It also keeps an
+   off-switch, so you can measure the difference yourself.
 
 Head to [Setup](setup.md) to get your toolchain ready.
