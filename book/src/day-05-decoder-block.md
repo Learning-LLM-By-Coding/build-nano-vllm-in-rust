@@ -124,14 +124,6 @@ block:  [3, 8]
 swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2 moved: true
 ```
 
-- `q proj [8, 8]` and `k,v proj [8, 4]` (Day 4's line) are translator
-  shapes, which read differently from `cards: [3, 8]`. A card table is
-  guests × numbers. A translator holds no guests, so its shape is
-  numbers in × numbers out: 8 in, then 4 ears × 2 = 8 out for questions,
-  and 2 shared sets × 2 = 4 out for topic cards and statements. The
-  layer you add in section A reads the same way: 8 numbers in, 16 out,
-  then 16 back to 8.
-
 - `block:  [3, 8]` — the complete unit runs end to end. 3 tokens go in
   and 3 tokens come out, each still carrying 8 numbers. The size never
   changes, and that is exactly what lets a real model stack this unit

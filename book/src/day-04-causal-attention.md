@@ -265,9 +265,9 @@ guest 2's prepped card            x2 = [0.3, -1.2, 0.8, 0.5, -0.4, 1.1, 0.2, -0.
         │
         │ 1. three translators (each is a matmul: every output number
         │    is a blend of all 8 input numbers)
-        │      q translator [8, 8]:  8 numbers in → 8 out
-        │      k translator [8, 4]:  8 numbers in → 4 out
-        │      v translator [8, 4]:  8 numbers in → 4 out
+        │      q translator:  8 numbers in → 8 out (4 ears × 2)
+        │      k translator:  8 numbers in → 4 out (2 shared cards × 2)
+        │      v translator:  8 numbers in → 4 out (2 shared cards × 2)
         ▼
 question      q2 = [1, 1 │ 0.4, -0.2 │ 0.9, 0.1 │ -0.5, 0.3]      [1, 8] = 4 ears × 2
 topic card    k2 = [1, 1 │ 0.2, 0.6]                              [1, 4] = 2 shared pairs × 2
@@ -299,7 +299,7 @@ ear 0 heard   [5.0, 5.0]                                                 [1, 2]
         ▼
 stitched      [5.0, 5.0 │ 5.95, 4.05 │ ·, · │ ·, ·]                    [1, 8] = 4 ears × 2
         │
-        │ 5. o translator [8, 8]: re-mix the 4 ears' findings into one card
+        │ 5. o translator (8 in → 8 out): re-mix the 4 ears' findings into one card
         ▼
 guest 2 carries away   a new [1, 8] card                                 same shape it started with
 ```
@@ -987,13 +987,11 @@ attn:   [3, 8]
 ```
 
 - The `q proj` line shows GQA in the *weights*, before a single number is
-  computed. Careful: a translator's shape reads differently from a card
-  table's. `cards: [3, 8]` means 3 guests × 8 numbers each. A translator
-  has no guests in it, so `[8, 8]` means 8 numbers in × 8 numbers out:
-  it reads a guest's 8-number card and writes 4 ears × 2 numbers = 8.
-  The topic-card and statement translators are `[8, 4]`: the same 8
-  numbers in, but only 2 shared cards × 2 numbers = 4 out. That makes
-  four ears and two shared card sets.
+  computed. A translator holds no guests, so the line counts numbers in
+  and numbers out. The question translator reads a guest's 8 numbers and
+  writes 8: 4 ears × 2 numbers each. The topic-card and statement
+  translators read the same 8 numbers but write only 4: 2 shared cards ×
+  2 numbers. That makes four ears and two shared card sets.
 
 - `attn:   [3, 8]` — `Attention::forward` ran section A's `attend` once
   per ear on its own slice. It stitched the four answers with
@@ -1051,10 +1049,10 @@ Read it line by line. You can check every number:
   every `-inf` became exactly zero. Seat 0 keeps everything, because
   nobody spoke before them.
 
-- `q proj [8, 8] … k,v proj [8, 4]` — this is GQA in the weights. Read
-  each as numbers in × numbers out, not guests × numbers: 8 in, then
-  4 ears × 2 = 8 out for the questions, and 2 shared sets × 2 = 4 out
-  for the topic cards and statements.
+- `q proj: 8 in -> 8 out … k,v proj: 8 in -> 4 out` — this is GQA in
+  the weights. Each translator reads a guest's 8 numbers. The question
+  one writes 4 ears × 2 = 8, and the topic-card and statement ones write
+  2 shared sets × 2 = 4: half the table space.
 
 - `heard:` and `attn:` — both are `[3, 8]`. The hand-held round and the
   packaged `Attention` layer each hand every guest back a full card.
