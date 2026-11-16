@@ -240,8 +240,9 @@ that is exactly what makes it stackable.
 - **The feed-forward is where most of the model lives.** It expands each
   card to a wider hidden size and back (8 → 16 → 8 here). Those two fat
   matrices dominate the parameter count. In today's toy, the digest holds
-  384 weights against attention's 192, and real models keep roughly that
-  ratio. When Day 9 measures where the time goes, remember where the
+  384 weights against attention's 192. Real models keep the digest the
+  biggest part too: in Qwen3-0.6B it holds about 1.5 weights for every
+  attention weight. When Day 9 measures where the time goes, remember where the
   weights are.
 
 - **"A 28-layer model" means 28 of these blocks.** The whole engine will
