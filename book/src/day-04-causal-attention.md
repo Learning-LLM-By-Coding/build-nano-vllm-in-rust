@@ -987,9 +987,13 @@ attn:   [3, 8]
 ```
 
 - The `q proj` line shows GQA in the *weights*, before a single number is
-  computed. Questions get a full-width `[8, 8]` translator, while topic
-  cards and statements share a half-width `[8, 4]` one. That makes four
-  ears and two shared card sets.
+  computed. Careful: a translator's shape reads differently from a card
+  table's. `cards: [3, 8]` means 3 guests × 8 numbers each. A translator
+  has no guests in it, so `[8, 8]` means 8 numbers in × 8 numbers out:
+  it reads a guest's 8-number card and writes 4 ears × 2 numbers = 8.
+  The topic-card and statement translators are `[8, 4]`: the same 8
+  numbers in, but only 2 shared cards × 2 numbers = 4 out. That makes
+  four ears and two shared card sets.
 
 - `attn:   [3, 8]` — `Attention::forward` ran section A's `attend` once
   per ear on its own slice. It stitched the four answers with
@@ -1047,8 +1051,10 @@ Read it line by line. You can check every number:
   every `-inf` became exactly zero. Seat 0 keeps everything, because
   nobody spoke before them.
 
-- `q proj [8, 8] … k,v proj [8, 4]` — this is GQA in the weights: four
-  ears' questions and two shared topic/statement sets.
+- `q proj [8, 8] … k,v proj [8, 4]` — this is GQA in the weights. Read
+  each as numbers in × numbers out, not guests × numbers: 8 in, then
+  4 ears × 2 = 8 out for the questions, and 2 shared sets × 2 = 4 out
+  for the topic cards and statements.
 
 - `heard:` and `attn:` — both are `[3, 8]`. The hand-held round and the
   packaged `Attention` layer each hand every guest back a full card.
