@@ -285,7 +285,7 @@ real model runs that unit dozens of times in a row.
 
 *What it is:* adding a step's output to its input instead of replacing the input, so the original information always survives.
 
-*In the story:* neither talking nor thinking replaces a guest's card. Their conclusions are penciled onto it, so after forty rounds each guest is still recognizably themselves.
+*In the story:* neither talking nor thinking replaces a guest's card. Their conclusions are penciled onto it, so after 28 rounds (Qwen3-0.6B's 28 dining rooms) each guest is still recognizably themselves.
 
 </div>
 
