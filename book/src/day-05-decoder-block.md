@@ -42,7 +42,8 @@ cook who learns from old tickets (Day 2), the dining room where [guests](story.m
 prompt) got their [profile cards](story.md#embedding) (Day 3). And last
 night, at last, came the [table conversation](story.md#attention): every guest walked away with a card full of borrowed
 information (Day 4). Today the evening becomes something the restaurant
-can *repeat*, night after night, forty rounds deep.
+can *repeat*, night after night, round after round (Qwen3-0.6B, the
+model you load on Day 6, runs 28).
 
 Why repeat it? One round of conversation is not a model. A real LLM runs
 dozens of rounds in a row, each with its own learned weights. Here is the
@@ -65,7 +66,7 @@ next token          highest score wins (Day 1's greedy pick) — and
 
 The repeating unit in the middle is the **transformer decoder block**, or
 **block** for short. Your first instinct might be to make Day 4's
-`Attention` the block and stack it forty times. Three things go wrong:
+`Attention` the block and stack it 28 times. Three things go wrong:
 
 - **Nobody digests what they heard.** Embedding and `Linear` are
   weighted sums, and a stack of weighted sums folds into one. Check it
@@ -74,10 +75,11 @@ The repeating unit in the middle is the **transformer decoder block**, or
   translator that multiplies by 6 gives, for every input. Matrices fold
   the same way.
 
-  Attention is subtler. Its shares come from `q · k`, which multiplies two
-  readings of the cards together, and softmax bends those scores. But the
-  shares only decide *how much* of each guest to take. What a guest walks
-  away with is still a blend: each statement times its share, added up.
+  Attention is subtler. Its shares come from `q · k`, and softmax bends
+  those scores. But that bend lands on the *shares*, not on the card's
+  numbers. What a guest walks away with is still a blend: each statement
+  times its share, added up.
+
   RMSNorm only scales the whole card by one number. So nothing in a round
   takes one number on the card (one **feature**) and bends it on its own.
   If a statement reads `[1, −2]`, a round can scale it to `[0.5, −1]` and
@@ -93,7 +95,7 @@ The repeating unit in the middle is the **transformer decoder block**, or
 
 - **Rounds erase the cards.** Suppose every round *replaced* each guest's
   card with that round's output. The original guest would be gone within
-  a few rounds, and forty rounds deep, the model would long ago have
+  a few rounds, and 28 rounds deep, the model would long ago have
   erased its own input. The fix is to *add* each round's output onto the
   card instead, like a note penciled onto it. That addition is a
   **residual connection**.
@@ -125,18 +127,18 @@ watch the whole thing get packaged:
 - **Think it over, alone.** After the conversation, each guest digests.
   They take two fresh readings of their card. One reading goes through a
   soft switch (`silu`, defined in section A) and becomes the **gate**.
-  Each gate number decides how much of the matching number in the other
-  reading gets through. The result is mixed back down to card size. That
+  Each gate number multiplies the matching number in the other reading:
+  near 0 shuts it off; a big gate passes it, even scaled up. The result is mixed back down to card size. That
   is the SwiGLU feed-forward, all per-guest, with no cross-talk. (The
   conversation decides *where* information flows. The digest is where
   each guest *makes something of it*.)
 
 - **Pencil, never rewrite.** Both activities' output is *added onto* the
-  card (the residuals). After forty rounds, each guest is still
+  card (the residuals). After 28 rounds, each guest is still
   recognizably themselves, only heavily annotated.
 
 - **The knob turns before every activity**, on the copy that activity
-  reads (pre-norm, what the Llama/Qwen family actually runs).
+  reads (pre-norm, what Meta's Llama and Qwen, Day 6's model, actually run).
 
 - **One evening, packaged.** A **block** is that whole sequence (knob,
   conversation, pencil; knob, digestion, pencil) as a single struct. A
@@ -186,9 +188,12 @@ that is exactly what makes it stackable.
   matrices: gate and up widen, down shrinks. Those three dominate the
   parameter count. In today's toy, the digest holds 384 weights (three
   matrices of 8 × 16 = 128) against attention's 192 (8 × 8 + 8 × 4 +
-  8 × 4 + 8 × 8). Qwen3-0.6B keeps the same balance, with 1,024-number
+  8 × 4 + 8 × 8; k and v are 8 × 4 because Day 4 gave them 2 shared heads
+  of 2 numbers). Qwen3-0.6B keeps the same balance, with 1,024-number
   cards, a 3,072-wide scratch space, 16 ears of 128 numbers, and 8 shared
-  key/value heads (Day 6 prints these shapes):
+  key/value heads (Day 6 prints these shapes). In the toy, q's width
+  (4 heads × 2) happens to equal the card's 8. In Qwen, q is 16 ears × 128
+  = 2048, wider than the 1024 card, because Qwen's ears are 128 wide:
 
   ```text
   digest      3 × 1024 × 3072                          = 9,437,184
@@ -357,9 +362,11 @@ fn run_attention_demo() -> Result<()> {
 }
 ```
 
-Look at the widths: `8 → 16` up, then `16 → 8` back down. The expansion
-gives the digest room to work, and it is where most of a real model's
-weights live. `cargo run -- attention` now ends with one more line. (The
+`ramp(rows, cols, scale)` is the demo's weight maker since Day 3: a
+`rows × cols` matrix whose values count up by `scale`. The gate gets 0.02
+only so its reading differs from up's. Look at the widths: `8 → 16` up,
+then `16 → 8` back down, room for the digest to work.
+`cargo run -- attention` now ends with one more line. (The
 `───` divider is ours, not the program's: it marks where Day 4's output
 ends.)
 
@@ -472,13 +479,13 @@ Look at the shape of both lines in `forward`: `x + something`. That little
 produces gets *added onto* the card, and the card itself is never
 replaced.
 
-The two lines differ for a Rust reason: who owns `x`. In the first line,
-`x` is the argument, a borrowed `&Tensor`, and adding a borrow only reads
-it. The `( … )?` unwraps the addition's `Result` into a new, owned `x`. In
-the second line, `x + …` on that owned tensor would use it up, yet the
-right-hand side still reads it (`&x` inside). So the line adds `&x`,
-which reads without using up. It needs no `?`: its `Result` is exactly
-what `forward` returns.
+The two lines differ for a Rust reason: who owns `x`.
+
+- First line: `x` is the borrowed argument (`&Tensor`), so adding only
+  reads it. The `( … )?` turns the sum into a new, owned `x`.
+- Second line: `x + …` would use up that owned `x` while the right side
+  still reads it, so it adds `&x` instead. No `?`: its `Result` is
+  exactly what `forward` returns.
 
 One subtlety: each sublayer *reads* a leveled copy of the card (the
 `self.attn_norm.forward(x)?` inside the parentheses), but its result is
@@ -577,9 +584,8 @@ mod tests {
 Zero out every sublayer, and the block is a perfect no-op, because the
 card's own path through `forward` is a bare `+`. Depth can only ever *add*.
 
-Here comes one last stretch of **wiring**, so copy freely. Your demo shows
-a full block now and has outgrown its name. Make five small edits, in
-order:
+One last stretch of **wiring**, so copy freely. Your demo now shows a
+full block and has outgrown its name. Make five small edits, in order:
 
 1. In `src/main.rs`, rename `run_attention_demo` to `run_block_demo`, in
    both its definition and the call in the `match` arm.
@@ -592,14 +598,17 @@ order:
    `eprintln!("       cargo run -- block");`.
 
 4. In `scripts/check.sh`, make the same swap in the smoke command:
-   `cargo run --quiet -- block`.
+   `cargo run --quiet -- attention` becomes `cargo run --quiet -- block`.
 
 5. Back in `run_block_demo`, replace the `mlp:` print line with the block
    assembly and the day's headline, shown next. Keep the `let mlp = …`
-   construction above it.
+   construction above it, but replace its two-line comment (`// The
+   digest, alone for now: …`) with the one-line comment shown, since the
+   digest now runs inside the block.
 
-The `⋮`, the framing lines, and the `let mlp` construction are already in
-your file. The markers bracket what's new:
+The `⋮` and the `let mlp` construction are already in your file.
+`DType` is already imported at the top of `src/main.rs` (Day 3's volume
+knob uses it). The markers bracket what's new:
 
 ```rust,ignore
 fn run_block_demo() -> Result<()> {
@@ -638,10 +647,10 @@ fn run_block_demo() -> Result<()> {
 }
 ```
 
-Two small things in that code are worth noticing. First, the demo feeds
+Two things to notice. First, the demo feeds
 the block the raw `cards`, not `leveled`. Turning the volume knobs is the
 block's own job now, so the demo hands it untouched cards and lets it
-level them inside. Second, there is an ownership detail. `Block::new(…)`
+level them inside. Second, ownership: `Block::new(…)`
 *moves* `attn` and `mlp` into the block. After that line they belong to
 the block, and the old variables can't be used again. That is why the
 demo builds the block *after* the `attn:` print: one last use, then the
@@ -710,12 +719,12 @@ shapes. Read the two new lines against what you built:
 - `swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2
   moved: true` — the demo ran the block on `"abc"`, ran it again on
   `"abz"`, and compared the outputs row by row. The label counts guests
-  from 1, the way you'd say it aloud, so guest 3 is the third token, `c`.
-  The rows count from 0, like Day 4's seats, so guest 3's output is row 2.
+  from 1, the rows from 0 (like Day 4's seats), so guest 3 (`c`) is row 2.
   Rows 0 and 1 are bit-identical across the two runs, because
   `mask_future` gives the changed guest exactly zero share in them, and
   every other step in the block works on each guest alone. Only row 2
-  moved.
+  moved. (The `"abz"` run prints only this
+  comparison; the tables are from `"abc"`.)
 
 This one-way-street rule is **causality**: a token can never affect the
 tokens before it, the way changing a novel's last page cannot rewrite its
@@ -839,7 +848,7 @@ extra per-head q/k normalization also waits for the real checkpoint
   The `silu` gate in the SwiGLU feed-forward is that nonlinearity.
 
 - Add each sublayer's result onto the card instead of replacing it. The
-  residual is why the original token survives forty rounds.
+  residual is why the original token survives 28 rounds.
 
 - Level the copy a sublayer reads, never the card itself (pre-norm). That
   keeps the numbers from snowballing as notes pile up.

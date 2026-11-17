@@ -163,7 +163,7 @@ of them with numbers.
   for its own kind of connection.
 
 - **Share the topic cards — the table is small.** Questions are cheap to
-  hold, since each is asked once and discarded. Topic cards and statements,
+  hold: each guest asks once, on arrival, and later guests ask their own. Topic cards and statements,
   though, must stay on the table for every *future* guest to consult. So
   groups of ears share one topic-card/statement pair: here, 4 askers share
   2 pairs. That is **grouped-query attention (GQA)**. The shared pairs are
@@ -171,9 +171,11 @@ of them with numbers.
   mise-en-place shelf), so halving them now halves that cache forever. It is a rare treat: an architecture choice made *for the
   inference engineer*.
 
-- **The seat stamp moves inside.** Yesterday's RoPE now stamps the
-  *question* and the *topic card*. It skips the statement and the prepped
-  card itself. Where you sit should shape *whom you listen to*
+- **The seat stamp moves inside.** Day 3's demo stamped seats (RoPE) onto
+  whole cards. From today the stamp goes only on the *question* and the
+  *topic card*, inside attention. The statement is never stamped, and
+  neither is the **prepped card**: a guest's profile card after Day 3's
+  volume knob (`RmsNorm`), the input to the round. Where you sit should shape *whom you listen to*
   (the dials make nearby guests match louder), not *what you say* once
   heard.
 
@@ -455,10 +457,11 @@ the function returns: no trailing `?`.
 `mask_future` brings two Rust newcomers. First, `flat_map` runs the inner
 closure for every `i` and flattens the resulting rows into one flat `Vec`.
 (A tensor is built from flat data plus a shape, as `from_vec` shows.)
-Second, `move`: the inner `map` closure is handed back *unrun* and only
-runs later, when `flat_map` pulls from it. By then the outer closure has
-finished and its `i` is gone, so `move` gives the inner closure its own
-copy. Everything else is Day 3 machinery: `matmul`, `broadcast_*`,
+Second, `move`. Rust iterators are lazy: `map(...)` computes nothing
+yet; it returns a recipe that runs only when someone pulls values out.
+So the outer closure returns the inner `map` unrun, and `flat_map` pulls
+from it after the outer closure has finished and its `i` is gone. `move`
+copies `i` into the inner closure so it still has it. Everything else is Day 3 machinery: `matmul`, `broadcast_*`,
 `keepdim`, and `D::Minus1` picking the last dimension.
 
 `softmax_rows`' trick in symbols, with *m* the row max:
@@ -597,13 +600,16 @@ fn run_attention_demo() -> Result<()> {
 }
 ```
 
-Wire it into the CLI `match`, and add
-`eprintln!("       cargo run -- attention");` to the usage message below
-it:
+Wire it into the CLI `match` in `main`: add this arm right under the
+`["layers"]` arm.
 
 ```rust,ignore
         ["attention"] => run_attention_demo(),
 ```
+
+Then, in the `_ =>` arm further down, add
+`eprintln!("       cargo run -- attention");` right after the
+`cargo run -- layers` usage line.
 
 In `scripts/check.sh`, add a third smoke command directly under the
 `cargo run --quiet -- layers` line:
@@ -664,8 +670,8 @@ wrote. Read it table by table:
   the match *fades with distance* (`2.502` one seat apart, `1.820` two
   apart). The cards can't cause that fade, since they are practically
   identical. It comes entirely from the seat stamps. Delete the two
-  `rope` calls and every cell reads `2.828`; seat three copies of `a`'s
-  card instead and the table matches this one to within 0.001. RoPE
+  `rope` calls and every cell reads `2.828`; change `text` to `"aaa"`
+  instead (three copies of `a`'s card) and the table matches this one to within 0.001. RoPE
   turns each card by an angle set by its seat, so two cards' dot product
   depends on the seat *gap*: the bigger the gap, the more they point apart.
 
@@ -828,7 +834,10 @@ last translator (`o_proj`) re-mixes them.
 Now add three tests. The second is the day's most important, and the
 third proves GQA does exactly what "sharing" claims. They go inside the
 existing `tests` module, below `seat_zero_hears_only_its_own_statement`,
-along with the two helpers they build on:
+along with the two helpers they build on. `counting` is `main.rs`'s
+`ramp` under a new name; the tests keep their own copy so they don't
+reach into demo code. Weights are `[in, out]`, as on Day 3, so
+`counting(8, 4, …)` reads 8 numbers and writes 4:
 
 ```rust,ignore
 #[cfg(test)]
@@ -1045,7 +1054,10 @@ and `attn:` hand every guest back a full `[3, 8]` card.
 
 ## 7. Test it
 
-Your seven new tests bring the suite to 31 (28 unit, 3 integration):
+Your seven new tests bring the suite to 31 (28 unit, 3 integration).
+The filter `attention` runs just the 7 new ones, so `21 filtered out` is
+the other 21 unit tests. (The integration binary prints its own
+`0 passed; … 3 filtered out` block, not shown.)
 
 ```bash
 cargo test attention
