@@ -26,8 +26,8 @@
 <rect x="56" y="24" width="248" height="48" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
 <text x="72" y="54.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">token ids</text>
 <rect x="56" y="140" width="248" height="64" rx="6" fill="#111111" stroke="#111111" stroke-width="1.6"/>
-<text x="72" y="168.0" font-size="20" fill="#ffffff" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">block</text>
-<text x="72" y="190.0" font-size="16" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">TODAY&#x27;S BUILD</text>
+<text x="72" y="167.0" font-size="20" fill="#ffffff" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">block</text>
+<text x="72" y="189.0" font-size="16" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">TODAY&#x27;S BUILD</text>
 <rect x="56" y="294" width="248" height="48" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
 <text x="72" y="324.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">scoring layer</text>
 <rect x="56" y="390" width="248" height="48" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
@@ -38,7 +38,7 @@
 <text x="120" y="122.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">each id becomes a vector of numbers (Day 3)</text>
 <text x="328" y="167.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">attention (Day 4) + the digest,</text>
 <text x="328" y="188.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">packaged</text>
-<text x="120" y="234.0" font-size="16" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">…then the same block again</text>
+<text x="120" y="234.0" font-size="16" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">…then more blocks like it</text>
 <text x="120" y="255.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">dozens of copies with their own</text>
 <text x="120" y="276.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">learned weights (Day 6 stacks them)</text>
 <text x="328" y="313.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the final vectors become one score</text>

@@ -72,9 +72,9 @@ The repeating unit in the middle is the **transformer decoder block**, or
 
   RMSNorm only scales the whole card by one number. So nothing in a round
   takes one number on the card (one **feature**) and bends it on its own.
-  If a statement reads `[1, −2]`, a round can scale it to `[0.5, −1]` and
-  add other statements to it, but it can never treat the `1` and the `−2`
-  differently.
+  A round can mix a statement's `1` and `−2` and weigh them differently.
+  But whatever it does to `−1`, it does exactly twice as hard to `−2`.
+  Nothing squeezes a number harder *because of its own value*.
 
   The fix is a **digest**: a small network each guest runs alone on its
   own card, with a curve in the middle. That curve, a **nonlinearity**,
@@ -165,8 +165,8 @@ that is exactly what makes it stackable.
 
 - **Residuals + pre-norm are why depth survives.** Each sublayer only
   *adds* its contribution, and it computes that contribution from a
-  leveled copy. So signals can't explode or vanish across dozens of
-  blocks. That is the same reason RMSNorm existed at all, now applied at
+  leveled copy. So no sublayer ever reads a card that has grown huge,
+  and the growth can't feed on itself across dozens of blocks. That is the same reason RMSNorm existed at all, now applied at
   the block scale.
 
 - **The feed-forward is where most of the model lives.** It expands each
@@ -175,7 +175,7 @@ that is exactly what makes it stackable.
   parameter count. In today's toy, the digest holds 384 weights (three
   matrices of 8 × 16 = 128) against attention's 192 (8 × 8 + 8 × 4 +
   8 × 4 + 8 × 8; k and v are 8 × 4 because Day 4 gave them 2 shared heads
-  of 2 numbers). Qwen3-0.6B keeps the same balance, with 1,024-number
+  of 2 numbers). Qwen3-0.6B keeps the digest the bigger part, with 1,024-number
   cards, a 3,072-wide scratch space, 16 ears of 128 numbers, and 8 shared
   key/value heads (Day 6 prints these shapes). In the toy, q's width
   (4 heads × 2) happens to equal the card's 8. In Qwen, q is 16 ears × 128
@@ -830,8 +830,9 @@ extra per-head q/k normalization also waits for the real checkpoint
   residual additions. It keeps the card size, so a model can stack it
   dozens of times.
 
-- Without a per-feature nonlinearity, stacked rounds collapse into one.
-  The `silu` gate in the SwiGLU feed-forward is that nonlinearity.
+- Without a per-feature nonlinearity, stacked rounds can only re-blend
+  what is already on the cards. The `silu` gate in the SwiGLU
+  feed-forward is the one step that bends each number by its own value.
 
 - Add each sublayer's result onto the card instead of replacing it. The
   residual is why the original token survives 28 rounds.
