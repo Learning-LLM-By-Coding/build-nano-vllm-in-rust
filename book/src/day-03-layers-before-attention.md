@@ -920,26 +920,48 @@ copy a rotation matrix from paper:
 +            row[2 * i + 1] = (a * sin - b * cos) as f32;
 ```
 
-`cargo test rope`:
+`cargo test layers`:
 
 ```text
+test layers::tests::identical_tokens_differ_by_position ... ok
+test layers::tests::lookup_returns_the_selected_rows ... ok
+test layers::tests::rmsnorm_output_has_unit_rms ... ok
+test layers::tests::rmsnorm_matches_hand_math ... ok
+test layers::tests::lookup_equals_one_hot_matmul ... ok
+test layers::tests::linear_reuses_day_1_arithmetic ... ok
+test layers::tests::rotation_preserves_vector_length ... FAILED
+test layers::tests::dot_products_depend_only_on_position_gap ... FAILED
 test layers::tests::rope_leaves_position_zero_untouched ... FAILED
-
-assertion `left == right` failed
-  left: [[1.0, -2.0, 3.0, -4.0]]
- right: [[1.0, 2.0, 3.0, 4.0]]
+test result: FAILED. 6 passed; 3 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
 ```
 
-This is what makes math bugs dangerous. The broken version still *runs*,
-still produces plausible-looking numbers, and even still preserves vector
-lengths. A sign flip turns the rotation into a reflection, which is also
-length-preserving. So `rotation_preserves_vector_length` alone would have
-stayed green! Only the *identity-at-position-zero* property catches the bug
-instantly. That is why section C pinned four independent properties
-instead of one. Math code does not crash when it is wrong. It quietly
-computes the wrong thing, and a set of property tests is the only
-tripwire. Flip the sign back by hand and confirm `cargo test` is green
-again.
+Read it line by line:
+
+- `rope_leaves_position_zero_untouched ... FAILED` — at seat 0 the angle
+  is 0, so cos is 1 and sin is 0. The flipped line now writes `-b` there,
+  and every second number comes out negated: `[1.0, -2.0, 3.0, -4.0]`
+  instead of `[1.0, 2.0, 3.0, 4.0]`.
+
+- `rotation_preserves_vector_length ... FAILED` — the flipped formula is
+  no longer a rotation, so it stretches or shrinks the pair. A real
+  rotation only turns a point; this one moves it closer to the center or
+  further away.
+
+- `dot_products_depend_only_on_position_gap ... FAILED` — once lengths
+  change with the seat, comparing two guests depends on where they sit,
+  not only on how far apart they are.
+
+- `identical_tokens_differ_by_position ... ok` — this one still passes.
+  The two vectors *do* still differ, just for the wrong reason.
+
+This is what makes math bugs dangerous. The broken version still *runs*
+and still produces plausible-looking numbers. A test that only checks
+"something changed" stays green, because wrong math also changes
+things. That is why section C pinned four independent properties instead
+of one: three of them catch this slip at once. Math code does not crash
+when it is wrong. It quietly computes the wrong thing, and a set of
+property tests is the only tripwire. Flip the sign back by hand and
+confirm `cargo test` is green again.
 
 ## 9. Checkpoint
 
