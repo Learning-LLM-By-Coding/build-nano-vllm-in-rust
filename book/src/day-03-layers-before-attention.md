@@ -172,7 +172,9 @@ Now walk the dining room in order, one host's move per layer:
 
 Tomorrow, **attention** is the conversation itself. Every guest compares
 cards with everyone seated before them and decides whom to listen to.
-Today ends with the cards ready:
+Today ends with the cards ready. The figure follows the demo you build in
+section 4. Its prompt is `"aa"`: two guests with the same badge, 97, like
+the twins above. Its translator turns 8 numbers into 4:
 
 <figure class="book-figure">
   <img src="figures/day03-cards.svg" alt="A top-to-bottom flow with a small grid per step. ids [97, 97], two guests that are so far just badge numbers, go through embed to [2, 8], 2 guests × 8 numbers on each profile card; rmsnorm keeps [2, 8] and only changes the loudness, every card at 1.0; linear makes [2, 4], 4 re-mixed numbers per card; rope keeps [2, 4] and winds the seat number into the dials.">

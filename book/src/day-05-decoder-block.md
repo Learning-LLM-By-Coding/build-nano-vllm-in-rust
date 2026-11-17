@@ -140,6 +140,9 @@ watch the whole thing get packaged:
   endings, and the later rounds begin to catch meaning. Today you build
   one round, and Day 6 stacks them.
 
+The figure uses the demo's table from section 4: the prompt `"abc"`, so 3
+guests, each with Day 3's 8-number card.
+
 <figure class="book-figure">
   <img src="figures/day05-block-flow.svg" alt="A [3, 8] card goes down the left. A copy goes right through a volume knob (RmsNorm) and the conversation (Day 4's Attention), and the result is added back onto the card, giving x + notes [3, 8]. The same happens with a second knob and the SwiGLU Mlp, giving x + more [3, 8].">
   <figcaption>Figure 5.2 — One block: each activity reads a knob-turned copy, and its result is penciled onto the card, which leaves at the size it arrived.</figcaption>
