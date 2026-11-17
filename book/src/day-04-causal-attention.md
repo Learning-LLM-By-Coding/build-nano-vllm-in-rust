@@ -79,7 +79,7 @@ back to `"the cat"` from twenty words earlier. You build the conversation
 in two sections:
 
 - **A. The rules of the conversation** are three small functions, one
-  rule each. *Scoring* asks how relevant one guest is to another right
+  rule each, plus a fourth that runs them in order. *Scoring* asks how relevant one guest is to another right
   now, with one number per pair of guests. *Etiquette* says nobody may
   listen to a guest who hasn't spoken yet, so every score pointing at the
   future is silenced (the **causal mask**). *Sharing out* gives each guest
@@ -128,10 +128,13 @@ of them with numbers.
   once.
 
 - **Match questions to topic cards.** Guest *i* holds their question up
-  against guest *j*'s topic card. The better the match (a dot product),
-  the higher the score. Long cards inflate scores by sheer arithmetic,
-  because the sum has more numbers in it. So every score is divided by the
-  square root of the card length to keep things fair.
+  against guest *j*'s topic card. The better the match (a *dot product*:
+  multiply the numbers in matching positions and add them up), the higher
+  the score. Long cards inflate scores by sheer arithmetic, because the sum
+  has more numbers in it. So every score is divided by the square root of
+  the card length to keep things fair. (Why the root? Products of mixed
+  signs partly cancel, so a sum of *n* of them typically grows like √*n*,
+  not *n*.)
 
 - **Etiquette: only listen to guests who have spoken.** During generation
   the engine produces one token at a time. At the moment guest *i* speaks,
@@ -164,13 +167,13 @@ of them with numbers.
   though, must stay on the table for every *future* guest to consult. So
   groups of ears share one topic-card/statement pair: here, 4 askers share
   2 pairs. That is **grouped-query attention (GQA)**. The shared pairs are
-  exactly what Day 8 will cache, so halving them now halves that shelf
-  forever. It is a rare treat: an architecture choice made *for the
+  exactly what Day 8 will cache (the KV cache, which the story calls the
+  mise-en-place shelf), so halving them now halves that cache forever. It is a rare treat: an architecture choice made *for the
   inference engineer*.
 
 - **The seat stamp moves inside.** Yesterday's RoPE now stamps the
-  *question* and the *topic card*. It skips the statement, and it never
-  touches the master card. Where you sit should shape *whom you listen to*
+  *question* and the *topic card*. It skips the statement and the prepped
+  card itself. Where you sit should shape *whom you listen to*
   (the dials make nearby guests match louder), not *what you say* once
   heard.
 
@@ -444,16 +447,22 @@ the whole card.
 In `scaled_scores`, `k.t()` *transposes* the topic cards: it flips k from
 `[seq, head_dim]` to `[head_dim, seq]`. By Day 1's shape rule,
 `[seq, head_dim] × [head_dim, seq] → [seq, seq]`, so one matmul meets
-every question with every topic card.
+every question with every topic card. In candle, `*` and `+` on a tensor
+return a `Result` too (the shapes might not fit), so the last line of
+`scaled_scores` and of `mask_future` already *is* the `Result<Tensor>`
+the function returns: no trailing `?`.
 
 `mask_future` brings two Rust newcomers. First, `flat_map` runs the inner
 closure for every `i` and flattens the resulting rows into one flat `Vec`.
 (A tensor is built from flat data plus a shape, as `from_vec` shows.)
-Second, the inner closure needs `move` because it uses `i`. The outer
-closure returns the inner one unfinished, and `flat_map` runs it later,
-after the outer closure's `i` is gone. `move` gives the inner closure its
-own copy of `i`. Everything else is Day 3 machinery: `matmul`,
-`broadcast_*`, `keepdim`, and `D::Minus1` picking the last dimension.
+Second, `move`: the inner `map` closure is handed back *unrun* and only
+runs later, when `flat_map` pulls from it. By then the outer closure has
+finished and its `i` is gone, so `move` gives the inner closure its own
+copy. Everything else is Day 3 machinery: `matmul`, `broadcast_*`,
+`keepdim`, and `D::Minus1` picking the last dimension.
+
+`softmax_rows`' trick in symbols, with *m* the row max:
+e^(a−m) / Σ e^(b−m) = (e^a · e^−m) / (e^−m · Σ e^b) = e^a / Σ e^b.
 
 The file is brand new, so wire it into the crate. In `src/main.rs`, add
 this declaration above the existing `mod layers;`. Without it, nothing in
@@ -533,7 +542,8 @@ freely, and now comes the fun part: *watching* your rules at work. Give
 round *by hand*. It uses the whole card as question, topic card, and
 statement alike, since the per-role slips arrive in section B. It prints
 the table **after every step**, so you can watch each function you just
-wrote change it. Add both the small table printer and the demo above
+wrote change it. Unlike Day 3's `layers` demo, it skips the demo `Linear`
+after the norm: section B's layer brings its own translators. Add both the small table printer and the demo above
 `run_generate`:
 
 ```rust,ignore
@@ -595,8 +605,14 @@ it:
         ["attention"] => run_attention_demo(),
 ```
 
-Add `cargo run --quiet -- attention` as a third smoke command in
-`scripts/check.sh`, then run it:
+In `scripts/check.sh`, add a third smoke command directly under the
+`cargo run --quiet -- layers` line:
+
+```bash
+cargo run --quiet -- attention
+```
+
+Then run it:
 
 ```bash
 cargo run -- attention
@@ -626,12 +642,14 @@ heard:  [3, 8]
 You see the same table three times, once after each function you just
 wrote. Read it table by table:
 
-- `text "abc" -> ids [97, 98, 99]` — this time you seat three *different*
-  guests: `a` (badge 97), `b` (98), and `c` (99). A conversation needs
-  more than twins.
+- `text "abc" -> ids [97, 98, 99]` — three guests: `a` (badge 97), `b`
+  (98), and `c` (99).
 
 - `cards:  [3, 8]` — Day 3's front door is unchanged. Three badges become
-  three profile cards.
+  three profile cards. One fact matters below: with ramp weights, badge
+  *t*'s card is `0.01 × [8t, 8t+1, …, 8t+7]`, a nearly flat row. After
+  leveling, all three cards are ≈ 1.0 in every slot (they first differ in
+  the fourth decimal). The three guests hold practically *the same card*.
 
 - The table layout is the same for all three tables. Each printed row is
   one guest *listening*, and each column (named in the header) is a guest
@@ -644,12 +662,16 @@ wrote. Read it table by table:
   the demo used the same cards for questions and topic cards. Second,
   every guest matches *itself* loudest (`2.828` down the diagonal), and
   the match *fades with distance* (`2.502` one seat apart, `1.820` two
-  apart). That fade is the seat stamps at work: `rope` on q and k makes
-  nearby guests match louder.
+  apart). The cards can't cause that fade, since they are practically
+  identical. It comes entirely from the seat stamps. Delete the two
+  `rope` calls and every cell reads `2.828`; seat three copies of `a`'s
+  card instead and the table matches this one to within 0.001. RoPE
+  turns each card by an angle set by its seat, so two cards' dot product
+  depends on the seat *gap*: the bigger the gap, the more they point apart.
 
 - You can derive the diagonal's `2.828` by hand. The volume knob leveled
-  each card to an RMS of 1, so its 8 squared numbers add up to 8. RoPE
-  only rotates a card, so a card dotted with itself still gives 8. Then
+  each card to an RMS of 1, so its 8 squared numbers add up to 8. On the
+  diagonal the seat gap is 0, so the stamps cancel and the dot product is 8. Then
   `scaled_scores` divides by √8 (the card holds 8 numbers), and 8 / √8 =
   √8 ≈ 2.828.
 
@@ -792,12 +814,10 @@ mod tests {
     ⋮
 ```
 
-The doc comment's *mise-en-place shelf* is the story's name for Day 8's
-KV cache: the shelf where the kept topic cards and statements wait.
-
 Read `forward` as the evening's choreography. Three translators make the
 three slips. When heads are shared, `k` and `v` come out *narrower* than
-`q`. `narrow(1, start, len)` slices columns `start..start+len`. Each ear
+`q`. `dims2()` returns `(rows, cols)` and `.1` takes the second, so
+`head_dim` is k's width split across the kv heads. `narrow(1, start, len)` slices columns `start..start+len`. Each ear
 `h` takes its own slice of the questions, but `h / group` sends whole
 *groups* of ears to the same shared kv slice. With 4 ears and 2 shared
 cards, ears 0–1 get card 0, and ears 2–3 get card 1. Sharing is nothing
@@ -900,6 +920,11 @@ mod tests {
 }
 ```
 
+The third test uses a smaller layer than `tiny_attention`: 2 q heads × 2
+numbers (`wq` writes 4), 1 kv head × 2 (`wk`, `wv` write 2), and `wo`
+reads the 4 back up to 8. The "copied" twin pastes `wk` and `wv` side by
+side to make 2 kv heads with identical contents.
+
 `the_future_cannot_reach_back` asserts **bit-identical** equality, not
 "close within tolerance". Masked-out shares are exactly zero, so a
 changed future token contributes exactly nothing. Hold on to that fact.
@@ -937,7 +962,9 @@ fn run_attention_demo() -> Result<()> {
 }
 ```
 
-Run `cargo run -- attention` again. Two new lines appear at the bottom:
+Run `cargo run -- attention` again. Two new lines appear at the bottom.
+(The ruled "everything above" line is the book's marker, not program
+output.)
 
 ```text
 text "abc" -> ids [97, 98, 99]
@@ -1009,31 +1036,12 @@ q proj: 8 in -> 8 out (4 heads x 2);  k,v proj: 8 in -> 4 out (2 SHARED heads x 
 attn:   [3, 8]
 ```
 
-Read it line by line. You can check the diagonal and every share by hand,
-as section A showed:
-
-- `ids [97, 98, 99]` — `a`, `b`, and `c` are three different guests.
-
-- `cards:  [3, 8]` — Day 3's front door runs unchanged.
-
-- `scores` — these are the raw matches from `scaled_scores`. They are
-  loudest on the diagonal (√8 ≈ 2.828, a leveled card matched with itself)
-  and fade with seat distance, which is the seat stamps at work.
-
-- `masked` — `mask_future` replaced the future with `-inf` and left the
-  past untouched.
-
-- `who listens to whom` — `softmax_rows` made every row sum to 1.000, and
-  every `-inf` became exactly zero. Seat 0 keeps everything, because
-  nobody spoke before them.
-
-- `q proj: 8 in -> 8 out … k,v proj: 8 in -> 4 out` — this is GQA in
-  the weights. Each translator reads a guest's 8 numbers. The question
-  one writes 4 ears × 2 = 8, and the topic-card and statement ones write
-  2 shared sets × 2 = 4: half the table space.
-
-- `heard:` and `attn:` — both are `[3, 8]`. The hand-held round and the
-  packaged `Attention` layer each hand every guest back a full card.
+This is the section A and B output, each line read there. In short: the
+diagonal is √8 ≈ 2.828 (a leveled card matched with itself), the fade
+with distance comes from the seat stamps alone (the cards are practically
+identical), every `-inf` becomes exactly `0.000`, the `k,v proj` writes
+half as many numbers as `q proj` (GQA in the weights), and both `heard:`
+and `attn:` hand every guest back a full `[3, 8]` card.
 
 ## 7. Test it
 
@@ -1077,7 +1085,10 @@ test attention::tests::the_future_cannot_reach_back ... FAILED
 
 Two tripwires fire. The `left`/`right` pair shown belongs to the first,
 `seat_zero_hears_only_its_own_statement`. The first guest's answer is now
-`[5.66, 6.66]` instead of their own `[5.0, 6.0]` statement. A slice of the *second* guest's words
+`[5.66, 6.66]` instead of their own `[5.0, 6.0]` statement. Unmasked,
+seat 0 scores 2/√2 = 1.414 against itself and 1/√2 = 0.707 against seat
+1, so softmax gives it shares 0.67 and 0.33, and 0.67 × `[5, 6]` +
+0.33 × `[7, 8]` ≈ `[5.66, 6.66]`. A third of the *second* guest's words
 leaked backward in time. Look at what did **not** happen: no crash, no
 error. `future_seats_get_a_zero_share` even stays green, because it tests
 the mask directly. Only the properties that watch `attend` end to end
@@ -1136,8 +1147,9 @@ is exact.
 Real engines batch heads into one big matmul, and Day 9's benchmark
 decides when we care. Every step recomputes attention over the *whole*
 prompt from scratch, and we live with that pain until Day 8 makes it
-obvious. The weights are still ramp-filled fakes (Day 6). Qwen's extra
-per-head q/k normalization also waits for the real checkpoint (Day 6).
+obvious. The weights are still ramp-filled fakes (Day 6). Qwen also
+levels each head's q and k slices with a small `RmsNorm` before the seat
+stamp; that waits for the real checkpoint too (Day 6).
 
 **Takeaways:**
 

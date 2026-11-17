@@ -26,7 +26,7 @@ git switch --detach v1-day-05a         # then 05b as you pass the section
 | Section | The layer (the learning) | Wiring & tests (copy-friendly) |
 |---------|--------------------------|--------------------------------|
 | A | `Mlp` · ~20 lines | `mod` line, 1 demo addition, 1 test |
-| B | `Block` · ~25 lines | a 3-name demo rename, demo finish, 3 tests, 1 CLI test |
+| B | `Block` · ~25 lines | a demo rename (4 small edits), demo finish, 3 tests, 1 CLI test |
 
 Two sections are two natural sittings, and every checkpoint is a save
 point — nothing says a "day" must fit in one. After yesterday's climb,
@@ -67,22 +67,29 @@ The repeating unit in the middle is the **transformer decoder block**, or
 **block** for short. Your first instinct might be to make Day 4's
 `Attention` the block and stack it forty times. Three things go wrong:
 
-- **Nobody digests what they heard.** Attention moves information
-  *between* guests, but each guest only walks away with a share-weighted
-  average of other guests' statements. Embedding and `Linear` are weighted
-  sums too, and stacked weighted sums collapse: algebra can fold any
-  number of purely linear steps into one equivalent step. Softmax and
-  RMSNorm are not linear, but neither bends the card's numbers one by one.
-  Softmax only decides *how much* of each guest to blend, and RMSNorm
-  scales the whole card by one number. So forty rounds could only keep
-  re-mixing what is already on the cards.
+- **Nobody digests what they heard.** Embedding and `Linear` are
+  weighted sums, and a stack of weighted sums folds into one. Check it
+  with one number and two translators: the first multiplies by 2, the
+  second by 3. Feed in 5 and you get 5 × 2 × 3 = 30, exactly what a single
+  translator that multiplies by 6 gives, for every input. Matrices fold
+  the same way.
 
-  The fix is a **digest**: a small
-  network each guest runs alone on its own card, with a curve in the
-  middle. That curve, a **nonlinearity**, is the block's only *per-feature*
-  nonlinearity: the one step that sends each of the card's numbers through
-  a bend of its own. It is what lets round two learn something round one
-  could not.
+  Attention is subtler. Its shares come from `q · k`, which multiplies two
+  readings of the cards together, and softmax bends those scores. But the
+  shares only decide *how much* of each guest to take. What a guest walks
+  away with is still a blend: each statement times its share, added up.
+  RMSNorm only scales the whole card by one number. So nothing in a round
+  takes one number on the card (one **feature**) and bends it on its own.
+  If a statement reads `[1, −2]`, a round can scale it to `[0.5, −1]` and
+  add other statements to it, but it can never treat the `1` and the `−2`
+  differently.
+
+  The fix is a **digest**: a small network each guest runs alone on its
+  own card, with a curve in the middle. That curve, a **nonlinearity**,
+  bends each feature separately: section A's `silu` turns `1` into `0.73`
+  but `−2` into `−0.24`, squeezing the negative number far harder. It is
+  the block's only *per-feature* nonlinearity, and it is what lets round
+  two learn something round one could not.
 
 - **Rounds erase the cards.** Suppose every round *replaced* each guest's
   card with that round's output. The original guest would be gone within
@@ -124,16 +131,12 @@ watch the whole thing get packaged:
   conversation decides *where* information flows. The digest is where
   each guest *makes something of it*.)
 
-- **Pencil, never rewrite.** Neither the conversation nor the digestion
-  *replaces* a guest's card. Their output is *added on*, like notes
-  penciled onto the original. These **residual connections** mean the
-  card always survives. After forty rounds, each guest is still
+- **Pencil, never rewrite.** Both activities' output is *added onto* the
+  card (the residuals). After forty rounds, each guest is still
   recognizably themselves, only heavily annotated.
 
-- **The knob turns before every activity.** Before the conversation, and
-  again before the digestion, the familiar volume knob levels the copy of
-  the card that the activity reads. Knob-first is **pre-norm**, and it is
-  what the Llama/Qwen family actually runs.
+- **The knob turns before every activity**, on the copy that activity
+  reads (pre-norm, what the Llama/Qwen family actually runs).
 
 - **One evening, packaged.** A **block** is that whole sequence (knob,
   conversation, pencil; knob, digestion, pencil) as a single struct. A
@@ -168,10 +171,9 @@ that is exactly what makes it stackable.
 <a href="https://www.youtube.com/watch?v=aircAruvnKk">▶ neural nets &amp; nonlinearity, visually (3Blue1Brown)</a>
 </div>
 
-- **Nonlinearity is why depth exists.** Without it, stacking layers is
-  cosmetic, because any pile of linear steps collapses into one. The
-  `silu` gate is the block's only per-feature nonlinearity. It is what
-  lets each stacked block capture patterns the previous one couldn't.
+- **Nonlinearity is why depth exists.** Without the `silu` bend, the
+  stacked blocks could only re-blend what is already on the cards (the
+  `[1, −2]` example in section 1).
 
 - **Residuals + pre-norm are why depth survives.** Each sublayer only
   *adds* its contribution, and it computes that contribution from a
@@ -180,14 +182,25 @@ that is exactly what makes it stackable.
   the block scale.
 
 - **The feed-forward is where most of the model lives.** It expands each
-  card to a wider hidden size and back (8 → 16 → 8 here). Those two fat
-  matrices dominate the parameter count. In today's toy, the digest holds
-  384 weights (three matrices of 8 × 16 = 128) against attention's 192
-  (8 × 8 + 8 × 4 + 8 × 4 + 8 × 8). Real models keep the digest the biggest
-  part too. In Qwen3-0.6B it holds about 1.5 weights for every attention
-  weight: 3 × 1024 × 3072 ≈ 9.4 million against about 6.3 million (Day 6
-  prints these shapes). When Day 9 measures where the time goes, remember
-  where the weights are.
+  card to a wider hidden size and back (8 → 16 → 8 here) through three
+  matrices: gate and up widen, down shrinks. Those three dominate the
+  parameter count. In today's toy, the digest holds 384 weights (three
+  matrices of 8 × 16 = 128) against attention's 192 (8 × 8 + 8 × 4 +
+  8 × 4 + 8 × 8). Qwen3-0.6B keeps the same balance, with 1,024-number
+  cards, a 3,072-wide scratch space, 16 ears of 128 numbers, and 8 shared
+  key/value heads (Day 6 prints these shapes):
+
+  ```text
+  digest      3 × 1024 × 3072                          = 9,437,184
+  attention   q 1024→2048    1024 × 2048 = 2,097,152
+              k 1024→1024    1024 × 1024 = 1,048,576
+              v 1024→1024    1024 × 1024 = 1,048,576
+              o 2048→1024    2048 × 1024 = 2,097,152   = 6,291,456
+  ```
+
+  That is about 1.5 digest weights per attention weight (Qwen's per-head
+  q/k norms, Day 6, add only 2 × 128 = 256 more). When Day 9 measures
+  where the time goes, remember where the weights are.
 
 - **"A 28-layer model" means 28 of these blocks.** The whole engine will
   be organized around the block. Day 6 stacks them, and Day 8's KV cache
@@ -287,8 +300,9 @@ mod block;
 ```
 
 Pin it with one hand-checked test at the bottom of `src/block.rs`. The
-numbers are small enough to verify on a napkin. With every weight 1, all
-three translators copy the input, so the output is `silu(1) × 1`. And
+numbers are small enough to verify on a napkin. The test's `Mlp` is 1
+wide (one number in, one out), and with every weight 1 all three
+translators copy the input, so the output is `silu(1) × 1`. And
 `sigmoid(1) = 1 / (1 + 1/e) = 1 / 1.368 = 0.731`:
 
 ```rust,ignore
@@ -345,7 +359,9 @@ fn run_attention_demo() -> Result<()> {
 
 Look at the widths: `8 → 16` up, then `16 → 8` back down. The expansion
 gives the digest room to work, and it is where most of a real model's
-weights live. `cargo run -- attention` now ends with one more line:
+weights live. `cargo run -- attention` now ends with one more line. (The
+`───` divider is ours, not the program's: it marks where Day 4's output
+ends.)
 
 ```text
 text "abc" -> ids [97, 98, 99]
@@ -456,29 +472,26 @@ Look at the shape of both lines in `forward`: `x + something`. That little
 produces gets *added onto* the card, and the card itself is never
 replaced.
 
-The two lines are written slightly differently, for Rust reasons. Every
-Candle addition returns a `Result`. In the first line, `x` is the
-function's argument, already a borrowed `&Tensor`, so `x + …` only reads
-it. The `( … )?` unwraps the `Result`, and the new `x` is a plain `Tensor`
-that replaces the old name. In the second line, `x` is that owned
-`Tensor`. Writing `x + …` would *move* it into the addition while the
-right-hand side still needs to read it, so the line *borrows* it with
-`&x`. That line needs no `?`, because its `Result` is exactly what
-`forward` returns.
+The two lines differ for a Rust reason: who owns `x`. In the first line,
+`x` is the argument, a borrowed `&Tensor`, and adding a borrow only reads
+it. The `( … )?` unwraps the addition's `Result` into a new, owned `x`. In
+the second line, `x + …` on that owned tensor would use it up, yet the
+right-hand side still reads it (`&x` inside). So the line adds `&x`,
+which reads without using up. It needs no `?`: its `Result` is exactly
+what `forward` returns.
 
-One subtlety is worth slowing down for. Each sublayer *reads* a leveled
-copy of the card. That is the `self.attn_norm.forward(x)?` tucked inside
-the parentheses. But the sublayer's result is added onto the *original*,
-un-leveled `x`. The volume knob only ever changes what a sublayer *sees*,
-never what the card *is*. This arrangement, leveling the copy you read
-and adding onto the original, is called **pre-norm**. It is exactly what
-the Llama/Qwen family runs.
+One subtlety: each sublayer *reads* a leveled copy of the card (the
+`self.attn_norm.forward(x)?` inside the parentheses), but its result is
+added onto the *original*, un-leveled `x`. The volume knob changes what a
+sublayer *sees*, never what the card *is*. That is **pre-norm**.
 
 Three tests pin the block: the residual guarantee, the shape guarantee,
 and causality end to end. They live in the existing `tests` module, below
 `silu_gate_matches_hand_math`, with two small helpers they share. Make one
 tiny edit first: the module's `use` line gains `DType`, so make it
-`use candle_core::{DType, Device};`. Then add:
+`use candle_core::{DType, Device};`. Then add the code below. `counting`
+is the same recipe as the demo's `ramp`, repeated so the tests don't
+depend on the demo:
 
 ```rust,ignore
 #[cfg(test)]
@@ -574,8 +587,9 @@ order:
 2. In the same `match`, change the arm's pattern `["attention"]` to
    `["block"]`.
 
-3. In the usage message just below, change the line to
-   `cargo run -- block`.
+3. In the usage message just below, change only its last line,
+   `eprintln!("       cargo run -- attention");`, to
+   `eprintln!("       cargo run -- block");`.
 
 4. In `scripts/check.sh`, make the same swap in the smoke command:
    `cargo run --quiet -- block`.
