@@ -12,8 +12,8 @@
 
 ```bash
 # Build mode — start (or restart) your branch from yesterday's checkpoint.
-# Already on my-course from Day 1? Just keep going — no command needed.
-git switch -c my-course v1-day-01
+# Already on my-engine from Day 1? Just keep going — no command needed.
+git switch -c my-engine v1-day-01
 
 # Inspect mode — read along with the finished code instead:
 git switch --detach v1-day-02a         # then 02b as you pass each section
@@ -51,13 +51,15 @@ the next thirteen days repair it.
   pipeline and feed each chosen token back in as the new input. That loop
   is autoregression, and every LLM you have ever used runs it.
 
-**The story so far** — remember [the restaurant](story.md): Day 1 built the kitchen,
-with its pantry of numbered jars, its recipe board, and its judge. Today the
-cook stops obeying a hard-coded rulebook and *learns*. Section A builds the
-cook's memory: a tally sheet of what followed what in the old order
-tickets. Section B has the cook serve a whole tasting menu, choosing every
-next course by looking at the last. So A builds the model, and B wraps the
-loop around it.
+**The story so far** — remember [the restaurant](story.md): Day 1 built
+the kitchen, with its pantry of numbered jars, its recipe board, and its
+judge. Today the cook stops obeying a hard-coded rulebook and *learns*.
+Section A builds the cook's memory: a tally sheet of what followed what in
+the old order tickets.
+
+Section B has the cook serve course after course, choosing every next
+course (one new token, added to the end of the text) by looking at the
+last one. So A builds the model, and B wraps the loop around it.
 
 ## 2. Mental model
 
@@ -85,7 +87,7 @@ remembers a step back. Our cook remembers exactly one *byte*. That is why
 
 <figure class="book-figure">
   <img src="figures/day02-loop.svg" alt="A loop. ids, every course served so far, of which the cook reads only the last, go through forward to logits [1, 256], one score for every byte that could come next; argmax picks the next token, which is appended to the end of ids; an arrow returns to the top, repeating steps times, and then ids are decoded once.">
-  <figcaption>Figure 2.1 — Autoregression: every course is chosen only from the one before, then the loop goes round again.</figcaption>
+  <figcaption>Figure 2.1 — Autoregression: every course is chosen only from the one before, then the loop runs again.</figcaption>
 </figure>
 
 The model still answers only one question, "what comes after this byte?",
@@ -100,12 +102,12 @@ asked over and over.
 
 - **Weights learned from data.** The bigram counts are the simplest possible
   learned parameters. Until real trained checkpoints arrive on Day 6, this is
-  the only "training" in the course. It is enough to expose every part of
+  the only "training" in this book. It is enough to expose every part of
   the serving problem.
 
 - **The autoregressive loop.** Generation is not one model call. It is a
   loop of calls, and each call depends on the previous choice. This loop
-  shape is why serving LLMs is hard and interesting: Days 8–14 schedule,
+  is why serving LLMs is hard and interesting: Days 8–14 schedule,
   cache, and batch exactly this loop.
 
 - **Context length.** A bigram conditions on exactly **one** token of
@@ -327,13 +329,15 @@ after "ru" the bigram predicts token 115 -> "s"
 ```
 
 Read it against what you just built. `logits shape: [1, 256]` is unchanged
-from Day 1, one score per [pantry jar](story.md#token). But the scores behind it now come
-from `from_text`'s tally sheet, not a formula. The new second line shows
-`forward` consulting the sheet. In the corpus, the most-marked column in
-row `u` is `s` (byte 115), so `forward` scores it highest. One Day 1 test
-goes away with the fake model: delete
-`toy_model_predicts_the_next_ascii_byte`. Its job passes to three tests at
-the bottom of `src/model.rs` that pin the counting itself:
+from Day 1, one score per [pantry jar](story.md#token). But the scores
+behind it now come from `from_text`'s tally sheet, not a formula. The new
+second line shows `forward` consulting the sheet. In the corpus, the
+most-marked column in row `u` is `s` (byte 115), so `forward` scores it
+highest.
+
+One Day 1 test goes away with the fake model: delete
+`toy_model_predicts_the_next_ascii_byte`. Its task passes to three tests
+at the bottom of `src/model.rs` that pin the counting itself:
 
 ```rust,ignore
 #[cfg(test)]
@@ -445,12 +449,14 @@ fn generate(model: &model::Bigram, prompt: &str, steps: usize) -> Result<String>
 ```
 
 That is nine lines, and it is *the* loop, the same one every production
-engine runs. Notice two details. First, `generate` decodes the whole
-sequence **once at the end**. That quietly fixes Day 1's "a single byte of
-`é` doesn't decode" caveat. Second, each iteration's input is the
-*previous iteration's output*. That data dependency is why generation
-cannot be parallelized within one sequence. It is also why Days 8–14 fight
-so hard to batch *across* sequences instead.
+engine runs. Notice two details. First, `generate` turns the whole
+sequence back into text **once at the end**. That quietly fixes Day 1's
+caveat that a single byte of `é` can't be turned back into text.
+
+Second, each iteration's input is the *previous iteration's output*. That
+data dependency is why generation cannot be parallelized within one
+sequence. It is also why Days 8–14 fight so hard to batch *across*
+sequences instead.
 
 Now replace `main` with a real command-line interface:
 
@@ -547,7 +553,7 @@ mod tests {
 }
 ```
 
-The CLI is now a user-facing contract, so give it the course's first
+The CLI is now a user-facing contract, so give it this book's first
 **integration tests**. These tests run the compiled binary from the
 outside, exactly like a user would. They live in `tests/cli.rs`, inside a
 new top-level `tests/` directory. (Cargo compiles each file there as its
@@ -634,16 +640,16 @@ cargo test
 
 ```text
 running 12 tests
-test tokenizer::tests::decode_rejects_ids_larger_than_a_byte ... ok
-test tokenizer::tests::roundtrip_ascii ... ok
-test tokenizer::tests::multibyte_text_uses_more_tokens_than_chars ... ok
-test tokenizer::tests::decode_rejects_invalid_utf8 ... ok
 test tests::greedy_pick_breaks_ties_toward_the_lowest_id ... ok
 test tests::matmul_rejects_mismatched_shapes ... ok
+test tokenizer::tests::decode_rejects_ids_larger_than_a_byte ... ok
+test tokenizer::tests::decode_rejects_invalid_utf8 ... ok
+test tokenizer::tests::decode_undoes_encode_ascii ... ok
+test tokenizer::tests::multibyte_text_uses_more_tokens_than_chars ... ok
 test tests::tiny_matmul_matches_hand_arithmetic ... ok
+test model::tests::counting_the_corpus_matches_hand_tallies ... ok
 test model::tests::forward_scores_every_token ... ok
 test model::tests::unseen_bytes_have_all_zero_logits ... ok
-test model::tests::counting_the_corpus_matches_hand_tallies ... ok
 test tests::unseen_bytes_generate_token_zero_garbage ... ok
 test tests::generation_is_deterministic_and_cyclic ... ok
 
@@ -653,7 +659,7 @@ running 2 tests
 test missing_subcommand_exits_nonzero_with_usage ... ok
 test generate_cli_is_deterministic ... ok
 
-test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
 ```
 
 The second `running 2 tests` block is `tests/cli.rs`. Cargo builds and runs
@@ -729,10 +735,12 @@ git diff v1-day-01 v1-day-02
 
 **What changed today:** your engine gained `src/model.rs`, with its first
 weights learned from data (a counted bigram). It gained an autoregressive
-`generate` loop that decodes once at the end, and a `generate` CLI with
-Unix-honest exit codes. It also gained its first integration tests, which
-drive the compiled binary from the outside. That makes fourteen tests
-across three modules and two test layers.
+`generate` loop that turns ids back into text once at the end, and a
+`generate` CLI with Unix-honest exit codes.
+
+It also gained its first integration tests, which drive the compiled
+binary from the outside. That makes fourteen tests across three modules
+and two test layers.
 
 **Deliberately naive:** the context is one byte, so output cycles forever.
 Unseen bytes produce confident NUL garbage, because there is no smoothing.

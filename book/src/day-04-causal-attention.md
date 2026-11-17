@@ -12,8 +12,8 @@
 
 ```bash
 # Build mode — start (or restart) your branch from yesterday's checkpoint.
-# Already on my-course from Day 3? Just keep going — no command needed.
-git switch -c my-course v1-day-03
+# Already on my-engine from Day 3? Just keep going — no command needed.
+git switch -c my-engine v1-day-03
 
 # Inspect mode — read along with the finished code instead:
 git switch --detach v1-day-04a         # then 04b as you pass the section
@@ -21,18 +21,21 @@ git switch --detach v1-day-04a         # then 04b as you pass the section
 
 <div class="callout">
 
-**Theory-density warning — and a promise.** Today is the summit:
-attention itself, the one mechanism everything else in this course
-serves. It is also the steepest math of the whole course, and the climb
-ends today. Day 5 assembles the finished transformer block with barely
-any new math. From Day 6 on, the work shifts back to this course's real
-subject: engineering the machine you now hold. Yesterday's promise still
-holds. Every block tells you *what* it is and *why* the engine needs it.
-The math of *how* it works inside is optional, and typing can always
-become copying. Whenever you want more, the teal chips open a video or
-the formal write-up. One extra comfort: you never have to take today's
-ideas on faith. Each property gets its own test, and you will watch the
-machine prove itself.
+**Theory-density warning — and a promise.** Today is the summit: attention
+itself, the one mechanism everything else in this book serves. It is also
+the steepest math of the whole book, and the climb ends today. Day 5
+assembles the finished transformer block with barely any new math.
+
+From Day 6 on, the work shifts back to this book's real subject:
+engineering the machine you now hold. Yesterday's promise still holds.
+Every block tells you *what* it is and *why* the engine needs it. The math
+of *how* it works inside is optional, and typing can always become
+copying.
+
+Whenever you want more, the teal chips open a video or the formal
+write-up. One extra comfort: you never have to take today's ideas on
+faith. Each property gets its own test, and you will watch the machine
+prove itself.
 
 </div>
 
@@ -52,17 +55,21 @@ point — nothing says a "day" must fit in one.
 
 ## 1. Why we need it
 
-**The story so far** — remember [the restaurant](story.md): Day 1 built the kitchen,
-and Day 2 taught the cook to serve each course from the last one.
-Yesterday the dining room opened. Every [guest](story.md#guest) (one per
-token of your prompt) traded their numbered badge for a
-[profile card](story.md#embedding). The host leveled the
-[volumes](story.md#rmsnorm), [re-mixed the cards](story.md#linear), and
-stamped on [seat numbers](story.md#rope). Then the chapter ended, and the room went quiet. Tonight
-comes the scene the whole restaurant has been building toward: **the table
-conversation**. The guests finally talk. Each one reads the cards of the
-guests seated before them and borrows what they need. That conversation
-is *attention*, and building it is today's whole job.
+**The story so far** — remember [the restaurant](story.md): Day 1 built
+the kitchen, and Day 2 taught the cook to serve each course from the last
+one. Yesterday the dining room opened. Every [guest](story.md#guest) (one
+per token of your prompt) traded their numbered badge for a [profile
+card](story.md#embedding).
+
+Then every card had its [volume](story.md#rmsnorm) leveled, its [numbers
+re-mixed](story.md#linear), and its [seat number](story.md#rope) stamped
+on. Then the chapter ended, and the room went quiet. Tonight comes the
+scene the whole restaurant has been building toward: **the table
+conversation**. The guests finally talk.
+
+Each one reads the cards of the guests seated before them and borrows what
+they need. That conversation is *attention*, and building it is today's
+whole task.
 
 Why does the restaurant need a conversation at all? Look at what your
 engine can do so far. The `generate` loop still chooses every course from
@@ -88,13 +95,13 @@ in two sections:
 
 - **B. The conversation at full scale** upgrades the same rules twice.
   Every guest listens through several narrow ears at once, and each ear is
-  tuned to its own kind of connection (**heads**). Because the table is
-  small, groups of ears also share their reading material (**grouped-query
-  attention**, GQA).
+  tuned to its own kind of connection (**heads**). Because memory is
+  limited, groups of ears also share their topic cards and statements
+  (**grouped-query attention**, GQA).
 
 Along the way, a new `cargo run -- attention` demo prints the
-conversation mid-flight, one table per rule: the raw match scores, the
-same table with the future silenced, and the who-listens-to-whom shares.
+conversation mid-flight, one grid per rule: the raw match scores, the
+same grid with the future silenced, and the who-listens-to-whom shares.
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=eMlx5fFNoYc">▶ Attention, step by step (3Blue1Brown)</a>
@@ -117,15 +124,17 @@ you have watched the demo print them.
 First meet the ideas one at a time. Then you follow one guest through all
 of them with numbers.
 
-- **Three things from one card.** Before talking, each guest prepares
-  three slips from their profile card. The **question** (`q`) asks: what
-  am I looking for right now? The **topic card** (`k`) answers: what can I
-  be asked about? The **statement** (`v`) holds what I will actually
-  contribute if someone listens to me. All three are made the Day 3 way,
-  with a translator (`Linear`) that re-mixes the card's numbers. Why three
-  separate slips? What you *seek*, what you can be *found by*, and what
-  you *say* are different roles. One card could never play all three at
-  once.
+- **Three things from one card.** Before talking, each guest makes three
+  new things from their profile card. The **question** (`q`) asks: what am
+  I looking for right now? The **topic card** (`k`) answers: what can I be
+  asked about? The **statement** (`v`) holds what I will actually
+  contribute if someone listens to me.
+
+  All three are made the Day 3 way, with a translator (`Linear`) that
+  re-mixes the card's numbers. Why make a question, a topic card and a
+  statement separately? What you *seek*, what you can be *found by*, and
+  what you *say* are different roles. One card could never play all three
+  at once.
 
 - **Match questions to topic cards.** Guest *i* holds their question up
   against guest *j*'s topic card. The better the match (a *dot product*:
@@ -162,28 +171,32 @@ of them with numbers.
   narrow ear that runs the identical routine on its own slice, listening
   for its own kind of connection.
 
-- **Share the topic cards — the table is small.** Questions are cheap to
-  hold: each guest asks once, on arrival, and later guests ask their own. Topic cards and statements,
-  though, must stay on the table for every *future* guest to consult. So
-  groups of ears share one topic-card/statement pair: here, 4 askers share
-  2 pairs. That is **grouped-query attention (GQA)**. The shared pairs are
-  exactly what Day 8 will cache (the KV cache, which the story calls the
-  mise-en-place shelf), so halving them now halves that cache forever. It is a rare treat: an architecture choice made *for the
-  inference engineer*.
+- **Share the topic cards — memory is limited.** Questions are cheap to
+  hold: each guest asks once, on arrival, and later guests ask their own.
+  Topic cards and statements, though, must stay in memory for every
+  *future* guest to consult. So groups of ears share one
+  topic-card/statement pair: here, 4 askers share 2 pairs.
+
+  That is **grouped-query attention (GQA)**. The shared pairs are exactly
+  what Day 8 will cache (the KV cache, which the story calls the
+  mise-en-place shelf), so halving them now halves that cache forever. It
+  is a rare treat: an architecture choice made *for the inference
+  engineer*.
 
 - **The seat stamp moves inside.** Day 3's demo stamped seats (RoPE) onto
   whole cards. From today the stamp goes only on the *question* and the
   *topic card*, inside attention. The statement is never stamped, and
   neither is the **prepped card**: a guest's profile card after Day 3's
-  volume knob (`RmsNorm`), the input to the round. Where you sit should shape *whom you listen to*
-  (the dials make nearby guests match louder), not *what you say* once
-  heard.
+  volume knob (`RmsNorm`), the input to the conversation.
 
-### Follow one guest through a round
+  Where you sit should decide *whom you listen to* (the dials make nearby
+  guests match louder), not *what you say* once heard.
 
-Now walk one round end to end, first for **one guest**, then for the
+### Follow one guest through a conversation
+
+Now walk one conversation end to end, first for **one guest**, then for the
 whole table. Follow guest 2, the last of three guests. Its prepped card
-is one row of 8 numbers, `[1, 8]` (1 guest × 8 numbers). The round has
+is one row of 8 numbers, `[1, 8]` (1 guest × 8 numbers). The conversation has
 six short stages, and each one shows its inputs before any arithmetic.
 
 The numbers are made up and rounded, so you can check them in your head.
@@ -191,12 +204,12 @@ The walk also skips two small adjustments: the seat stamp (RoPE) and the
 division by the square root of the card length. Section A builds both.
 They nudge the numbers without changing the flow.
 
-**Stage 1: one card becomes three slips.** Three translators read guest
+**Stage 1: one card becomes a question, a topic card and a statement.** Three translators read guest
 2's card:
 
 <figure class="book-figure">
   <img src="figures/day04-one-guest-1.svg" alt="Guest 2's prepped card x2, eight numbers [0.3, -1.2, 0.8, 0.5, -0.4, 1.1, 0.2, -0.7], shape [1, 8], goes through three translators. The q translator makes 8 numbers out (4 ears × 2): question q2 in four ear slices, [1, 1], [0.4, -0.2], [0.9, 0.1] and [-0.5, 0.3]. The k and v translators make 4 out (2 shared cards × 2): topic card k2 in two pairs, [1, 1] and [0.2, 0.6], and statement v2 in two pairs, [5, 5] and [-1, 3]. Pair 0 is shared by ears 0 and 1, pair 1 by ears 2 and 3.">
-  <figcaption>Figure 4.1 — Stage 1: one [1, 8] card becomes an 8-number question and two 4-number slips.</figcaption>
+  <figcaption>Figure 4.1 — Stage 1: one [1, 8] card becomes an 8-number question, a 4-number topic card and a 4-number statement.</figcaption>
 </figure>
 
 The question is 8 numbers: 4 ears × 2. The topic card and statement are
@@ -209,10 +222,10 @@ topic card and statement:
 
 <figure class="book-figure">
   <img src="figures/day04-one-guest-2.svg" alt="Ear 0 holds three slices, each [1, 2]: question [1, 1], topic card [1, 1] and statement [5, 5].">
-  <figcaption>Figure 4.2 — Stage 2: ear 0's slices of guest 2's three slips.</figcaption>
+  <figcaption>Figure 4.2 — Stage 2: ear 0's slices of guest 2's question, topic card and statement.</figcaption>
 </figure>
 
-**Stage 3: collect everyone's slips.** Ear 0 is about to meet the other
+**Stage 3: collect everyone's topic cards and statements.** Ear 0 is about to meet the other
 guests, so first list what they bring. Every guest ran stages 1 and 2 on
 its own card. Here are all three guests' ear-0 question and pair-0 topic
 card and statement:
@@ -267,30 +280,32 @@ works on its own card:
 | 6 stitch, re-mix | your own 4 ears' results | only you |
 
 Now zoom out to the whole table at once. All three guests run stages 1, 2
-and 6 side by side, as the three rows of one table. Stage 4 needs every
+and 6 side by side, as the three rows of one grid. Stage 4 needs every
 guest's topic card together, so each ear's shares come out as a `[3, 3]`
-table, one row per guest. Guest 2's row is the `[0.21, 0.21, 0.58]` you
-just computed. Guest 1's question `[0, 1]` scores 0 against guest 0's
-topic card and 1 against its own, and guest 2 is masked as the future. So
-its shares are `exp(0)` and `exp(1)` (1 and 2.72) divided by their total
-of 3.72. Guest 0 can hear only itself. Here is ear 0:
+grid, one row per guest. Guest 2's row is the `[0.21, 0.21, 0.58]` you
+just computed.
+
+Guest 1's question `[0, 1]` scores 0 against guest 0's topic card and 1
+against its own, and guest 2 is masked as the future. So its shares are
+`exp(0)` and `exp(1)` (1 and 2.72) divided by their total of 3.72. Guest 0
+can hear only itself. Here is ear 0:
 
 <figure class="book-figure">
   <img src="figures/day04-shares.svg" alt="A 3 by 3 grid of ear 0's shares. Guest 0 hears guest 0 with 1.00 and nobody else, since nobody sits before it. Guest 1 hears guest 0 with 0.27 and itself with 0.73; guest 2 is masked as the future. Guest 2 hears 0.21, 0.21 and 0.58. Every cell above the diagonal is hatched: the masked future, share exactly 0.">
   <figcaption>Figure 4.6 — Ear 0's shares for the whole table: each row sums to 1, and the future gets exactly 0.</figcaption>
 </figure>
 
-Each round makes four such tables, one per ear. Here is the round in
-shapes:
+Each conversation makes four such grids, one per ear. Here is the
+conversation in shapes:
 
 <figure class="book-figure">
   <img src="figures/day04-round-shapes.svg" alt="A top-to-bottom flow of shapes. x [3, 8], 3 guests × 8 numbers, goes through three translators to q [3, 8], 4 ears × 2 numbers of question per guest, and k, v [3, 4], only 2 shared topic/statement pairs. Per ear, seats are stamped onto q and k, then match, mask the future and split shares give shares [3, 3] four times, rows summing to 1 with zeros above the diagonal. Blending, stitching and re-mixing with o give [3, 8], what each guest carries away.">
-  <figcaption>Figure 4.7 — The round in shapes: [3, 8] in, [3, 8] out, with k and v at half width.</figcaption>
+  <figcaption>Figure 4.7 — The conversation in shapes: [3, 8] in, [3, 8] out, with k and v at half width.</figcaption>
 </figure>
 
 The reading rule is the same as yesterday: every shape is `[how many
 guests, how many numbers each]`. Tomorrow covers what each guest *does*
-with what they carried away, and how the whole evening gets packaged into
+with what they carried away, and how the whole round gets packaged into
 one repeatable unit. Day 5 builds the digestion step and the decoder
 block.
 
@@ -310,12 +325,15 @@ block.
   entirely on today's `the_future_cannot_reach_back` test.
 
 - **GQA is why real models are servable.** At serving time, the engine
-  must keep the k and v slips of every past token (the KV cache, Day 8).
-  Qwen3-0.6B, the model you load on Day 6, has 16 query heads but only 8
-  kv heads (its config file lists `num_attention_heads: 16` and
-  `num_key_value_heads: 8`, and Day 6 prints both). Keeping 8 kv heads
-  instead of 16 halves that memory *for the life of every request*. Qwen,
-  Llama, and friends all ship GQA for exactly this reason.
+  must keep the topic cards (k) and statements (v) of every past token
+  (the KV cache, Day 8). Qwen3-0.6B, the model you load on Day 6, has 16
+  query heads but only 8 kv heads (its config file lists
+  `num_attention_heads: 16` and `num_key_value_heads: 8`, and Day 6 prints
+  both).
+
+  Keeping 8 kv heads instead of 16 halves that memory *for the life of
+  every request*. Qwen, Llama, and friends all ship GQA for exactly this
+  reason.
 
 - **Softmax turns scores into a budget.** Shares that always sum to 1 make
   attention a weighted *average*. Outputs stay in a sane range no matter
@@ -342,7 +360,7 @@ conversation. It leans on yesterday's `layers.rs` for `Linear` and `rope`.
 In section A you write the rules of the conversation as four small
 functions. The first three match questions to topic cards, silence the
 future, and split attention into shares. The fourth composes them into a
-full listening round. Start a new file, `src/attention.rs`, with all four:
+full conversation. Start a new file, `src/attention.rs`, with all four:
 
 *(These are today's core ideas, ~45 lines. Typing them out builds
 finger-memory, but copying them straight from here is just as legitimate.
@@ -391,7 +409,7 @@ pub fn softmax_rows(scores: &Tensor) -> Result<Tensor> {
     exp.broadcast_div(&total)
 }
 
-/// Analogy: one full listening round at the table. Each guest asks their
+/// Analogy: one full conversation at the table. Each guest asks their
 /// question (q) of every earlier guest's topic card (k), splits their
 /// attention into shares, and walks away with the share-weighted blend of
 /// what those guests actually said (v).
@@ -491,7 +509,7 @@ mod tests {
 
     #[test]
     fn seat_zero_hears_only_its_own_statement() -> Result<()> {
-        // The first guest has nobody before them: their listening round
+        // The first guest has nobody before them: their conversation
         // returns exactly their own statement, bit for bit.
         let device = Device::Cpu;
         let q = Tensor::new(&[[1_f32, 0.0], [0_f32, 1.0]], &device)?;
@@ -506,13 +524,16 @@ mod tests {
 
 That is the heart of the section. The rest is **wiring**, yours to copy
 freely, and now comes the fun part: *watching* your rules at work. Give
-`src/main.rs` a third demo subcommand. It preps cards exactly as Day 3 did, then holds one listening
-round *by hand*. It uses the whole card as question, topic card, and
-statement alike, since the per-role slips arrive in section B. It prints
-the table **after every step**, so you can watch each function you just
-wrote change it. Unlike Day 3's `layers` demo, it skips the demo `Linear`
-after the norm: section B's layer brings its own translators. Add both the small table printer and the demo above
-`run_generate`:
+`src/main.rs` a third demo subcommand. It preps cards exactly as Day 3
+did, then holds one conversation *by hand*.
+
+It uses the whole card as question, topic card, and statement alike, since
+the separate ones arrive in section B. It prints the grid **after every
+stage**, so you can watch each function you just wrote change it. Unlike
+Day 3's `layers` demo, it skips the demo `Linear` after the norm: section
+B's layer brings its own translators.
+
+Add both the small grid printer and the demo above `run_generate`:
 
 ```rust,ignore
 /// Print a [seq, seq] table of the conversation: one row per listening
@@ -528,8 +549,8 @@ fn print_table(table: &Tensor) -> Result<()> {
     Ok(())
 }
 
-/// Analogy: seat tonight's guests and hold one round of the table
-/// conversation, printing the result of every step.
+/// Analogy: seat tonight's guests and hold one conversation at the
+/// table, printing the result of every stage.
 fn run_attention_demo() -> Result<()> {
     let device = Device::Cpu;
     // Day 3's front door and volume knob, unchanged. No demo translator
@@ -544,7 +565,7 @@ fn run_attention_demo() -> Result<()> {
     println!("cards:  {:?}", cards.dims());
 
     // One head over whole cards for now: level the volume, stamp the seats,
-    // then hold the listening round by hand — printing after every step.
+    // then hold the conversation by hand — printing after every stage.
     let leveled = norm.forward(&cards)?;
     let q = layers::rope(&leveled)?;
     let k = layers::rope(&leveled)?;
@@ -610,8 +631,8 @@ who listens to whom (each row sums to 1; 0.000 = the future):
 heard:  [3, 8]
 ```
 
-You see the same table three times, once after each function you just
-wrote. Read it table by table:
+You see the same grid three times, once after each function you just
+wrote. Read it grid by grid:
 
 - `text "abc" -> ids [97, 98, 99]` — three guests: `a` (badge 97), `b`
   (98), and `c` (99).
@@ -619,26 +640,29 @@ wrote. Read it table by table:
 - `cards:  [3, 8]` — Day 3's front door is unchanged. Three badges become
   three profile cards. One fact matters below: with ramp weights, badge
   *t*'s card is `0.01 × [8t, 8t+1, …, 8t+7]`, a nearly flat row. After
-  leveling, all three cards are ≈ 1.0 in every slot (they first differ in
+  leveling, all three cards are ≈ 1.0 in every number (they first differ in
   the fourth decimal). The three guests hold practically *the same card*.
 
-- The table layout is the same for all three tables. Each printed row is
+- The grid layout is the same for all three grids. Each printed row is
   one guest *listening*, and each column (named in the header) is a guest
   being *heard*. The cell at row `seat 1`, column `seat 0` reads "how
   strongly guest `b` attends to guest `a`."
 
 - **`scores`** — these are `scaled_scores`' raw matches, before any rule
-  applies. You can see two things in the numbers. First, the table is
-  *symmetric* (the same `2.502` above and below the diagonal), because
-  the demo used the same cards for questions and topic cards. Second,
-  every guest matches *itself* loudest (`2.828` down the diagonal), and
-  the match *fades with distance* (`2.502` one seat apart, `1.820` two
-  apart). The cards can't cause that fade, since they are practically
-  identical. It comes entirely from the seat stamps. Delete the two
-  `rope` calls and every cell reads `2.828`; change `text` to `"aaa"`
-  instead (three copies of `a`'s card) and the table matches this one to within 0.001. RoPE
-  turns each card by an angle set by its seat, so two cards' dot product
-  depends on the seat *gap*: the bigger the gap, the more they point apart.
+  applies. You can see two things in the numbers. First, the grid is
+  *symmetric* (the same `2.502` above and below the diagonal), because the
+  demo used the same cards for questions and topic cards.
+
+  Second, every guest matches *itself* loudest (`2.828` down the
+  diagonal), and the match *fades with distance* (`2.502` one seat apart,
+  `1.820` two apart). The cards can't cause that fade, since they are
+  practically identical. It comes entirely from the seat stamps.
+
+  Delete the two `rope` calls and every cell reads `2.828`; change `text`
+  to `"aaa"` instead (three copies of `a`'s card) and the grid matches
+  this one to within 0.001. RoPE turns each card by an angle set by its
+  seat, so two cards' dot product depends on the seat *gap*: the bigger
+  the gap, the more they point apart.
 
 - You can derive the diagonal's `2.828` by hand. The volume knob leveled
   each card to an RMS of 1, so its 8 squared numbers add up to 8. On the
@@ -646,11 +670,11 @@ wrote. Read it table by table:
   `scaled_scores` divides by √8 (the card holds 8 numbers), and 8 / √8 =
   √8 ≈ 2.828.
 
-- **`masked`** — this is the same table after `mask_future`. Every score
+- **`masked`** — this is the same grid after `mask_future`. Every score
   above the diagonal, meaning every look into the future, is now `-inf`.
   Nothing below the diagonal changed.
 
-- **`who listens to whom`** — this is the same table after
+- **`who listens to whom`** — this is the same grid after
   `softmax_rows`. Each row of scores became shares that sum to 1.000, and
   `-inf` became *exactly* `0.000`, not merely small. Seat 0 has nobody
   before it, so it keeps all 100%. Seat 2 is the only guest allowed to
@@ -680,17 +704,19 @@ grouping is one integer division, and the head loop is a plain `for`.</div>
 Your section A conversation already works, with one big ear and whole
 cards for every role. So why touch it? Put yourself in a card's position
 for a moment. You are expected to say what your guest is *looking for*.
-You also advertise what they can be *asked about*, and you carry what
-they would actually *say*. That is three jobs for the same eight numbers,
-and one card can't be great at any of them.
 
-The fix is what you'd do in real life. Stop making one card do three jobs,
-and write three slips instead, each translated off the card: a question
-slip (the `q` projection), a topic card (`k`), and a statement (`v`). Then
-add the two upgrades you met in the mental model. Each guest listens
+You also advertise what they can be *asked about*, and you carry what they
+would actually *say*. That is three tasks for the same eight numbers, and
+one card can't be great at any of them.
+
+The fix is what you'd do in real life. Stop making one card do three
+tasks, and write three new things instead, each translated off the card: a
+question (the `q` projection), a topic card (`k`), and a statement (`v`).
+
+Then add the two upgrades you met in the mental model. Each guest listens
 through four narrow ears, and pairs of ears share their topic cards to
-save table space. Put together, that is grouped-query attention, exactly
-as promised.
+save memory. Put together, that is grouped-query attention, exactly as
+promised.
 
 You build all of it from pieces you already own: Day 3's `Linear` does
 the translating, and `rope` stamps the seats. Invite them in first. In
@@ -785,16 +811,21 @@ mod tests {
     ⋮
 ```
 
-Read `forward` as the evening's choreography. Three translators make the
-three slips. When heads are shared, `k` and `v` come out *narrower* than
-`q`. `dims2()` returns `(rows, cols)` and `.1` takes the second, so
-`head_dim` is k's width split across the kv heads. `narrow(1, start, len)` slices columns `start..start+len`. Each ear
-`h` takes its own slice of the questions, but `h / group` sends whole
-*groups* of ears to the same shared kv slice. With 4 ears and 2 shared
-cards, ears 0–1 get card 0, and ears 2–3 get card 1. Sharing is nothing
-fancier than *reading the same columns*. Each ear runs section A's `attend` unchanged.
-`Tensor::cat` stitches the narrow answers back into full cards, and one
-last translator (`o_proj`) re-mixes them.
+Read `forward` as the conversation's choreography. Three translators make
+the question, the topic card and the statement. When heads are shared, `k`
+and `v` come out *narrower* than `q`. `dims2()` returns `(rows, cols)` and
+`.1` takes the second, so `head_dim` is k's width split across the kv
+heads.
+
+`narrow(1, start, len)` slices columns `start..start+len`. Each ear `h`
+takes its own slice of the questions, but `h / group` sends whole *groups*
+of ears to the same shared kv slice. With 4 ears and 2 shared cards, ears
+0–1 get card 0, and ears 2–3 get card 1. Sharing is nothing fancier than
+*reading the same columns*.
+
+Each ear runs section A's `attend` unchanged. `Tensor::cat` stitches the
+narrow answers back into full cards, and one last translator (`o_proj`)
+re-mixes them.
 
 Now add three tests. The second is the day's most important, and the
 third proves GQA does exactly what "sharing" claims. They go inside the
@@ -919,7 +950,7 @@ fn run_attention_demo() -> Result<()> {
     println!("heard:  {:?}", heard.dims());
 
     // ──────── new code starts here (around line 132) ────────
-    // The packaged layer: the same round through real projections.
+    // The packaged layer: the same conversation through real projections.
     println!("q proj: 8 in -> 8 out (4 heads x 2);  k,v proj: 8 in -> 4 out (2 SHARED heads x 2)");
     let attn = attention::Attention::new(
         layers::Linear::new(ramp(8, 8, 0.02, &device)?),
@@ -937,7 +968,7 @@ fn run_attention_demo() -> Result<()> {
 ```
 
 Run `cargo run -- attention` again. Two new lines appear at the bottom.
-(The ruled "everything above" line is the book's marker, not program
+(The ruled "everything above" line is this book's marker, not program
 output.)
 
 ```text
@@ -974,7 +1005,7 @@ attn:   [3, 8]
 - `attn:   [3, 8]` — `Attention::forward` ran section A's `attend` once
   per ear on its own slice. It stitched the four answers with
   `Tensor::cat` and re-mixed them through `o_proj`. Every guest leaves the
-  packaged layer with a full card, exactly like the hand-held round above.
+  packaged layer with a full card, exactly like the hand-held conversation above.
 
 **Section checkpoint:** `./scripts/compare.sh v1-day-04b` (identical to
 `v1-day-04`, because the last section of a day *is* the day).
@@ -1130,7 +1161,7 @@ stamp; that waits for the real checkpoint too (Day 6).
 
 **Takeaways:**
 
-- Attention is one table transformed twice: score every question against
+- Attention is one grid transformed twice: score every question against
   every topic card, set the future to `-inf`, then softmax each row into
   shares and blend the statements by those shares.
 
@@ -1149,7 +1180,7 @@ stamp; that waits for the real checkpoint too (Day 6).
 
 **Tomorrow's limitation, resolved on Day 5:** the guests can finally
 listen, but nobody digests what they hear. Nothing protects the cards
-through dozens of rounds, and the evening is still loose parts. Day 5
+through dozens of dining rooms, and the round is still loose parts. Day 5
 adds the think-it-over step (the SwiGLU feed-forward). It then packages
-the whole evening into the transformer decoder block, the repeating unit
+the whole round into the transformer decoder block, the repeating unit
 that real models stack.

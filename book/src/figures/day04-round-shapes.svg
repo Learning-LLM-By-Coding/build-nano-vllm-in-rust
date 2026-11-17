@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 720 488" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day04-round-shapes-title day04-round-shapes-desc" id="day04-round-shapes-root">
-<title id="day04-round-shapes-title">One round of attention, in shapes</title>
-<desc id="day04-round-shapes-desc">Prepped cards x [3, 8] become questions q [3, 8] and shared topic cards and statements k, v [3, 4]; each of 4 ears makes a [3, 3] shares table; blending, stitching and re-mixing return [3, 8].</desc>
+<title id="day04-round-shapes-title">One conversation, in shapes</title>
+<desc id="day04-round-shapes-desc">Prepped cards x [3, 8] become questions q [3, 8] and shared topic cards and statements k, v [3, 4]; each of 4 ears makes a [3, 3] shares grid; blending, stitching and re-mixing return [3, 8].</desc>
 <defs>
       <style>#day04-round-shapes-root { --color-paper: #ffffff;
       --color-ink: #111111;
@@ -36,14 +36,14 @@
 <rect x="24" y="183" width="200" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
 <text x="36" y="207" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">k, v</text>
 <text x="212" y="207" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[3, 4]</text>
-<text x="244" y="207" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">only 2 SHARED topic/statement pairs —</text>
-<text x="244" y="228" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">half the table space</text>
+<text x="244" y="207" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">only 2 shared topic/statement pairs —</text>
+<text x="244" y="228" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">half the memory</text>
 <text x="68" y="260" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">per ear: stamp seats onto <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">q</tspan> and <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">k</tspan>, match, mask the</text>
 <text x="68" y="282" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">future, split shares</text>
 <rect x="24" y="298" width="200" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
 <text x="36" y="322" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">shares</text>
 <text x="212" y="322" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[3, 3] ×4</text>
-<text x="244" y="322" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">who listens to whom, one table per ear —</text>
+<text x="244" y="322" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">who listens to whom, one grid per ear —</text>
 <text x="244" y="343" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">rows sum to 1, zeros above the diagonal</text>
 <text x="68" y="375" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">blend each ear&#x27;s statements by its shares, stitch the</text>
 <text x="68" y="397" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">ears, re-mix (<tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">o</tspan>)</text>

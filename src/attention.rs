@@ -40,7 +40,7 @@ pub fn softmax_rows(scores: &Tensor) -> Result<Tensor> {
     exp.broadcast_div(&total)
 }
 
-/// Analogy: one full listening round at the table. Each guest asks their
+/// Analogy: one full conversation at the table. Each guest asks their
 /// question (q) of every earlier guest's topic card (k), splits their
 /// attention into shares, and walks away with the share-weighted blend of
 /// what those guests actually said (v).
@@ -161,7 +161,7 @@ mod tests {
 
     #[test]
     fn seat_zero_hears_only_its_own_statement() -> Result<()> {
-        // The first guest has nobody before them: their listening round
+        // The first guest has nobody before them: their conversation
         // returns exactly their own statement, bit for bit.
         let device = Device::Cpu;
         let q = Tensor::new(&[[1_f32, 0.0], [0_f32, 1.0]], &device)?;

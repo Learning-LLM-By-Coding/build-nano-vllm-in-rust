@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day04-one-guest-1-title day04-one-guest-1-desc" id="day04-one-guest-1-root">
-<title id="day04-one-guest-1-title">Stage 1: one card becomes three slips</title>
+<title id="day04-one-guest-1-title">Stage 1: one card becomes a question, a topic card and a statement</title>
 <desc id="day04-one-guest-1-desc">Guest 2&#x27;s [1, 8] prepped card goes through the q, k and v translators into a [1, 8] question (4 ears × 2) and a [1, 4] topic card and statement (2 shared pairs × 2).</desc>
 <defs>
       <style>#day04-one-guest-1-root { --color-paper: #ffffff;

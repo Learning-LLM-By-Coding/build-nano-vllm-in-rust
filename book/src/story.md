@@ -9,7 +9,7 @@ you can always picture the engine, even on the days the code gets dense.
 This page keeps the whole story in one place:
 
 - **Before you start**, read it through once. A few minutes here give you
-  a map of where the course is going, and every later chapter will feel
+  a map of where this book is going, and every later chapter will feel
   like a place you have already visited.
 
 - **While you work**, come back whenever a name from an earlier day stops
@@ -31,7 +31,7 @@ introduced it, if you want the full explanation again.
 | 2 | [The cook learns](#day-2--the-cook-learns) | bigram model, training, autoregression |
 | 3 | [The dining room opens](#day-3--the-dining-room-opens) | guest, one-hot, embedding, RMSNorm, Linear, RoPE |
 | 4 | [The table conversation](#day-4--the-table-conversation) | attention, q/k/v, causal mask, softmax, heads, GQA |
-| 5 | [The evening, packaged](#day-5--the-evening-packaged) | feed-forward (SwiGLU), residual, pre-norm, decoder block |
+| 5 | [The round, packaged](#day-5--the-round-packaged) | feed-forward (SwiGLU), residual, pre-norm, decoder block |
 
 ## Day 1 — the kitchen
 
@@ -77,7 +77,7 @@ next piece, and choose one.
 
 *What it is:* the model's output: one score for every token in the vocabulary. A higher score means the model thinks that token is a likelier next token.
 
-*In the story:* every dish the kitchen could serve next gets a score.
+*In the story:* every dish (every token the model could produce next) gets a score.
 
 </div>
 
@@ -87,7 +87,7 @@ next piece, and choose one.
 
 *What it is:* choose the token with the highest logit. The same input always gives the same choice, which makes the engine easy to test.
 
-*In the story:* the judge always picks the highest-scoring dish. No dice are involved.
+*In the story:* the judge always picks the highest-scoring dish, the token with the top score. No dice are involved.
 
 </div>
 
@@ -110,7 +110,7 @@ language model.
 
 <div class="concept" id="training">
 
-**Training — learning from old tickets** · [Day 2](day-02-toy-language-model.md)
+**Training — learning from old order tickets** · [Day 2](day-02-toy-language-model.md)
 
 *What it is:* adjusting a model's numbers based on example text. Real training uses gradient descent, a smarter version of the same idea.
 
@@ -124,7 +124,7 @@ language model.
 
 *What it is:* generating text one token at a time, feeding each chosen token back in as input for the next step.
 
-*In the story:* the cook serves a course, looks at what was just served, and uses it to choose the next one — again and again.
+*In the story:* the cook serves a course (one new token, added to the end of the text), looks at what was just served, and uses it to choose the next one — again and again.
 
 </div>
 
@@ -132,8 +132,9 @@ language model.
 
 The kitchen alone can only look one token back. So the **dining room**
 opens, and your prompt becomes tonight's table of **guests**. Before anyone
-talks, a host gets every guest ready. The host swaps number badges for
-profile cards, levels voices, rewrites cards, and stamps seat numbers.
+talks, every guest gets ready: number badges are swapped for profile
+cards, voices are leveled, cards are rewritten, and seat numbers are
+stamped on.
 
 <div class="concept" id="guest">
 
@@ -141,7 +142,7 @@ profile cards, levels voices, rewrites cards, and stamps seat numbers.
 
 *What it is:* one token of your prompt, seen from inside the model. A prompt of five tokens seats five guests. With the byte tokenizer, a guest is one byte, which is one letter of plain English. From Day 7, a guest is a word piece.
 
-*In the story:* each guest carries a card of numbers describing them, and from Day 4 the guests talk to each other.
+*In the story:* each guest carries a card of numbers describing them, and from Day 4 the guests talk to each other. The same token wears different names at different moments: a jar in the pantry, a dish the judge weighs, the course that is served, and then a guest at the table.
 
 </div>
 
@@ -159,9 +160,9 @@ profile cards, levels voices, rewrites cards, and stamps seat numbers.
 
 **Embedding — the profile card** · [Day 3, section A](day-03-layers-before-attention.md)
 
-*What it is:* a lookup table that turns a token id into a short list of numbers describing that token. In a trained model, tokens used in similar ways carry similar numbers.
+*What it is:* a lookup in a grid of numbers: a token id picks one row, a short list of numbers describing that token. In a trained model, tokens used in similar ways carry similar numbers.
 
-*In the story:* at the door, the host swaps badge 97 for card 97 from a filing cabinet. The same badge always gets the same card.
+*In the story:* at the front door, badge 97 is swapped for card 97 from a filing cabinet. The same badge always gets the same card.
 
 </div>
 
@@ -258,14 +259,15 @@ connects an "it" back to the thing it refers to.
 
 *What it is:* several query heads share one key/value pair, so fewer keys and values are stored.
 
-*In the story:* questions are asked once and thrown away. Topic cards and statements, though, stay on the table for every future guest, so groups of ears share them to save table space.
+*In the story:* questions are asked once and thrown away. Topic cards and statements, though, stay in memory for every future guest, so groups of ears share them to save memory.
 
 </div>
 
-## Day 5 — the evening, packaged
+
+## Day 5 — the round, packaged
 
 After the conversation, each guest **thinks it over alone**, and nothing
-anyone does ever erases a guest's original card. Then the whole evening
+anyone does ever erases a guest's original card. Then the whole round
 (level, talk, level, think) is packaged into one repeatable unit, and a
 real model runs that unit dozens of times in a row.
 
@@ -285,7 +287,7 @@ real model runs that unit dozens of times in a row.
 
 *What it is:* adding a step's output to its input instead of replacing the input, so the original information always survives.
 
-*In the story:* neither talking nor thinking replaces a guest's card. Their conclusions are penciled onto it, so after 28 rounds (Qwen3-0.6B's 28 dining rooms) each guest is still recognizably themselves.
+*In the story:* neither talking nor thinking replaces a guest's card. Their conclusions are penciled onto it, so after 28 rounds, one per dining room (the real model you load on Day 6 has 28), each guest is still recognizably themselves.
 
 </div>
 
@@ -301,11 +303,11 @@ real model runs that unit dozens of times in a row.
 
 <div class="concept" id="block">
 
-**Decoder block — one evening** · [Day 5, section B](day-05-decoder-block.md)
+**Decoder block — one round** · [Day 5, section B](day-05-decoder-block.md)
 
 *What it is:* one full round of norm, attention, residual add, norm, feed-forward, and residual add. A real model stacks many blocks, each with its own weights.
 
-*In the story:* the whole evening, packaged into one repeatable routine. The choreography never changes, but every round looks for something new.
+*In the story:* the whole round, packaged into one repeatable routine. The choreography never changes, but every round looks for something new.
 
 </div>
 

@@ -12,8 +12,8 @@
 
 ```bash
 # Build mode — start (or restart) your branch from yesterday's checkpoint.
-# Already on my-course from Day 4? Just keep going — no command needed.
-git switch -c my-course v1-day-04
+# Already on my-engine from Day 4? Just keep going — no command needed.
+git switch -c my-engine v1-day-04
 
 # Inspect mode — read along with the finished code instead:
 git switch --detach v1-day-05a         # then 05b as you pass the section
@@ -37,15 +37,19 @@ everything you already built into one unit.
 
 ## 1. Why we need it
 
-**The story so far** — remember [the restaurant](story.md): the kitchen (Day 1), the
-cook who learns from old tickets (Day 2), the dining room where [guests](story.md#guest) (one per token of your
-prompt) got their [profile cards](story.md#embedding) (Day 3). And last
-night, at last, came the [table conversation](story.md#attention): every guest walked away with a card full of borrowed
-information (Day 4). Today the evening becomes something the restaurant
-can *repeat*, night after night, round after round (Qwen3-0.6B, the
-model you load on Day 6, runs 28).
+**The story so far** — remember [the restaurant](story.md): the kitchen
+(Day 1), the cook who learns from old order tickets (Day 2), the dining
+room where [guests](story.md#guest) (one per token of your prompt) got
+their [profile cards](story.md#embedding) (Day 3).
 
-Why repeat it? One round of conversation is not a model. A real LLM runs
+And last night, at last, came the [table
+conversation](story.md#attention): every guest walked away with a card
+full of borrowed information (Day 4). Today that routine becomes a
+**round**, one dining room's whole routine, which the restaurant can
+*repeat*, room after room (Qwen3-0.6B, the model you load on Day 6, has 28
+rooms).
+
+Why repeat it? One conversation is not a model. A real LLM runs
 dozens of rounds in a row, each with its own learned weights. Here is the
 whole machine, with the day each part arrives:
 
@@ -91,10 +95,10 @@ The repeating unit in the middle is the **transformer decoder block**, or
   **residual connection**.
 
 - **The notes snowball.** Each round now adds more onto the card, so the
-  card's numbers can grow round after round. A step that reads bigger
+  card's numbers can grow round after round. An activity that reads bigger
   numbers writes bigger notes, and the growth feeds itself. The fix is
   Day 3's [volume knob](story.md#rmsnorm) (`RmsNorm`), turned before every
-  step on the copy that step reads. Leveling first is called
+  activity on the copy that activity reads. Leveling first is called
   **pre-norm**.
 
 You build these fixes in two sections. Section A builds the digest (the
@@ -111,7 +115,7 @@ results do not move.
 
 ## 2. Mental model
 
-Tonight the evening earns its rhythm. Walk its last two rituals, then
+Tonight the round earns its rhythm. Walk its last two rituals, then
 watch the whole thing get packaged:
 
 - **Think it over, alone.** After the conversation, each guest digests.
@@ -130,17 +134,18 @@ watch the whole thing get packaged:
 - **The knob turns before every activity**, on the copy that activity
   reads (pre-norm, what Meta's Llama and Qwen, Day 6's model, actually run).
 
-- **One evening, packaged.** A **block** is that whole sequence (knob,
+- **One round, packaged.** A **block** is that whole sequence (knob,
   conversation, pencil; knob, digestion, pencil) as a single struct. A
-  real model runs this same evening dozens of times in a row. The
-  choreography never changes, but every round carries its own learned
-  weights, so every round looks for something new. If you could watch one
-  card travel down the stack, you would see it grow richer round by round.
-  The early rounds pick up surface things, like spellings and word
-  endings, and the later rounds begin to catch meaning. Today you build
-  one round, and Day 6 stacks them.
+  real model runs this same round dozens of times in a row, once per
+  dining room. The choreography never changes, but every round carries its
+  own learned weights, so every round looks for something new.
 
-The figure uses the demo's table from section 4: the prompt `"abc"`, so 3
+  If you could watch one card travel down the stack, you would see it grow
+  richer round by round. The early rounds pick up surface things, like
+  spellings and word endings, and the later rounds begin to catch meaning.
+  Today you build one round, and Day 6 stacks them.
+
+The figure uses the demo's numbers from section 4: the prompt `"abc"`, so 3
 guests, each with Day 3's 8-number card.
 
 <figure class="book-figure">
@@ -254,15 +259,16 @@ impl Mlp {
 }
 ```
 
-You typed three translators there, so meet them properly. `up_proj`
-widens each card into a bigger scratch space, room to think. In today's
-demo, 8 numbers become 16. `gate_proj` reads the *same* card and produces
-one control value per scratch slot. And `down_proj` shrinks the finished
-thought back to card size. The flow in `forward` is exactly that: widen,
-gate, shrink.
+You typed three translators there, so meet them properly. `up_proj` widens
+each card into a bigger scratch space, room to think. In today's demo, 8
+numbers become 16. `gate_proj` reads the *same* card and produces one
+control value per scratch number.
+
+And `down_proj` shrinks the finished thought back to card size. The flow
+in `forward` is exactly that: widen, gate, shrink.
 
 The `*` in `gate * self.up_proj.forward(x)?` is not a matmul. Both sides
-have the same shape, and `*` multiplies them slot by slot: gate number 0
+have the same shape, and `*` multiplies them number by number: gate number 0
 times scratch number 0, gate number 1 times scratch number 1, and so on.
 
 Now the soft switch itself. It is built from **sigmoid**,
@@ -273,15 +279,16 @@ negative `g` comes out near 0, and in between the curve bends smoothly
 (its lowest point is about −0.28).
 
 So why a *gate*, instead of squashing the widened card with some fixed
-function? A fixed squash treats every slot the same way, every time. The
+function? A fixed squash treats every number the same way, every time. The
 gate is computed from its own reading of the card, so it decides *per
-slot, per card*. `silu` sends a strongly negative gate reading toward
-zero, and multiplying by nearly-zero erases that slot's thought. A
-confident reading lets its thought through almost unchanged. So the
-network learns not just *what to compute* but *what to keep*.
-That gate-times-value pattern is the "GLU" family. The `silu`-gated
-variant is the one the Llama/Qwen models actually ship, and Candle
-provides `silu()` ready-made.
+number, per card*. `silu` sends a strongly negative gate reading toward
+zero, and multiplying by nearly-zero erases that number's thought.
+
+A confident reading lets its thought through almost unchanged. So the
+network learns not just *what to compute* but *what to keep*. That
+gate-times-value pattern is the "GLU" family. The `silu`-gated variant is
+the one the Llama/Qwen models actually ship, and Candle provides `silu()`
+ready-made.
 
 The file is new, so declare it. In `src/main.rs`, add this line between
 `mod attention;` and `mod layers;`:
@@ -396,7 +403,7 @@ one struct composed of everything already built.</div>
 <a href="https://www.youtube.com/watch?v=aircAruvnKk">▶ what the per-token network is (3Blue1Brown)</a>
 </div>
 
-Now comes the payoff of five days of parts: boxing up the evening. The
+Now comes the payoff of five days of parts: boxing up the round. The
 `Block` owns Day 4's `Attention`, today's `Mlp`, and two volume knobs of
 its own. So first widen the imports. At the top of `src/block.rs`,
 replace the `use crate::layers::Linear;` line with these two, so the code
@@ -633,14 +640,14 @@ fn run_block_demo() -> Result<()> {
 }
 ```
 
-Two things to notice. First, the demo feeds
-the block the raw `cards`, not `leveled`. Turning the volume knobs is the
-block's own job now, so the demo hands it untouched cards and lets it
-level them inside. Second, ownership: `Block::new(…)`
-*moves* `attn` and `mlp` into the block. After that line they belong to
-the block, and the old variables can't be used again. That is why the
-demo builds the block *after* the `attn:` print: one last use, then the
-demo hands them over.
+Two things to notice. First, the demo feeds the block the raw `cards`, not
+`leveled`. Turning the volume knobs is the block's own task now, so the
+demo hands it untouched cards and lets it level them inside. Second,
+ownership: `Block::new(…)` *moves* `attn` and `mlp` into the block.
+
+After that line they belong to the block, and the old variables can't be
+used again. That is why the demo builds the block *after* the `attn:`
+print: one last use, then the demo hands them over.
 
 The headline is now user-facing behavior, so pin it from
 the outside in `tests/cli.rs`, above
@@ -698,19 +705,21 @@ swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2 moved: true
 Everything from Day 4 still holds: scores, mask, shares, and the GQA
 shapes. Read the two new lines against what you built:
 
-- `block:  [3, 8]` — `Block::forward` ran the whole evening (knob,
+- `block:  [3, 8]` — `Block::forward` ran the whole round (knob,
   conversation, pencil; knob, digest, pencil). It handed back cards the
   same size they arrived, which is the stackability guarantee, live.
 
 - `swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2
   moved: true` — the demo ran the block on `"abc"`, ran it again on
-  `"abz"`, and compared the outputs row by row. The label counts guests
-  from 1, the rows from 0 (like Day 4's seats), so guest 3 (`c`) is row 2.
-  Rows 0 and 1 are bit-identical across the two runs, because
-  `mask_future` gives the changed guest exactly zero share in them, and
-  every other step in the block works on each guest alone. Only row 2
-  moved. (The `"abz"` run prints only this
-  comparison; the tables are from `"abc"`.)
+  `"abz"`, and compared the outputs row by row.
+
+  The label counts guests from 1, the rows from 0 (like Day 4's seats), so
+  guest 3 (`c`) is row 2. Rows 0 and 1 are bit-identical across the two
+  runs, because `mask_future` gives the changed guest exactly zero share
+  in them, and every other stage in the block works on each guest alone.
+
+  Only row 2 moved. (The `"abz"` run prints only this comparison; the
+  grids are from `"abc"`.)
 
 This one-way-street rule is **causality**: a token can never affect the
 tokens before it, the way changing a novel's last page cannot rewrite its
@@ -832,7 +841,7 @@ extra per-head q/k normalization also waits for the real checkpoint
 
 - Without a per-feature nonlinearity, stacked rounds can only re-blend
   what is already on the cards. The `silu` gate in the SwiGLU
-  feed-forward is the one step that bends each number by its own value.
+  feed-forward is the one stage that bends each number by its own value.
 
 - Add each sublayer's result onto the card instead of replacing it. The
   residual is why the original token survives 28 rounds.

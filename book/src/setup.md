@@ -13,14 +13,14 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
 You do not need to pick a version. The repository contains a
-`rust-toolchain.toml` that pins the exact compiler this course was built and
+`rust-toolchain.toml` that pins the exact compiler this book was built and
 tested with. The first time you run `cargo` inside the repo, rustup reads
 that file and installs the pinned version for you.
 
 ## 2. Clone and verify
 
 Before your first command, know this: **`main` always holds the most
-recently finished day** of the course. Every checkpoint's exact state lives
+recently finished day** of this book. Every checkpoint's exact state lives
 forever under its tag. This page is about Day 0, so jump to its checkpoint
 first:
 
@@ -51,7 +51,7 @@ rules keep yours safe. Breaking either rule shows the same symptom:
 
 1. **Clone the original, not a fork.** GitHub forks copy only the default
    branch, with *none of the tags*. You never push to this repository, so
-   you don't need a fork to follow the course. If you want your build-along
+   you don't need a fork to follow this book. If you want your build-along
    branch on your own GitHub, push to a fork but fetch the checkpoints from
    the original:
 
@@ -120,7 +120,7 @@ cargo test
 yourself by following the chapter, and compare after each section:
 
 ```bash
-git switch -c my-course v1-day-04
+git switch -c my-engine v1-day-04
 # ...follow the Day 5 chapter, section A...
 ./scripts/compare.sh v1-day-05a    # code-only diff against the checkpoint
 # ...section B...
@@ -131,17 +131,18 @@ git switch -c my-course v1-day-04
 
 The compare script checks only the code you are expected to write (`src/`,
 `tests/`, `Cargo.toml`). It leaves out chapters, the README, `Cargo.lock`,
-and course infrastructure on purpose. It is also forgiving about style. It
-ignores comments, blank lines, extra whitespace, and the order of top-level
-items, so your `fn` may sit above or below the checkpoint's. It reads your
-files exactly as they sit on disk. You don't need to `git add` or commit
-before comparing, and comparing never touches your git state.
-**Its final ✓ line means the section is done**, even though your copy of the
-book still shows yesterday's prose.
+and book infrastructure on purpose. It is also forgiving about style. It
+ignores comments, blank lines, extra whitespace, and the order of
+top-level items, so your `fn` may sit above or below the checkpoint's.
+
+It reads your files exactly as they sit on disk. You don't need to `git
+add` or commit before comparing, and comparing never touches your git
+state. **Its final ✓ line means the section is done**, even though your
+copy of the book still shows yesterday's prose.
 
 <div class="callout">
 
-**While the course is under construction**, a checkpoint tag occasionally
+**While this book is under construction**, a checkpoint tag occasionally
 moves when an earlier day receives a fix. A plain `git fetch` or `git pull`
 deliberately does *not* move a tag you already have. If a checkpoint ever
 looks stale (a missing file, or output that does not match its chapter),
@@ -155,7 +156,7 @@ git fetch --tags --force
 
 ## 5. The green bar
 
-Every checkpoint of this course must end green, including this one. It
+Every checkpoint of this book must end green, including this one. It
 helps to get in the habit now:
 
 ```bash
@@ -173,7 +174,7 @@ cargo run                                  # the day's smoke command
 mdbook test book -L target/doctest-libs    # the book's own code blocks
 ```
 
-That last gate compiles and runs the Rust code blocks inside the book
+That last gate compiles and runs the Rust code blocks inside this book
 chapters themselves. It keeps the prose from silently drifting away from the
 code.
 

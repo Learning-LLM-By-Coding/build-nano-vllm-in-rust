@@ -36,17 +36,20 @@ first becomes useful on Day 9, and the tests never require one.
 
 Every day adds a scene to one running story: a little restaurant. Each
 piece of the engine is one thing in it — a jar in the pantry, a guest at a
-table, a chef with a recipe book.
-[The restaurant: an analogy to help you build the right mental model](story.md) keeps the whole story on one page.
-Read it once before you start, as a map of the course. Come back to it
-whenever an earlier idea gets fuzzy. In the chapters, a concept name with a
-dotted underline links to that page. Click it, and a short reminder opens
-right where you are reading. It tells you what the concept is, what it is in
-the story, and which day introduced it. The story rides along in the code,
-too. Every `Analogy:` comment is highlighted, so you can spot where a scene
-from the story meets the code that builds it.
+table, a chef with a recipe book. [The restaurant: an analogy to help you
+build the right mental model](story.md) keeps the whole story on one page.
 
-## How the course works
+Read it once before you start, as a map of this book. Come back to it
+whenever an earlier idea gets fuzzy. In the chapters, a concept name with
+a dotted underline links to that page. Click it, and a short reminder
+opens right where you are reading.
+
+It tells you what the concept is, what it is in the story, and which day
+introduced it. The story rides along in the code, too. Every `Analogy:`
+comment is highlighted, so you can spot where a scene from the story meets
+the code that builds it.
+
+## How this book works
 
 Each day is one chapter and one theme, built as **two to four related
 sections**. Each section adds one focused capability that you can run when
@@ -63,13 +66,16 @@ Each section introduces at most one new *systems* concept. You learn the
 Rust language by reference instead of by detour. Every code section opens
 with a small **Rust used here** strip. It links exactly the concepts its
 code leans on (borrowing, `Option`, iterators, …) to the matching pages of
-Google's [Comprehensive Rust](https://google.github.io/comprehensive-rust/)
-course. Those links open in a side panel *next to* the code, so you can fill
-a gap without leaving the page (Esc closes the panel). A git submodule
-(`third_party/comprehensive-rust`) pins the exact upstream revision the
-course references. One optional script stages the linked pages locally for
-fully offline reading — see [Setup](setup.md). The course assumes no prior
-Rust, so read only the strips you need.
+Google's [Comprehensive
+Rust](https://google.github.io/comprehensive-rust/) course.
+
+Those links open in a side panel *next to* the code, so you can fill a gap
+without leaving the page (Esc closes the panel). A git submodule
+(`third_party/comprehensive-rust`) pins the exact upstream revision this
+book references. One optional script stages the linked pages locally for
+fully offline reading — see [Setup](setup.md).
+
+This book assumes no prior Rust, so read only the strips you need.
 
 Deep-learning theory gets the same deal. Sections that introduce ML
 machinery (embeddings, normalization, attention, …) carry a teal **LLM
@@ -110,10 +116,10 @@ checkpoint.
 
 Plan on roughly 30–32 hours end to end.
 
-Two rules keep the course honest:
+Two rules keep this book honest:
 
 1. **Every day ends green.** At every tag, formatting, lints, tests, the
-   day's smoke command, and the book's own code examples all pass.
+   day's smoke command, and this book's own code examples all pass.
 
 2. **Naive before optimized.** Every optimization arrives after a slow
    version you already understand and can see is correct. It also keeps an

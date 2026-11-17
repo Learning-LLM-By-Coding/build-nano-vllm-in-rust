@@ -7,23 +7,25 @@ inference engine in Rust — from your first tensor to a streaming HTTP server
 with real continuous batching, a paged KV cache, and honest benchmarks.
 
 Each day is one theme built as two to four related sections, and the
-repository history **is** the course: every day ends green and receives an
+repository history **is** the syllabus: every day ends green and receives an
 immutable checkpoint tag. Days 0–5 live in this repository, free; Days
 6–15 continue in the Pro edition (see
-[Get the full course](#get-the-full-course)). The full day-by-day syllabus
-is in the book's [introduction](book/src/introduction.md).
+[Get the full book](#get-the-full-book)). The full day-by-day syllabus
+is in this book's [introduction](book/src/introduction.md).
 
 ## Prerequisites
 
 Some programming experience, in any language — that is the whole list.
-${\color{red}\textbf{Rust is not a prerequisite}}$: the language is taught as you go, one
-concept chip at a time (each opens Comprehensive Rust in a side panel).
-${\color{red}\textbf{Deep learning is not a prerequisite}}$: every concept arrives with a
-plain-English analogy and a ▶ video, and the math is never required to
-progress (see "What this course is — and isn't — about" below). No GPU is
-needed until Day 9, and never for the tests.
+${\color{red}\textbf{Rust is not a prerequisite}}$: the language is taught
+as you go, one concept chip at a time (each opens Comprehensive Rust in a
+side panel).
 
-## Why this course?
+${\color{red}\textbf{Deep learning is not a prerequisite}}$: every concept
+arrives with a plain-English analogy and a ▶ video, and the math is never
+required to progress (see "What this book is — and isn't — about" below).
+No GPU is needed until Day 9, and never for the tests.
+
+## Why this book?
 
 Knowing what each part of an inference engine does is not the same as
 knowing how the parts behave *together* — and the second kind of
@@ -52,7 +54,7 @@ each one stops short of it:
   everything production needs, and it is hard to tell the load-bearing
   code from the rest.
 
-This course takes a fourth path: **build a nano version from scratch**,
+This book takes a fourth path: **build a nano version from scratch**,
 keeping only the load-bearing parts. You write every one of them, one day
 at a time, and each new part lands in an engine that already runs. So you
 watch every new part change how the old ones behave. The KV cache makes
@@ -64,7 +66,7 @@ the interactions between them, which is what every real engine is made of.
 
 **And one story carries you through the hard parts.** An inference engine
 has to run a real model, so some days are full of deep-learning machinery
-— attention, normalization, rotary positions. This course is not about
+— attention, normalization, rotary positions. This book is not about
 that math, and you do not need to master it to finish. Instead, every
 concept arrives as part of one running story: a little restaurant, built
 one scene at a time. A token is a guest at a table. Attention is the table
@@ -74,11 +76,11 @@ then as code — which is how the deep-learning parts stay understandable
 even for readers who have never studied them.
 [The restaurant: an analogy to help you build the right mental model](book/src/story.md)
 keeps the whole story on one page: read it first for a ten-minute tour of
-where the course goes, and come back whenever an idea gets fuzzy.
+where the book goes, and come back whenever an idea gets fuzzy.
 
 The first six days, free in this repository,
 let you try building it yourself, end to end, on a working transformer. The
-[Pro edition](#get-the-full-course) carries the same engine the rest of
+[Pro edition](#get-the-full-book) carries the same engine the rest of
 the way: the KV cache, continuous batching, paged memory, and a real
 streaming service.
 
@@ -110,14 +112,16 @@ system you meet afterwards will read as familiar.
 
 Fair question — the ML world speaks Python. Three honest reasons:
 
-- **The second half of this course is systems programming.** The KV
-  cache, paged memory, continuous batching, surviving load — those days
-  are all one question in different clothes: *who owns which block of
-  memory, and when is it safe to reuse?* Rust's ownership model makes you
-  answer that out loud, so the compiler becomes a second teacher. In
-  Python, those chapters would be hand-waving.
+- **The second half of this book is systems programming.** The KV cache,
+  paged memory, continuous batching, surviving load — those days are all
+  one question in different clothes: *who owns which block of memory, and
+  when is it safe to reuse?*
 
-- **Every checkpoint has to work forever.** The whole course rests on
+  Rust's ownership model makes you answer that out loud, so the compiler
+  becomes a second teacher. In Python, those chapters would be
+  hand-waving.
+
+- **Every checkpoint has to work forever.** The whole book rests on
   `git checkout <any tag>` → green bar. One toolchain, no virtualenv
   drift, no "works on my machine": a Rust checkpoint that compiled on
   tag day still compiles years later. A Python version of that promise
@@ -156,10 +160,10 @@ One engine — single GPU, text only — built in four arcs:
 **Volume 2** (planned): tensor parallelism, custom CUDA kernels,
 quantization, speculative decoding, multimodal inference.
 
-## What this course is — and isn't — about
+## What this book is — and isn't — about
 
-This is a course about **inference engineering**: batching, caching,
-scheduling, memory management, serving. It is *not* a course about deep
+This is a book about **inference engineering**: batching, caching,
+scheduling, memory management, serving. It is *not* a book about deep
 learning or its math. Some days (3–6 especially) necessarily contain
 math-flavored code — normalization formulas, rotations, attention — because
 a real engine has to run a real model, and the code has to compile.
@@ -173,14 +177,14 @@ statement of **what it is and why the engine needs it** — only the math of
 still recommended (fingers build a familiarity that reading skips), and
 copying them straight from the chapter is a completely legitimate choice:
 that code exists so the engine works, not to test you. The lessons this
-course actually cares about — the engine-side ideas — never hide inside
+book actually cares about — the engine-side ideas — never hide inside
 the math.
 
 ## The 15 days
 
 Roughly 30–32 hours end to end. Each day is one theme built as two to four
 related sections, and every section ends at a runnable, tagged checkpoint —
-the per-section breakdown lives in the book's
+the per-section breakdown lives in this book's
 [introduction](book/src/introduction.md).
 
 | Day | Theme | In plain words | ≈&nbsp;Time |
@@ -204,10 +208,10 @@ the per-section breakdown lives in the book's
 
 ✅ = finished — the day's chapter and checkpoint tags are in this repository.
 ✅&#8288;🔒 = finished, in the Pro edition — unlocked the moment you join.
-🔒 = Pro edition — see [Get the full course](#get-the-full-course).
+🔒 = Pro edition — see [Get the full book](#get-the-full-book).
 Days 0–5 are free in this repository.
 
-## Get the full course
+## Get the full book
 
 **Days 0–5 are free, right here** — the complete arc from your first
 tensor to a full transformer decoder block, with every checkpoint tag and
@@ -236,9 +240,9 @@ lifetime updates to Volume 1.
 **Launch offer:** the first 20 early adopters get $20 off with code
 `LAUNCH` — or [buy at $19 with the code pre-applied](https://buy.polar.sh/polar_cl_FtuqD869kNyzM6SuPqazhW2QPQjSW8adblmzE0aGZmM).
 
-## How to follow the course
+## How to follow this book
 
-Read the book chapters in `book/` (rendered with [mdBook](https://rust-lang.github.io/mdBook/)):
+Read this book's chapters in `book/` (rendered with [mdBook](https://rust-lang.github.io/mdBook/)):
 
 ```bash
 mdbook serve book --open
@@ -253,7 +257,7 @@ git switch --detach v1-day-08
 cargo test
 
 # Mode 2 — build it yourself: start from yesterday, follow today's chapter
-git switch -c my-course v1-day-07
+git switch -c my-engine v1-day-07
 # ...write the code from the Day 8 chapter, section by section...
 ./scripts/compare.sh v1-day-08a   # code-only diff after section A
 ./scripts/compare.sh v1-day-08    # the finished day
@@ -261,9 +265,11 @@ git switch -c my-course v1-day-07
 
 Every *section* of a day is one commit with its own checkpoint tag
 (`v1-day-08a`, `v1-day-08b`, …), and the day's last section doubles as the
-day tag. The compare script checks only the code you write (`src/`,
-`tests/`, `Cargo.toml`) — never chapters, README, or course infrastructure —
-and ignores comments, blank lines, and top-level item order, so its ✓ means
+day tag.
+
+The compare script checks only the code you write (`src/`, `tests/`,
+`Cargo.toml`) — never chapters, README, or book infrastructure — and
+ignores comments, blank lines, and top-level item order, so its ✓ means
 the section is done.
 
 ## The green bar
@@ -276,17 +282,17 @@ A checkpoint is not done until this passes at its tag:
 
 The script runs, in order: `cargo fmt --check`,
 `cargo clippy --all-targets -- -D warnings`, `cargo test`, the day's smoke
-run, and `mdbook test` — so the book's own code blocks compile and run
+run, and `mdbook test` — so this book's own code blocks compile and run
 against the same pinned dependencies as the engine.
 
 ## Credits & further learning
 
-This course stands on excellent public work. The reference chips throughout
-the book link straight into these — follow them whenever you want more than
-the course itself provides:
+This book stands on excellent public work. The reference chips throughout
+this book link straight into these — follow them whenever you want more than
+this book itself provides:
 
 - [nano-vllm](https://github.com/GeeeekExplorer/nano-vllm) — the ~1,200-line
-  Python inference engine whose spirit (and name) this course borrows. Read
+  Python inference engine whose spirit (and name) this book borrows. Read
   it after Day 15; it will feel like meeting a pen pal.
 
 - [Candle](https://github.com/huggingface/candle) — the Rust tensor library
@@ -313,7 +319,7 @@ the course itself provides:
 
 - [mdBook](https://github.com/rust-lang/mdBook) — renders this book.
 
-None of these projects are affiliated with this course; all of them deserve
+None of these projects are affiliated with this book; all of them deserve
 your time.
 
 ## License

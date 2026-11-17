@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 720 324" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day02-loop-title day02-loop-desc" id="day02-loop-root">
 <title id="day02-loop-title">Serving course after course</title>
-<desc id="day02-loop-desc">The ids feed forward into [1, 256] logits, argmax picks the next token, it is appended to ids, and the loop repeats steps times before ids are decoded once.</desc>
+<desc id="day02-loop-desc">The ids feed forward into [1, 256] logits, argmax picks the next token, it is appended to ids, and the loop repeats steps times before ids are turned back into text once.</desc>
 <defs>
       <style>#day02-loop-root { --color-paper: #ffffff;
       --color-ink: #111111;
@@ -20,7 +20,7 @@
 </defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <path d="M92,246 V266 Q92,274 84,274 H36 Q28,274 28,266 V50.0 Q28,42.0 36,42.0 H62" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#day02-loop-arrow-accent)"/>
-<text x="28" y="304" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">back to the top; repeat <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">steps</tspan> times, then decode <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">ids</tspan> once</text>
+<text x="28" y="304" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">back to the top; repeat <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">steps</tspan> times, then turn <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">ids</tspan> into text</text>
 <line x1="92" y1="60" x2="92" y2="115" stroke="#575757" stroke-width="1.5" marker-end="url(#day02-loop-arrow)"/>
 <line x1="92" y1="153" x2="92" y2="208" stroke="#575757" stroke-width="1.5" marker-end="url(#day02-loop-arrow)"/>
 <rect x="64" y="24" width="232" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>

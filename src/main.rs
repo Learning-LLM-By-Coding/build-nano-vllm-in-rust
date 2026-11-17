@@ -96,8 +96,8 @@ fn print_table(table: &Tensor) -> Result<()> {
     Ok(())
 }
 
-/// Analogy: seat tonight's guests and hold one round of the table
-/// conversation, printing the result of every step.
+/// Analogy: seat tonight's guests and hold one conversation at the
+/// table, printing the result of every stage.
 fn run_block_demo() -> Result<()> {
     let device = Device::Cpu;
     // Day 3's front door and volume knob, unchanged. No demo translator
@@ -112,7 +112,7 @@ fn run_block_demo() -> Result<()> {
     println!("cards:  {:?}", cards.dims());
 
     // One head over whole cards for now: level the volume, stamp the seats,
-    // then hold the listening round by hand — printing after every step.
+    // then hold the conversation by hand — printing after every stage.
     let leveled = norm.forward(&cards)?;
     let q = layers::rope(&leveled)?;
     let k = layers::rope(&leveled)?;
@@ -130,7 +130,7 @@ fn run_block_demo() -> Result<()> {
     let heard = attention::attend(&q, &k, &leveled)?;
     println!("heard:  {:?}", heard.dims());
 
-    // The packaged layer: the same round through real projections.
+    // The packaged layer: the same conversation through real projections.
     println!("q proj: 8 in -> 8 out (4 heads x 2);  k,v proj: 8 in -> 4 out (2 SHARED heads x 2)");
     let attn = attention::Attention::new(
         layers::Linear::new(ramp(8, 8, 0.02, &device)?),

@@ -24,7 +24,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn roundtrip_ascii() {
+    fn decode_undoes_encode_ascii() {
         let ids = encode("hello");
         assert_eq!(ids, vec![104, 101, 108, 108, 111]);
         assert_eq!(decode(&ids), Some("hello".to_string()));

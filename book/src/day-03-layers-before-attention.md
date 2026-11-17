@@ -13,8 +13,8 @@
 
 ```bash
 # Build mode — start (or restart) your branch from yesterday's checkpoint.
-# Already on my-course from Day 2? Just keep going — no command needed.
-git switch -c my-course v1-day-02
+# Already on my-engine from Day 2? Just keep going — no command needed.
+git switch -c my-engine v1-day-02
 
 # Inspect mode — read along with the finished code instead:
 git switch --detach v1-day-03a         # then 03b, 03c as you pass each section
@@ -24,17 +24,20 @@ git switch --detach v1-day-03a         # then 03b, 03c as you pass each section
 
 **Theory-density warning — and a promise.** Today is the most
 concept-heavy day so far: embeddings, normalization, rotary positions.
-Remember what this course is about: *inference engineering*, not deep
-learning math. Today's formulas are cargo the engine needs, not material
+Remember what this book is about: *inference engineering*, not deep
+learning math. Today's formulas are things the engine needs, not material
 you will be tested on. You will always learn *what* each block is and
-*why* the engine needs it. Only the math of *how* it works inside is
-optional. Type the blocks out anyway, because your fingers build a
-familiarity that reading skips. Or copy them straight from this page. Both
-are legitimate, and the code only has to compile. Every concept comes with
-an everyday analogy in the mental model below. Whenever you want more, the
-teal **LLM concepts used here** chips open a short video (▶) or the formal
-write-up in a side panel. Understanding compounds, and Day 4 is where
-today's pieces click together.
+*why* the engine needs it.
+
+Only the math of *how* it works inside is optional. Type the blocks out
+anyway, because your fingers build a familiarity that reading skips. Or
+copy them straight from this page. Both are legitimate, and the code only
+has to compile. Every concept comes with an everyday analogy in the mental
+model below.
+
+Whenever you want more, the teal **LLM concepts used here** chips open a
+short video (▶) or the formal write-up in a side panel. Understanding
+compounds, and Day 4 is where today's pieces click together.
 
 </div>
 
@@ -72,19 +75,24 @@ build the *layers*, the processing stations, that come before attention,
 and a new `cargo run -- layers` subcommand that walks a tiny prompt
 through them.
 
-**The story so far** — remember [the restaurant](story.md): Day 1 built the kitchen,
-and Day 2 taught the cook to choose each course from the last. Today the
-**dining room** opens. Your prompt is tonight's table of guests, with **one
-guest per token**, so a prompt of five tokens seats five guests. (With our
-byte tokenizer, one token is one byte. For plain English text, that is one
-letter: the prompt `"hi"` seats two guests, `h` and `i`. On Day 7 the real
-tokenizer arrives, and a guest becomes a word piece instead.) The engine
-is the host seating them. The conversation the guests will eventually have
-at the table is *attention*, and that is Day 4. Now picture the badge
-problem in that dining room: a table where every guest wears only a number.
-Nobody can hold a conversation with that. Today covers everything the host
-must do *before* anyone can talk, and each of today's layers is one of the
-host's moves.
+**The story so far** — remember [the restaurant](story.md): Day 1 built
+the kitchen, and Day 2 taught the cook to choose each course from the
+last. Today the **dining room** opens. Your prompt is tonight's table of
+guests, with **one guest per token**, so a prompt of five tokens seats
+five guests.
+
+(With our byte tokenizer, one token is one byte. For plain English text,
+that is one letter: the prompt `"hi"` seats two guests, `h` and `i`. On
+Day 7 the real tokenizer arrives, and a guest becomes a word piece
+instead.) The engine seats them.
+
+The conversation the guests will eventually have at the table is
+*attention*, and that is Day 4. Now picture the badge problem in that
+dining room: a table where every guest wears only a number. Nobody can
+hold a conversation with that.
+
+Today covers everything each guest must get *before* anyone can talk, and
+each of today's layers is one move in that preparation.
 
 At tomorrow's conversation, every guest gets to look around at the guests
 seated before them and borrow information from the ones that matter. That
@@ -118,7 +126,7 @@ watched the demo print them.
 
 </div>
 
-Now walk the dining room in order, one host's move per layer:
+Now walk the dining room in order, one move per layer:
 
 - **Arrival — the badge problem.** Each guest walks in wearing only a
   numbered badge (`a` is badge 97). Two guests with the same badge are
@@ -126,49 +134,63 @@ Now walk the dining room in order, one host's move per layer:
   That badge is Day 2's one-hot representation, and it is why the bigram
   was so limited.
 
-- **Embedding — swap the badge for a profile card.** The badge number
-  says *which* letter a guest is, and nothing more. So at the door, the
-  host takes the badge and hands back a profile card from a filing
-  cabinet: card 97 for badge 97. The card holds eight numbers that describe
-  the guest, and the same badge always gets the same card. Today our cards
-  hold made-up numbers. In a trained model (you will load one on Day 6),
-  the numbers were learned, so that guests used in similar ways carry
-  similar numbers. That is all an embedding is: a lookup table that turns
-  a token's id into a short list of numbers describing it.
+- **Embedding — swap the badge for a profile card.** The badge number says
+  *which* letter a guest is, and nothing more.
+
+  So at the front door, each badge is swapped for a profile card from a
+  filing cabinet: card 97 for badge 97. The card holds eight numbers that
+  describe the guest, and the same badge always gets the same card.
+
+  Today our cards hold made-up numbers. In a trained model (you will load
+  one on Day 6), the numbers were learned, so that guests used in similar
+  ways carry similar numbers. That is all an embedding is: a lookup in a
+  grid of numbers, where a token's id picks one row, a short list of
+  numbers describing it.
 
 - **RMSNorm — set everyone to the same volume.** Think of a card's numbers
   as how loudly its guest speaks. Some cards arrive loud (big numbers) and
-  some faint (tiny numbers). Before each activity, the host turns a volume
-  knob on every card, so that every guest speaks at the same loudness, 1.0.
-  The knob changes how loud a card is, never what it says: all its numbers
-  shrink or grow together, keeping their proportions. Why bother? A real
-  model repeats the evening dozens of times, and every round multiplies the
-  numbers again. Without the knob, a card that is a little too loud gets
-  louder round after round until its numbers explode toward infinity, and a
-  card that is a little too faint fades until its numbers vanish to zero.
-  Leveling everyone before every round keeps both from happening.
+  some faint (tiny numbers).
 
-- **Linear — the translator.** Each activity later in the evening needs a
-  card's information arranged differently. Think of how the same dish is
-  described one way on the menu and another way in the recipe. So before
-  each activity, a translator rewrites every card. Each number on the new
-  card is a blend of all the numbers on the old one: a bit of the first, a
-  lot of the third, none of the fifth, all added up. How much of each to
-  take is the recipe the translator follows, and those amounts are the
-  *blend weights*. Today the weights are made up, so only the *shapes* of
-  the cards are real. On Day 6, a trained chef brings the real weights.
+  Before each activity, a volume knob is turned on every card, so that
+  every guest speaks at the same loudness, 1.0. The knob changes how loud
+  a card is, never what it says: all its numbers shrink or grow together,
+  keeping their proportions.
+
+  Why bother? A real model sends every card through dozens of dining rooms
+  in a row, and each room's round (its routine of activities) multiplies
+  the numbers again.
+
+  Without the knob, a card that is a little too loud gets louder room
+  after room until its numbers explode toward infinity, and a card that is
+  a little too faint fades until its numbers vanish to zero. Leveling
+  everyone before every activity keeps both from happening.
+
+- **Linear — the translator.** Each activity later in the round needs a
+  card's information arranged differently. Think of the same news, told
+  one way to a child and another way to an expert. So before each
+  activity, a translator rewrites every card.
+
+  Each number on the new card is a blend of all the numbers on the old
+  one: a bit of the first, a lot of the third, none of the fifth, all
+  added up. How much of each to take is the recipe the translator follows,
+  and those amounts are the *blend weights*.
+
+  Today the weights are made up, so only the *shapes* of the cards are
+  real. On Day 6, a trained chef brings the real weights.
 
 - **RoPE — stamp the seat number, as clock dials.** Identical twins still
-  carry identical cards, so the host records *where each guest sits*.
-  Every pair of numbers on the card is a little dial: read the pair as a
-  point (x, y). Sitting in seat N winds each dial forward N clicks, and
-  winding rotates that point around the center. The first dial spins fast
-  and later dials spin slower, like second, minute, and hour hands. Two
-  guests *compare* cards with a dot product: multiply the numbers pairwise
-  and add them up. Here is the clever part. Comparing two guests' wound
-  dials reveals only *how many seats apart* they are, never the absolute
-  row number. And "how far apart" is
-  precisely what a conversation cares about.
+  carry identical cards, so the seat stamp records *where each guest
+  sits*. Every pair of numbers on the card is a little dial: read the pair
+  as a point (x, y).
+
+  Sitting in seat N winds each dial forward N clicks, and winding rotates
+  that point around the center. The first dial spins fast and later dials
+  spin slower, like second, minute, and hour hands. Two guests *compare*
+  cards with a dot product: multiply the numbers pairwise and add them up.
+
+  Here is the clever part. Comparing two guests' wound dials reveals only
+  *how many seats apart* they are, never the absolute row number. And "how
+  far apart" is precisely what a conversation cares about.
 
 Tomorrow, **attention** is the conversation itself. Every guest compares
 cards with everyone seated before them and decides whom to listen to.
@@ -181,7 +203,7 @@ the twins above. Its translator turns 8 numbers into 4:
   <figcaption>Figure 3.1 — Today's pipeline: only linear changes a card's size; rmsnorm and rope keep the shape.</figcaption>
 </figure>
 
-Read every shape the same way all course long: `[how many guests, how many
+Read every shape the same way throughout this book: `[how many guests, how many
 numbers each]`. In engine terms, that is `[sequence length, features]`.
 
 ## 3. Inference concepts introduced
@@ -192,7 +214,7 @@ numbers each]`. In engine terms, that is `[sequence length, features]`.
 <a href="https://www.youtube.com/watch?v=o29P0Kpobz0">▶ RoPE (Efficient NLP)</a>
 </div>
 
-- **Dense representations.** A one-hot badge needs 256 slots only to say
+- **Dense representations.** A one-hot badge needs 256 numbers only to say
   "I am token 97", and it says nothing else. A profile card says more with
   less: eight numbers here, thousands in real models. Those numbers are
   *learnable*, and that is the whole point. Everything a model "knows"
@@ -223,8 +245,8 @@ in one new file, `src/layers.rs`, which you build up section by section.
 </div>
 
 Section A is the dining room's front door, with the filing cabinet where
-the host swaps badge numbers for profile cards. Start `src/layers.rs` with
-that cabinet, the lookup table:
+badge numbers are swapped for profile cards. Start `src/layers.rs` with
+that cabinet:
 
 *(Typing it out builds finger-memory, but copying it straight from here is
 just as legitimate.)*
@@ -389,7 +411,7 @@ Read it line by line, against the code you just typed:
 - `embed:  [2, 8]` — `Embedding::forward` swapped each badge for a profile
   card: 2 guests × 8 numbers each.
 
-- `row 0 starts [7.76, 7.77, 7.78, ...]` — the ramp table is fake, but you
+- `row 0 starts [7.76, 7.77, 7.78, ...]` — the ramp grid is fake, but you
   can check it by hand. Row 97 starts at `97 × 8 × 0.01 = 7.76`.
 
 - `rows equal: true` — this is the section's real finding: same badge,
@@ -401,7 +423,7 @@ Read it line by line, against the code you just typed:
 ### Section B — linear layers and RMSNorm
 
 <div class="rust-concepts"><span>Rust used here:</span> nothing new. This
-section is pure tensor math, plus the course's first tolerance-based test.</div>
+section is pure tensor math, plus this book's first tolerance-based test.</div>
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=aircAruvnKk">▶ neural nets &amp; weights, visually (3Blue1Brown)</a>
@@ -603,7 +625,7 @@ rows equal: true
 Read the two new lines against the two layers you just built:
 
 - `rmsnorm: [2, 8]  rms of row 0 = 1.000` — `RmsNorm::forward` leveled
-  every card to loudness 1.000. That is the volume knob doing its one job.
+  every card to loudness 1.000. That is the volume knob doing its one task.
   The shape is the same as before, because normalizing changes values,
   never sizes.
 
@@ -629,10 +651,10 @@ more layers, and position is still nowhere in sight.
 <a href="https://nn.labml.ai/transformers/rope/index.html">RoPE, formally (labml)</a>
 </div>
 
-This is the host's final move before the conversation: recording where
+This is the last move before the conversation: recording where
 each guest sits. Without it, a sentence is only a *bag* of tokens. Feed
 "dog bites man" and "man bites dog" through everything built so far, and
-the model sees the same evening twice.
+the model sees the same table of guests twice.
 
 Start with the obvious fix. Write the seat number straight onto the card.
 Keep a second filing cabinet of *position* cards, with one learned vector
@@ -861,11 +883,11 @@ Read it line by line. You can check every number:
 - `embed:   [2, 8]` — `Embedding` swapped each badge for a profile card:
   2 guests × 8 numbers each.
 
-- `row 0 starts [7.76, ...]` — this is the ramp table's row 97:
+- `row 0 starts [7.76, ...]` — this is the ramp grid's row 97:
   `97 × 8 × 0.01`.
 
 - `rmsnorm: [2, 8]  rms of row 0 = 1.000` — the volume knob has done its
-  entire job.
+  entire task.
 
 - `linear:  [2, 4]` — the translator re-mixed each card:
   `[2, 8] × [8, 4] → [2, 4]`.
@@ -912,7 +934,7 @@ the filter matches `layers_demo_is_deterministic` (not shown above).
 
 ## 8. Break it deliberately
 
-Flip one sign in `rope`. It is the classic transcription slip when you
+Flip one sign in `rope`. It is the classic transcription mistake when you
 copy a rotation matrix from paper:
 
 ```diff
@@ -956,12 +978,13 @@ Read it line by line:
 
 This is what makes math bugs dangerous. The broken version still *runs*
 and still produces plausible-looking numbers. A test that only checks
-"something changed" stays green, because wrong math also changes
-things. That is why section C pinned four independent properties instead
-of one: three of them catch this slip at once. Math code does not crash
-when it is wrong. It quietly computes the wrong thing, and a set of
-property tests is the only tripwire. Flip the sign back by hand and
-confirm `cargo test` is green again.
+"something changed" stays green, because wrong math also changes things.
+That is why section C pinned four independent properties instead of one:
+three of them catch this mistake at once.
+
+Math code does not crash when it is wrong. It quietly computes the wrong
+thing, and a set of property tests is the only tripwire. Flip the sign
+back by hand and confirm `cargo test` is green again.
 
 ## 9. Checkpoint
 
@@ -1006,7 +1029,7 @@ pre-attention building blocks:
 
 - `Linear`, Day 1's matmul in a struct;
 
-- `RmsNorm`, which levels rows to unit magnitude, with the course's first
+- `RmsNorm`, which levels rows to unit magnitude, with this book's first
   tolerance-based tests;
 
 - and `rope`, position as multi-speed rotation, with four property tests.

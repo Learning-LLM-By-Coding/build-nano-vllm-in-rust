@@ -27,7 +27,7 @@
 <text x="72" y="54.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">token ids</text>
 <rect x="56" y="140" width="248" height="64" rx="6" fill="#111111" stroke="#111111" stroke-width="1.6"/>
 <text x="72" y="167.0" font-size="20" fill="#ffffff" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">block</text>
-<text x="72" y="189.0" font-size="16" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">TODAY&#x27;S BUILD</text>
+<text x="72" y="189.0" font-size="16" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">today&#x27;s build</text>
 <rect x="56" y="294" width="248" height="48" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
 <text x="72" y="324.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">scoring layer</text>
 <rect x="56" y="390" width="248" height="48" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>

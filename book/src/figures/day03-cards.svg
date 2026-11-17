@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg viewBox="0 0 720 472" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day03-cards-title day03-cards-desc" id="day03-cards-root">
 <title id="day03-cards-title">Two twin guests get their cards ready</title>
-<desc id="day03-cards-desc">ids [97, 97] are embedded into a [2, 8] card table, rmsnorm keeps [2, 8], linear re-mixes to [2, 4], and rope keeps [2, 4] while winding in the seat numbers.</desc>
+<desc id="day03-cards-desc">ids [97, 97] are embedded into a [2, 8] grid of cards, rmsnorm keeps [2, 8], linear re-mixes to [2, 4], and rope keeps [2, 4] while winding in the seat numbers.</desc>
 <defs>
       <style>#day03-cards-root { --color-paper: #ffffff;
       --color-ink: #111111;

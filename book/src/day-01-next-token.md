@@ -13,7 +13,7 @@
 
 ```bash
 # Build mode — type today's code yourself, on your own branch:
-git switch -c my-course v1-day-00      # branch off the Day 0 scaffold
+git switch -c my-engine v1-day-00      # branch off the Day 0 scaffold
 
 # Inspect mode — read along with the finished code instead:
 git switch --detach v1-day-01a         # then 01b, 01c as you pass each section
@@ -50,16 +50,20 @@ and juggling GPU memory:
 
 - **the greedy choice**: turning a row of scores into the single next token.
 
-Today's three sections build one primitive each, and `main` wires them into a
-single pipeline. Each section stands alone, with its own runnable finish and
-its own checkpoint tag, but together they tell one story. This whole course
-keeps telling it: **the running story, for all 15 days, is a little
-restaurant, built one scene at a time.** Today you build its kitchen. Your
-text is the order slip, and the engine is the cook. Section A builds the
-recipe board, section B stocks the pantry, and section C hires the judge.
+Today's three sections build one primitive each, and `main` wires them
+into a single pipeline. Each section stands alone, with its own runnable
+finish and its own checkpoint tag, but together they tell one story. This
+whole book keeps telling it: **the running story, for all 15 days, is a
+little restaurant, built one scene at a time.**
+
+Today you build its kitchen. Your text is the order slip, and the model is
+the cook. Section A builds the recipe board, section B stocks the pantry,
+and section C hires the judge.
+
 (On Day 2, the cook starts *learning* from old order tickets.) The whole
-story, scene by scene, lives on one page that grows by one scene every day:
-[The restaurant: an analogy to help you build the right mental model](story.md).
+story, scene by scene, lives on one page that grows by one scene every
+day: [The restaurant: an analogy to help you build the right mental
+model](story.md).
 
 ## 2. Mental model
 
@@ -67,26 +71,27 @@ Walk the kitchen, one station per section:
 
 - **The pantry (section B's tokenizer).** The kitchen owns exactly 256
   numbered jars, one for every possible byte. So *any* order slip, in any
-  language, becomes jar numbers: `"hi"` is jars 104 and 105. No order can
-  ever ask for an ingredient the pantry lacks.
+  language, becomes jar numbers: `"hi"` is jars 104 and 105. No order slip
+  can ever ask for an ingredient the pantry lacks.
 
 - **The recipe board (section A's matmul).** A recipe is a column of
   amounts: this much from jar A, this much from jar B. Cooking is
   multiply-and-sum, and one matmul cooks *every recipe on the board at
   once*. Section A's board is `[3, 2]`: three jars in, two recipes out.
-  Recipe 1 takes one scoop each from jars A and C, and recipe 2 takes one
-  scoop each from jars B and C. Feed it the amounts `[1, 2, 3]`, and you get
-  two dish scores: `[4.0, 5.0]` (1 + 3 and 2 + 3). You check this by hand
-  in section A.
 
-- **The judge (section C's greedy pick).** Every candidate dish gets a
-  score, and those scores are the *logits*. The judge always picks the
+  Recipe 1 takes one scoop each from jars A and C, and recipe 2 takes one
+  scoop each from jars B and C. Feed it the amounts `[1, 2, 3]`, and you
+  get two dish scores (a dish is one token the model could produce next):
+  `[4.0, 5.0]` (1 + 3 and 2 + 3). You check this by hand in section A.
+
+- **The judge (section C's greedy pick).** Every candidate dish (every
+  token that could come next) gets a score, and those scores are the *logits*. The judge always picks the
   highest. No dice are involved. The same order slip gets the same winner
   every time, on purpose, until correctness is proven (Day 7).
 
 <figure class="book-figure">
   <img src="figures/day01-pipeline.svg" alt="A top-to-bottom flow. The order slip "hi" goes through the pantry jars (encode) to the jar numbers [104, 105], through the recipe board (matmul) to a [1, 256] row of scores, through the judge (greedy pick) to the winning jar number 106, and back to text (decode) as "j", the next letter, served.">
-  <figcaption>Figure 1.1 — One order, four steps: encode, matmul, greedy pick, decode.</figcaption>
+  <figcaption>Figure 1.1 — One order slip, four steps: encode, matmul, greedy pick, and back to text.</figcaption>
 </figure>
 
 ## 3. Inference concepts introduced
@@ -179,7 +184,7 @@ Four lines are doing all the work here:
 
 One small mark in the `println!` lines: `{:?}` prints a value in *debug*
 form, with brackets and quotes kept. That is how you print shapes, vectors,
-and strings throughout the course.
+and strings throughout this book.
 
 Run `cargo run`. The first run compiles Candle's ~140 crates, so give it a
 minute:
@@ -346,7 +351,7 @@ mod tokenizer;
 because the ids came from `encode` one line earlier. The message documents
 that reasoning.
 
-`cargo run` now shows the round-trip after the warm-up matmul:
+`cargo run` now shows encode, then decode, after the warm-up matmul:
 
 ```text
 output shape: [1, 2]
@@ -365,11 +370,13 @@ Read it line by line, against the code you just wrote:
   `encode` turned each letter into its jar number: `h` is byte 104, `i` is
   105.
 
-- `decoded back: "hi"` — `decode` reassembled those bytes into text. The
-  round trip is lossless, and the tests below pin exactly that.
+- `decoded back: "hi"` — `decode` reassembled those bytes into text.
+  Encode, then decode, gives back the same text, and the tests below pin
+  exactly that.
 
 Now pin the behavior with four tests at the bottom of `src/tokenizer.rs`.
-They cover both round-trips and both `decode -> None` failure modes:
+They cover both encode-then-decode checks and both `decode -> None`
+failure modes:
 
 ```rust,ignore
 #[cfg(test)]
@@ -377,7 +384,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn roundtrip_ascii() {
+    fn decode_undoes_encode_ascii() {
         let ids = encode("hello");
         assert_eq!(ids, vec![104, 101, 108, 108, 111]);
         assert_eq!(decode(&ids), Some("hello".to_string()));
@@ -412,9 +419,9 @@ cargo test tokenizer
 
 ```text
 running 4 tests
-test tokenizer::tests::decode_rejects_invalid_utf8 ... ok
 test tokenizer::tests::multibyte_text_uses_more_tokens_than_chars ... ok
-test tokenizer::tests::roundtrip_ascii ... ok
+test tokenizer::tests::decode_rejects_invalid_utf8 ... ok
+test tokenizer::tests::decode_undoes_encode_ascii ... ok
 test tokenizer::tests::decode_rejects_ids_larger_than_a_byte ... ok
 
 test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
@@ -484,7 +491,7 @@ fn one_hot(id: u32, device: &Device) -> Result<Tensor> {
 
 Greedy sampling, the story's judge, is deliberately plain Rust. That way you
 can see there is no magic in "the model chose a token": it is `argmax`. It
-slots in right below `one_hot`:
+goes right below `one_hot`:
 
 ```rust
 # extern crate candle_core;
@@ -512,7 +519,7 @@ references, not copies). You'll see the same `*` in `main` below, on
 `*ids.last()`.
 
 Finally, replace `main` with the pipeline. The warm-up matmul and the
-round-trip demo leave `main`. You don't lose them: the tests from sections
+encode-then-decode demo leave `main`. You don't lose them: the tests from sections
 A and B already pin their behavior, and those tests stay exactly where they
 are:
 
@@ -575,10 +582,10 @@ fn main() -> Result<()> {
 }
 ```
 
-Here are the shapes through the whole pipeline. Make this table a reflex:
+Here are the shapes through the whole pipeline. Make these shapes a reflex:
 
 <figure class="book-figure">
-  <img src="figures/day01-shapes.svg" alt="A table of shapes with a small glyph per row. The text "hi" is 2 bytes; ids [104, 105] are a plain Vec of u32, not a tensor yet; input [1, 256] is an f32 one-hot of the last id (105); weights [256, 256] are the f32 toy model; logits [1, 256] come from [1, 256] x [256, 256], where the inner 256s cancel; next is 106, a single u32 chosen by argmax.">
+  <img src="figures/day01-shapes.svg" alt="A list of shapes with a small glyph per row. The text "hi" is 2 bytes; ids [104, 105] are a plain Vec of u32, not a tensor yet; input [1, 256] is an f32 one-hot of the last id (105); weights [256, 256] are the f32 toy model; logits [1, 256] come from [1, 256] x [256, 256], where the inner 256s cancel; next is 106, a single u32 chosen by argmax.">
   <figcaption>Figure 1.2 — The shapes through the whole pipeline. In the matmul the inner 256s cancel, leaving one row of 256 scores.</figcaption>
 </figure>
 
@@ -634,14 +641,14 @@ greedy next token: 106 -> "j"
 
 Trace it by hand. `h` is byte 104, and `i` is byte 105. After 105, the toy
 weights score byte 106 highest, and byte 106 is `"j"`. Run it five times,
-and you get the same answer five times. Greedy decoding is deterministic,
+and you get the same answer five times. Greedy picking is deterministic,
 and it stays that way until the engine has a correctness oracle (Day 7).
 
 ## 7. Test it
 
 Eight tests now pin today's behavior. Section A covers the warm-up matmul
-and its shape-mismatch rejection. Section B covers the tokenizer
-round-trips and both failure modes. Section C covers the toy model and the
+and its shape-mismatch rejection. Section B covers the tokenizer's
+encode-then-decode checks and both failure modes. Section C covers the toy model and the
 tie-break rule. Run the whole suite:
 
 ```bash
@@ -650,12 +657,12 @@ cargo test
 
 ```text
 running 8 tests
-test tokenizer::tests::decode_rejects_ids_larger_than_a_byte ... ok
 test tokenizer::tests::decode_rejects_invalid_utf8 ... ok
 test tests::greedy_pick_breaks_ties_toward_the_lowest_id ... ok
-test tokenizer::tests::roundtrip_ascii ... ok
+test tokenizer::tests::decode_rejects_ids_larger_than_a_byte ... ok
 test tests::matmul_rejects_mismatched_shapes ... ok
 test tokenizer::tests::multibyte_text_uses_more_tokens_than_chars ... ok
+test tokenizer::tests::decode_undoes_encode_ascii ... ok
 test tests::tiny_matmul_matches_hand_arithmetic ... ok
 test tests::toy_model_predicts_the_next_ascii_byte ... ok
 
@@ -703,13 +710,15 @@ green bar passes:
 <details>
 <summary>Optional: why the check script stages libraries</summary>
 
-`mdbook test` compiles the book's code blocks against your built
+`mdbook test` compiles this book's code blocks against your built
 dependencies. Clippy leaves extra `.rmeta` metadata files next to the
 `.rlib` libraries, and rustdoc refuses to choose between them (error
 E0464). So the check script has copied clean libraries into
-`target/doctest-libs` since Day 0. Today is the first day that matters,
-because `candle-core` is your first dependency. The script is a few
-commented lines, and nothing else is hidden in it.
+`target/doctest-libs` since Day 0.
+
+Today is the first day that matters, because `candle-core` is your first
+dependency. The script is a few commented lines, and nothing else is
+hidden in it.
 
 </details>
 
@@ -741,11 +750,13 @@ git diff v1-day-00 v1-day-01
 ## 10. Recap
 
 **What changed today:** your project gained a tensor library (pinned
-`candle-core =0.11.0`) and a byte tokenizer module with lossless
-round-trips. It also gained a toy next-byte model, plain-Rust greedy
-sampling, and a `main` that runs the full pipeline: text, ids, logits,
-choice, and back to text. Eight tests pin all of it across three section
-checkpoints (`v1-day-01a`, `v1-day-01b`, `v1-day-01c`).
+`candle-core =0.11.0`) and a byte tokenizer module whose `decode` gives
+back exactly the text `encode` was given. It also gained a toy next-byte
+model, plain-Rust greedy sampling, and a `main` that runs the full
+pipeline: text, ids, logits, choice, and back to text.
+
+Eight tests pin all of it across three section checkpoints (`v1-day-01a`,
+`v1-day-01b`, `v1-day-01c`).
 
 **Deliberately naive:** the weights are hard-coded, not learned. The
 one-hot matmul is a row lookup in disguise. The model uses only the *last*
