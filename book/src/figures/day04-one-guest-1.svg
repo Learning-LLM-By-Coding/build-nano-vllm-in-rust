@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day04-one-guest-1-title day04-one-guest-1-desc" id="day04-one-guest-1-root">
+<title id="day04-one-guest-1-title">Stage 1: one card becomes three slips</title>
+<desc id="day04-one-guest-1-desc">Guest 2&#x27;s [1, 8] prepped card goes through the q, k and v translators into a [1, 8] question (4 ears × 2) and a [1, 4] topic card and statement (2 shared pairs × 2).</desc>
+<defs>
+      <style>#day04-one-guest-1-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day04-one-guest-1-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day04-one-guest-1-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day04-one-guest-1-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day04-one-guest-1-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day04-one-guest-1-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day04-one-guest-1-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<line x1="212" y1="58" x2="212" y2="185" stroke="#575757" stroke-width="1.5" marker-end="url(#day04-one-guest-1-arrow)"/>
+<text x="24" y="38" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">prepped card x2</text>
+<text x="24" y="58" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[1, 8]</text>
+<rect x="184" y="24" width="50" height="32" fill="#ececec" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="209.0" y="45.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.3</text>
+<rect x="234" y="24" width="50" height="32" fill="#ececec" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="259.0" y="45.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">-1.2</text>
+<rect x="284" y="24" width="50" height="32" fill="#ececec" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="309.0" y="45.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.8</text>
+<rect x="334" y="24" width="50" height="32" fill="#ececec" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="359.0" y="45.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.5</text>
+<rect x="384" y="24" width="50" height="32" fill="#ececec" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="409.0" y="45.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">-0.4</text>
+<rect x="434" y="24" width="50" height="32" fill="#ececec" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="459.0" y="45.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">1.1</text>
+<rect x="484" y="24" width="50" height="32" fill="#ececec" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="509.0" y="45.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.2</text>
+<rect x="534" y="24" width="50" height="32" fill="#ececec" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="559.0" y="45.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">-0.7</text>
+<text x="228" y="80" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">three translators, each a matmul: every output</text>
+<text x="228" y="101" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">number is a blend of all 8 input numbers</text>
+<text x="228" y="122" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">q</tspan> translator:  8 numbers in → 8 out (4 ears × 2)</text>
+<text x="228" y="143" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">k</tspan> translator:  8 numbers in → 4 out (2 shared cards × 2)</text>
+<text x="228" y="164" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">v</tspan> translator:  8 numbers in → 4 out (2 shared cards × 2)</text>
+<text x="230.0" y="207" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">ear 0</text>
+<text x="330.0" y="207" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">ear 1</text>
+<text x="430.0" y="207" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">ear 2</text>
+<text x="530.0" y="207" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">ear 3</text>
+<text x="24" y="229" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">question q2</text>
+<text x="24" y="249" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[1, 8]</text>
+<rect x="184" y="215" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="207.0" y="235.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">1</text>
+<rect x="230" y="215" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="253.0" y="235.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">1</text>
+<rect x="284" y="215" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="307.0" y="235.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.4</text>
+<rect x="330" y="215" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="353.0" y="235.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">-0.2</text>
+<rect x="384" y="215" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="407.0" y="235.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.9</text>
+<rect x="430" y="215" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="453.0" y="235.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.1</text>
+<rect x="484" y="215" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="507.0" y="235.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">-0.5</text>
+<rect x="530" y="215" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="553.0" y="235.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.3</text>
+<text x="280.0" y="279" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">pair 0</text>
+<text x="480.0" y="279" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">pair 1</text>
+<text x="24" y="301" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">topic card k2</text>
+<text x="24" y="321" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[1, 4]</text>
+<rect x="184" y="287" width="94.0" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="231.0" y="307.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">1</text>
+<rect x="278.0" y="287" width="94.0" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="325.0" y="307.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">1</text>
+<rect x="380.0" y="287" width="94.0" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="427.0" y="307.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.2</text>
+<rect x="474.0" y="287" width="94.0" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="521.0" y="307.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.6</text>
+<text x="24" y="345" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">statement v2</text>
+<text x="24" y="365" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[1, 4]</text>
+<rect x="184" y="331" width="94.0" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="231.0" y="351.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">5</text>
+<rect x="278.0" y="331" width="94.0" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="325.0" y="351.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">5</text>
+<rect x="380.0" y="331" width="94.0" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="427.0" y="351.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">-1</text>
+<rect x="474.0" y="331" width="94.0" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="521.0" y="351.95" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">3</text>
+<text x="184" y="379" font-size="16" fill="#575757" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">pair 0 is shared by ears 0 and 1; pair 1 by ears 2 and 3</text>
+</svg>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 464" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day05-whole-machine-title day05-whole-machine-desc" id="day05-whole-machine-root">
+<title id="day05-whole-machine-title">The whole machine, and the day each part arrives</title>
+<desc id="day05-whole-machine-desc">Token ids become vectors in the embedding, pass through today&#x27;s block and dozens of stacked copies, reach the scoring layer, and the highest score becomes the next token, which Day 2&#x27;s loop feeds back in.</desc>
+<defs>
+      <style>#day05-whole-machine-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day05-whole-machine-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day05-whole-machine-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day05-whole-machine-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day05-whole-machine-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day05-whole-machine-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day05-whole-machine-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<line x1="104" y1="72" x2="104" y2="138" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-whole-machine-arrow)"/>
+<line x1="104" y1="204" x2="104" y2="292" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-whole-machine-arrow)"/>
+<line x1="104" y1="342" x2="104" y2="388" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-whole-machine-arrow)"/>
+<path d="M 56 414.0 H 36 Q 28 414.0 28 406.0 V 56.0 Q 28 48.0 36 48.0 H 54" fill="none" stroke="#575757" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#day05-whole-machine-arrow)"/>
+<rect x="56" y="24" width="248" height="48" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="72" y="54.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">token ids</text>
+<rect x="56" y="140" width="248" height="64" rx="6" fill="#111111" stroke="#111111" stroke-width="1.6"/>
+<text x="72" y="168.0" font-size="20" fill="#ffffff" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">block</text>
+<text x="72" y="190.0" font-size="16" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">TODAY&#x27;S BUILD</text>
+<rect x="56" y="294" width="248" height="48" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="72" y="324.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">scoring layer</text>
+<rect x="56" y="390" width="248" height="48" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="72" y="420.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">next token</text>
+<text x="328" y="43.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the prompt as numbers</text>
+<text x="328" y="64.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">(Day 1&#x27;s tokenizer)</text>
+<text x="120" y="101.5" font-size="16" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">embedding</text>
+<text x="120" y="122.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">each id becomes a vector of numbers (Day 3)</text>
+<text x="328" y="167.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">attention (Day 4) + the digest,</text>
+<text x="328" y="188.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">packaged</text>
+<text x="120" y="234.0" font-size="16" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">…then the same block again</text>
+<text x="120" y="255.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">dozens of copies with their own</text>
+<text x="120" y="276.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">learned weights (Day 6 stacks them)</text>
+<text x="328" y="313.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the final vectors become one score</text>
+<text x="328" y="334.5" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">per possible next token (Day 6)</text>
+<text x="328" y="399.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">highest score wins (Day 1&#x27;s greedy pick)</text>
+<text x="328" y="420.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">— and Day 2&#x27;s loop feeds it back in</text>
+<text x="328" y="441.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">for the token after</text>
+</svg>

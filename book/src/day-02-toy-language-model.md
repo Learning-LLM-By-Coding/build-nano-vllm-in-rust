@@ -83,17 +83,10 @@ a beautiful day and I am a beautiful day and…"), because the keyboard only
 remembers a step back. Our cook remembers exactly one *byte*. That is why
 `"ru"` will become `"rust. rust. rust. "` forever:
 
-```text
-ids [.., last]      every course served so far — the cook reads only the last
-    │ forward
-    ▼
-logits [1, 256]     1 row of 256 scores — one for every byte that could come next
-    │ argmax
-    ▼
-next token          the judge's pick — appended to the end of `ids`
-    │
-    └──► back to the top; repeat `steps` times, then decode `ids` once
-```
+<figure class="book-figure">
+  <img src="figures/day02-loop.svg" alt="A loop. ids, every course served so far, of which the cook reads only the last, go through forward to logits [1, 256], one score for every byte that could come next; argmax picks the next token, which is appended to the end of ids; an arrow returns to the top, repeating steps times, and then ids are decoded once.">
+  <figcaption>Figure 2.1 — Autoregression: every course is chosen only from the one before, then the loop goes round again.</figcaption>
+</figure>
 
 The model still answers only one question, "what comes after this byte?",
 asked over and over.

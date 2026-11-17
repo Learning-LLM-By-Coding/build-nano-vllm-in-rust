@@ -84,21 +84,10 @@ Walk the kitchen, one station per section:
   highest. No dice are involved. The same order slip gets the same winner
   every time, on purpose, until correctness is proven (Day 7).
 
-```text
-order slip "hi"     the incoming text
-    │ pantry jars (encode)
-    ▼
-[104, 105]          two jar numbers — one per letter
-    │ recipe board (matmul)
-    ▼
-[1, 256]            1 row of 256 scores — one for every jar that could come next
-    │ judge (greedy pick)
-    ▼
-106                 the winning jar number
-    │ back to text (decode)
-    ▼
-"j"                 the next letter, served
-```
+<figure class="book-figure">
+  <img src="figures/day01-pipeline.svg" alt="A top-to-bottom flow. The order slip "hi" goes through the pantry jars (encode) to the jar numbers [104, 105], through the recipe board (matmul) to a [1, 256] row of scores, through the judge (greedy pick) to the winning jar number 106, and back to text (decode) as "j", the next letter, served.">
+  <figcaption>Figure 1.1 — One order, four steps: encode, matmul, greedy pick, decode.</figcaption>
+</figure>
 
 ## 3. Inference concepts introduced
 
@@ -588,14 +577,10 @@ fn main() -> Result<()> {
 
 Here are the shapes through the whole pipeline. Make this table a reflex:
 
-```text
-"hi"                 2 bytes
-ids:      [104, 105] plain Vec<u32>, not a tensor yet
-input:    [1, 256]   f32, one-hot of the LAST id (105)
-weights:  [256, 256] f32, the toy model
-logits:   [1, 256]   f32   ([1, 256] x [256, 256] -> inner 256s cancel)
-next:     106        a single u32, chosen by argmax
-```
+<figure class="book-figure">
+  <img src="figures/day01-shapes.svg" alt="A table of shapes with a small glyph per row. The text "hi" is 2 bytes; ids [104, 105] are a plain Vec of u32, not a tensor yet; input [1, 256] is an f32 one-hot of the last id (105); weights [256, 256] are the f32 toy model; logits [1, 256] come from [1, 256] x [256, 256], where the inner 256s cancel; next is 106, a single u32 chosen by argmax.">
+  <figcaption>Figure 1.2 — The shapes through the whole pipeline. In the matmul the inner 256s cancel, leaving one row of 256 scores.</figcaption>
+</figure>
 
 Pin the new behavior with two more tests. They go inside the
 `#[cfg(test)] mod tests` block at the bottom of `src/main.rs`, below

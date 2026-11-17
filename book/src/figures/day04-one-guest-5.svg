@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 144" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day04-one-guest-5-title day04-one-guest-5-desc" id="day04-one-guest-5-root">
+<title id="day04-one-guest-5-title">Stage 5: blend the statements</title>
+<desc id="day04-one-guest-5-desc">The three pair-0 statements weighted by 0.21, 0.21 and 0.58 add up to [5.0, 5.0], what ear 0 heard.</desc>
+<defs>
+      <style>#day04-one-guest-5-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day04-one-guest-5-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day04-one-guest-5-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day04-one-guest-5-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day04-one-guest-5-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day04-one-guest-5-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day04-one-guest-5-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="40" y="26" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">0.21 × [10, 0] = [2.1, 0.0]</text>
+<text x="364" y="26" font-size="16" fill="#575757" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">guest 0&#x27;s statement</text>
+<text x="40" y="50" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">0.21 × [0, 10] = [0.0, 2.1]</text>
+<text x="364" y="50" font-size="16" fill="#575757" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">guest 1&#x27;s statement</text>
+<text x="40" y="74" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">0.58 × [5, 5]  = [2.9, 2.9]</text>
+<text x="364" y="74" font-size="16" fill="#575757" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">guest 2&#x27;s own statement</text>
+<line x1="211.18" y1="84" x2="316.58" y2="84" stroke="#111111" stroke-width="1.2"/>
+<text x="24" y="111" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">ear 0 heard</text>
+<rect x="211.18" y="90" width="50" height="30" fill="#111111" stroke="#111111" stroke-width="1.2"/>
+<text x="236.18" y="110.95" font-size="17" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">5.0</text>
+<rect x="261.18" y="90" width="50" height="30" fill="#111111" stroke="#111111" stroke-width="1.2"/>
+<text x="286.18" y="110.95" font-size="17" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">5.0</text>
+<text x="696" y="111" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[1, 2]</text>
+</svg>

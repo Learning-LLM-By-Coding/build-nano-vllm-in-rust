@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 412" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day01-pipeline-title day01-pipeline-desc" id="day01-pipeline-root">
+<title id="day01-pipeline-title">From &quot;hi&quot; to &quot;j&quot; in four steps</title>
+<desc id="day01-pipeline-desc">The order slip &quot;hi&quot; is encoded to ids [104, 105], the recipe board turns them into [1, 256] scores, the judge picks 106, and decode serves &quot;j&quot;.</desc>
+<defs>
+      <style>#day01-pipeline-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day01-pipeline-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day01-pipeline-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day01-pipeline-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day01-pipeline-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day01-pipeline-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day01-pipeline-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<line x1="52" y1="60" x2="52" y2="100" stroke="#575757" stroke-width="1.5" marker-end="url(#day01-pipeline-arrow)"/>
+<line x1="52" y1="138" x2="52" y2="178" stroke="#575757" stroke-width="1.5" marker-end="url(#day01-pipeline-arrow)"/>
+<line x1="52" y1="216" x2="52" y2="271" stroke="#575757" stroke-width="1.5" marker-end="url(#day01-pipeline-arrow)"/>
+<line x1="52" y1="309" x2="52" y2="349" stroke="#575757" stroke-width="1.5" marker-end="url(#day01-pipeline-arrow)"/>
+<rect x="24" y="24" width="220" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="48" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">order slip</text>
+<text x="232" y="48" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">&quot;hi&quot;</text>
+<text x="264" y="48" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the incoming text</text>
+<text x="68" y="86" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">pantry jars (<tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">encode</tspan>)</text>
+<rect x="24" y="102" width="220" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="126" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[104, 105]</text>
+<text x="264" y="126" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">two jar numbers — one per letter</text>
+<text x="68" y="164" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">recipe board (<tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">matmul</tspan>)</text>
+<rect x="24" y="180" width="220" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="204" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[1, 256]</text>
+<text x="264" y="204" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">1 row of 256 scores — one for every</text>
+<text x="264" y="225" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">jar that could come next</text>
+<text x="68" y="257" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">judge (greedy pick)</text>
+<rect x="24" y="273" width="220" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="297" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">106</text>
+<text x="264" y="297" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the winning jar number</text>
+<text x="68" y="335" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">back to text (<tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">decode</tspan>)</text>
+<rect x="24" y="351" width="220" height="36" rx="4" fill="#111111" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="375" font-size="17" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">&quot;j&quot;</text>
+<text x="264" y="375" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the next letter, served</text>
+</svg>

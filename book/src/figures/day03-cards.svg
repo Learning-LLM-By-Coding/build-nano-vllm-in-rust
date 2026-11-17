@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 472" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day03-cards-title day03-cards-desc" id="day03-cards-root">
+<title id="day03-cards-title">Two twin guests get their cards ready</title>
+<desc id="day03-cards-desc">ids [97, 97] are embedded into a [2, 8] card table, rmsnorm keeps [2, 8], linear re-mixes to [2, 4], and rope keeps [2, 4] while winding in the seat numbers.</desc>
+<defs>
+      <style>#day03-cards-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day03-cards-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day03-cards-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day03-cards-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day03-cards-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day03-cards-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day03-cards-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<line x1="52" y1="60" x2="52" y2="100" stroke="#575757" stroke-width="1.5" marker-end="url(#day03-cards-arrow)"/>
+<line x1="52" y1="138" x2="52" y2="193" stroke="#575757" stroke-width="1.5" marker-end="url(#day03-cards-arrow)"/>
+<line x1="52" y1="231" x2="52" y2="286" stroke="#575757" stroke-width="1.5" marker-end="url(#day03-cards-arrow)"/>
+<line x1="52" y1="324" x2="52" y2="364" stroke="#575757" stroke-width="1.5" marker-end="url(#day03-cards-arrow)"/>
+<rect x="24" y="24" width="144" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="48" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">ids</text>
+<text x="156" y="48" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[97, 97]</text>
+<text x="312" y="48" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">two guests — so far just badge numbers</text>
+<text x="68" y="86" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">embed</tspan></text>
+<rect x="24" y="102" width="144" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="126" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[2, 8]</text>
+<text x="312" y="126" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">2 guests × 8 numbers on each</text>
+<text x="312" y="147" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">profile card</text>
+<text x="68" y="179" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">rmsnorm</tspan></text>
+<rect x="24" y="195" width="144" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="219" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[2, 8]</text>
+<text x="312" y="219" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">same shape — only the loudness</text>
+<text x="312" y="240" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">changed (every card at 1.0)</text>
+<text x="68" y="272" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">linear</tspan></text>
+<rect x="24" y="288" width="144" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="312" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[2, 4]</text>
+<text x="312" y="312" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">2 guests × 4 re-mixed numbers per card</text>
+<text x="68" y="350" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">rope</tspan></text>
+<rect x="24" y="366" width="144" height="36" rx="4" fill="#111111" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="390" font-size="17" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[2, 4]</text>
+<text x="312" y="390" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">same shape — the seat number is now</text>
+<text x="312" y="411" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">wound into the dials</text>
+<rect x="188" y="30" width="34" height="24" rx="3" fill="#ffffff" stroke="#111111" stroke-width="1.2"/>
+<text x="205" y="47" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">97</text>
+<rect x="228" y="30" width="34" height="24" rx="3" fill="#ffffff" stroke="#111111" stroke-width="1.2"/>
+<text x="245" y="47" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">97</text>
+<rect x="188" y="107.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="199" y="107.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="210" y="107.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="221" y="107.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="232" y="107.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="243" y="107.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="254" y="107.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="265" y="107.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="188" y="121.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="199" y="121.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="210" y="121.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="221" y="121.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="232" y="121.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="243" y="121.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="254" y="121.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="265" y="121.5" width="11" height="11" fill="#ececec" stroke="#111111" stroke-width="1"/>
+<rect x="188" y="200.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="199" y="200.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="210" y="200.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="221" y="200.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="232" y="200.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="243" y="200.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="254" y="200.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="265" y="200.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="188" y="214.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="199" y="214.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="210" y="214.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="221" y="214.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="232" y="214.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="243" y="214.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="254" y="214.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="265" y="214.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="188" y="293.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="199" y="293.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="210" y="293.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="221" y="293.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="188" y="307.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="199" y="307.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="210" y="307.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="221" y="307.5" width="11" height="11" fill="#cfcfcf" stroke="#111111" stroke-width="1"/>
+<rect x="188" y="371.5" width="11" height="11" fill="#111111" stroke="#ffffff" stroke-width="1"/>
+<rect x="199" y="371.5" width="11" height="11" fill="#111111" stroke="#ffffff" stroke-width="1"/>
+<rect x="210" y="371.5" width="11" height="11" fill="#111111" stroke="#ffffff" stroke-width="1"/>
+<rect x="221" y="371.5" width="11" height="11" fill="#111111" stroke="#ffffff" stroke-width="1"/>
+<rect x="188" y="385.5" width="11" height="11" fill="#111111" stroke="#ffffff" stroke-width="1"/>
+<rect x="199" y="385.5" width="11" height="11" fill="#111111" stroke="#ffffff" stroke-width="1"/>
+<rect x="210" y="385.5" width="11" height="11" fill="#111111" stroke="#ffffff" stroke-width="1"/>
+<rect x="221" y="385.5" width="11" height="11" fill="#111111" stroke="#ffffff" stroke-width="1"/>
+<text x="24" y="447" font-size="16" fill="#575757" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">glyphs: one small square per number; one row per guest</text>
+</svg>

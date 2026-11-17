@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 488" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day04-round-shapes-title day04-round-shapes-desc" id="day04-round-shapes-root">
+<title id="day04-round-shapes-title">One round of attention, in shapes</title>
+<desc id="day04-round-shapes-desc">Prepped cards x [3, 8] become questions q [3, 8] and shared topic cards and statements k, v [3, 4]; each of 4 ears makes a [3, 3] shares table; blending, stitching and re-mixing return [3, 8].</desc>
+<defs>
+      <style>#day04-round-shapes-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day04-round-shapes-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day04-round-shapes-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day04-round-shapes-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day04-round-shapes-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day04-round-shapes-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day04-round-shapes-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<line x1="52" y1="60" x2="52" y2="137" stroke="#575757" stroke-width="1.5" marker-end="url(#day04-round-shapes-arrow)"/>
+<line x1="52" y1="219" x2="52" y2="296" stroke="#575757" stroke-width="1.5" marker-end="url(#day04-round-shapes-arrow)"/>
+<line x1="52" y1="334" x2="52" y2="411" stroke="#575757" stroke-width="1.5" marker-end="url(#day04-round-shapes-arrow)"/>
+<rect x="24" y="24" width="200" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="48" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">x</text>
+<text x="212" y="48" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[3, 8]</text>
+<text x="244" y="48" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">3 guests × 8 numbers on each</text>
+<text x="244" y="69" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">prepped card</text>
+<text x="68" y="101" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">three translators: <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">q</tspan> (questions), <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">k</tspan> (topic cards),</text>
+<text x="68" y="123" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">v</tspan> (statements)</text>
+<rect x="24" y="139" width="200" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="163" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">q</text>
+<text x="212" y="163" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[3, 8]</text>
+<text x="244" y="163" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">4 ears × 2 numbers of question per guest</text>
+<rect x="24" y="183" width="200" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="207" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">k, v</text>
+<text x="212" y="207" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[3, 4]</text>
+<text x="244" y="207" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">only 2 SHARED topic/statement pairs —</text>
+<text x="244" y="228" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">half the table space</text>
+<text x="68" y="260" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">per ear: stamp seats onto <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">q</tspan> and <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">k</tspan>, match, mask the</text>
+<text x="68" y="282" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">future, split shares</text>
+<rect x="24" y="298" width="200" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="322" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">shares</text>
+<text x="212" y="322" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[3, 3] ×4</text>
+<text x="244" y="322" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">who listens to whom, one table per ear —</text>
+<text x="244" y="343" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">rows sum to 1, zeros above the diagonal</text>
+<text x="68" y="375" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">blend each ear&#x27;s statements by its shares, stitch the</text>
+<text x="68" y="397" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">ears, re-mix (<tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">o</tspan>)</text>
+<rect x="24" y="413" width="200" height="36" rx="4" fill="#111111" stroke="#111111" stroke-width="1.2"/>
+<text x="36" y="437" font-size="17" fill="#ffffff" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[3, 8]</text>
+<text x="244" y="437" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">what each guest carries away from</text>
+<text x="244" y="458" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the conversation</text>
+</svg>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 324" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day02-loop-title day02-loop-desc" id="day02-loop-root">
+<title id="day02-loop-title">Serving course after course</title>
+<desc id="day02-loop-desc">The ids feed forward into [1, 256] logits, argmax picks the next token, it is appended to ids, and the loop repeats steps times before ids are decoded once.</desc>
+<defs>
+      <style>#day02-loop-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day02-loop-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day02-loop-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day02-loop-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day02-loop-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day02-loop-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day02-loop-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<path d="M92,246 V266 Q92,274 84,274 H36 Q28,274 28,266 V50.0 Q28,42.0 36,42.0 H62" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#day02-loop-arrow-accent)"/>
+<text x="28" y="304" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">back to the top; repeat <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">steps</tspan> times, then decode <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">ids</tspan> once</text>
+<line x1="92" y1="60" x2="92" y2="115" stroke="#575757" stroke-width="1.5" marker-end="url(#day02-loop-arrow)"/>
+<line x1="92" y1="153" x2="92" y2="208" stroke="#575757" stroke-width="1.5" marker-end="url(#day02-loop-arrow)"/>
+<rect x="64" y="24" width="232" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="76" y="48" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">ids</text>
+<text x="284" y="48" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[.., last]</text>
+<text x="316" y="48" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">every course served so far —</text>
+<text x="316" y="69" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the cook reads only the last</text>
+<text x="108" y="101" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">forward</tspan></text>
+<rect x="64" y="117" width="232" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="76" y="141" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">logits</text>
+<text x="284" y="141" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="end">[1, 256]</text>
+<text x="316" y="141" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">1 row of 256 scores — one for every</text>
+<text x="316" y="162" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">byte that could come next</text>
+<text x="108" y="194" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">argmax</tspan></text>
+<rect x="64" y="210" width="232" height="36" rx="4" fill="#ececec" stroke="#111111" stroke-width="1.2"/>
+<text x="76" y="234" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">next token</text>
+<text x="316" y="234" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the judge&#x27;s pick — appended to the</text>
+<text x="316" y="255" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">end of <tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">ids</tspan></text>
+</svg>

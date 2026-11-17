@@ -1,0 +1,25 @@
+/* Print-ready figures (book/src/figures/*.svg). Same grayscale art in light
+   and dark themes: the figure keeps its white paper so it reads like print. */
+figure.book-figure {
+  margin: 1.6em auto;
+  max-width: 100%;
+  text-align: center;
+}
+figure.book-figure img {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 6px;
+  box-sizing: border-box;
+}
+figure.book-figure figcaption {
+  margin-top: 0.6em;
+  font-size: 0.9em;
+  font-style: italic;
+  color: var(--fg);
+  opacity: 0.85;
+}

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 680.0" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day05-block-flow-title day05-block-flow-desc" id="day05-block-flow-root">
+<title id="day05-block-flow-title">One block: two activities, each penciled onto the card</title>
+<desc id="day05-block-flow-desc">A [3, 8] card goes through a volume knob and the conversation, whose notes are added onto the card, then a second knob and the Mlp, whose conclusions are added too, leaving a [3, 8] card.</desc>
+<defs>
+      <style>#day05-block-flow-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day05-block-flow-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day05-block-flow-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day05-block-flow-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day05-block-flow-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day05-block-flow-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day05-block-flow-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<line x1="64" y1="144" x2="430" y2="144" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-block-flow-arrow)"/>
+<line x1="480" y1="176.0" x2="480" y2="202.0" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-block-flow-arrow)"/>
+<line x1="432" y1="236.0" x2="78" y2="236.0" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-block-flow-arrow)"/>
+<line x1="64" y1="88" x2="64" y2="224.0" stroke="#575757" stroke-width="1.5"/>
+<line x1="64" y1="248.0" x2="64" y2="278.0" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-block-flow-arrow)"/>
+<line x1="64" y1="422.0" x2="430" y2="422.0" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-block-flow-arrow)"/>
+<line x1="480" y1="454.0" x2="480" y2="480.0" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-block-flow-arrow)"/>
+<line x1="432" y1="524.0" x2="78" y2="524.0" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-block-flow-arrow)"/>
+<line x1="64" y1="366.0" x2="64" y2="512.0" stroke="#575757" stroke-width="1.5"/>
+<line x1="64" y1="536.0" x2="64" y2="566.0" stroke="#575757" stroke-width="1.5" marker-end="url(#day05-block-flow-arrow)"/>
+<rect x="24" y="24" width="360" height="64" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="40" y="52" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">x  [3, 8]</text>
+<text x="40" y="76" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">3 guests × 8 numbers on each card</text>
+<rect x="432" y="112.0" width="264" height="64" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="448" y="139.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">volume knob</text>
+<text x="448" y="161.0" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">RmsNorm</text>
+<rect x="432" y="204.0" width="264" height="64" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="448" y="231.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">the conversation</text>
+<text x="448" y="253.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">Day 4&#x27;s Attention</text>
+<rect x="24" y="280.0" width="360" height="86" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="40" y="308.0" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">x + notes  [3, 8]</text>
+<text x="40" y="332.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">what each guest heard, penciled onto</text>
+<text x="40" y="354.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">their own card</text>
+<rect x="432" y="390.0" width="264" height="64" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="448" y="417.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">volume knob again</text>
+<text x="448" y="439.0" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">a second RmsNorm</text>
+<rect x="432" y="482.0" width="264" height="84" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="448" y="508.0" font-size="20" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">think it over</text>
+<text x="448" y="530.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the SwiGLU Mlp —</text>
+<text x="448" y="552.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">per guest, no cross-talk</text>
+<rect x="24" y="568.0" width="360" height="86" rx="6" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<text x="40" y="596.0" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600">x + more  [3, 8]</text>
+<text x="40" y="620.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">conclusions penciled in too —</text>
+<text x="40" y="642.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">same card size as it arrived</text>
+<circle cx="64" cy="236.0" r="12" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<line x1="58" y1="236.0" x2="70" y2="236.0" stroke="#111111" stroke-width="1.8"/>
+<line x1="64" y1="230.0" x2="64" y2="242.0" stroke="#111111" stroke-width="1.8"/>
+<circle cx="64" cy="524.0" r="12" fill="#ffffff" stroke="#111111" stroke-width="1.6"/>
+<line x1="58" y1="524.0" x2="70" y2="524.0" stroke="#111111" stroke-width="1.8"/>
+<line x1="64" y1="518.0" x2="64" y2="530.0" stroke="#111111" stroke-width="1.8"/>
+<text x="254.0" y="226.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="middle" font-style="italic">penciled onto the card (+)</text>
+<text x="254.0" y="134" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="middle" font-style="italic">a copy, for the knob</text>
+<text x="254.0" y="514.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="middle" font-style="italic">penciled onto the card (+)</text>
+<text x="254.0" y="412.0" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="middle" font-style="italic">a copy, for the knob</text>
+</svg>

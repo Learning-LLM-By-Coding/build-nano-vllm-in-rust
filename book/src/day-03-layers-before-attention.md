@@ -174,21 +174,10 @@ Tomorrow, **attention** is the conversation itself. Every guest compares
 cards with everyone seated before them and decides whom to listen to.
 Today ends with the cards ready:
 
-```text
-ids [97, 97]     two guests — so far just badge numbers
-    │ embed
-    ▼
-[2, 8]           2 guests × 8 numbers on each profile card
-    │ rmsnorm
-    ▼
-[2, 8]           same shape — only the loudness changed (every card at 1.0)
-    │ linear
-    ▼
-[2, 4]           2 guests × 4 re-mixed numbers per card
-    │ rope
-    ▼
-[2, 4]           same shape — the seat number is now wound into the dials
-```
+<figure class="book-figure">
+  <img src="figures/day03-cards.svg" alt="A top-to-bottom flow with a small grid per step. ids [97, 97], two guests that are so far just badge numbers, go through embed to [2, 8], 2 guests × 8 numbers on each profile card; rmsnorm keeps [2, 8] and only changes the loudness, every card at 1.0; linear makes [2, 4], 4 re-mixed numbers per card; rope keeps [2, 4] and winds the seat number into the dials.">
+  <figcaption>Figure 3.1 — Today's pipeline: only linear changes a card's size; rmsnorm and rope keep the shape.</figcaption>
+</figure>
 
 Read every shape the same way all course long: `[how many guests, how many
 numbers each]`. In engine terms, that is `[sequence length, features]`.

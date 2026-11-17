@@ -49,20 +49,10 @@ Why repeat it? One round of conversation is not a model. A real LLM runs
 dozens of rounds in a row, each with its own learned weights. Here is the
 whole machine, with the day each part arrives:
 
-```text
-token ids           the prompt as numbers (Day 1's tokenizer)
-    │ embedding — each id becomes a vector of numbers (Day 3)
-    ▼
-▶ block ◀           attention (Day 4) + the digest, packaged — TODAY'S BUILD
-    │ …then the same block again, dozens of copies with their own
-    │ learned weights (Day 6 stacks them)
-    ▼
-scoring layer       the final vectors become one score per possible
-    │               next token (Day 6)
-    ▼
-next token          highest score wins (Day 1's greedy pick) — and
-                    Day 2's loop feeds it back in for the token after
-```
+<figure class="book-figure">
+  <img src="figures/day05-whole-machine.svg" alt="A top-to-bottom flow: token ids pass through the embedding into the block, today's build, then through dozens of stacked copies of the block to the scoring layer, whose highest score becomes the next token; a dashed loop carries that token back to the token ids.">
+  <figcaption>Figure 5.1 — The whole machine: the block in the middle is today's build, and Day 6 stacks dozens of copies of it.</figcaption>
+</figure>
 
 The repeating unit in the middle is the **transformer decoder block**, or
 **block** for short. Your first instinct might be to make Day 4's
@@ -150,17 +140,10 @@ watch the whole thing get packaged:
   endings, and the later rounds begin to catch meaning. Today you build
   one round, and Day 6 stacks them.
 
-```text
-x [3, 8]            3 guests × 8 numbers on each card
-    │ volume knob (RmsNorm)
-    │ the conversation (Day 4's Attention)
-    ▼
-x + notes [3, 8]    what each guest heard, penciled onto their own card
-    │ volume knob again (a second RmsNorm)
-    │ think it over (the SwiGLU Mlp — per guest, no cross-talk)
-    ▼
-x + more [3, 8]     conclusions penciled in too — same card size as it arrived
-```
+<figure class="book-figure">
+  <img src="figures/day05-block-flow.svg" alt="A [3, 8] card goes down the left. A copy goes right through a volume knob (RmsNorm) and the conversation (Day 4's Attention), and the result is added back onto the card, giving x + notes [3, 8]. The same happens with a second knob and the SwiGLU Mlp, giving x + more [3, 8].">
+  <figcaption>Figure 5.2 — One block: each activity reads a knob-turned copy, and its result is penciled onto the card, which leaves at the size it arrived.</figcaption>
+</figure>
 
 The reading rule is the same as always: every shape is `[how many
 guests, how many numbers each]`. A block never changes the shape, and

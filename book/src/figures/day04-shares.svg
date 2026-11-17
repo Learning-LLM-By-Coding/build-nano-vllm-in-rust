@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 284" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day04-shares-title day04-shares-desc" id="day04-shares-root">
+<title id="day04-shares-title">Ear 0&#x27;s shares for all three guests</title>
+<desc id="day04-shares-desc">Guest 0 hears only itself (1.00); guest 1 splits 0.27 and 0.73 with guest 2 masked; guest 2 splits 0.21, 0.21 and 0.58. Every cell above the diagonal is the masked future.</desc>
+<defs>
+      <style>#day04-shares-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day04-shares-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day04-shares-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day04-shares-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day04-shares-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day04-shares-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day04-shares-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><pattern id="day04-shares-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#ffffff"/><line x1="0" y1="0" x2="0" y2="8" stroke="#8c8c8c" stroke-width="2"/></pattern></defs>
+<text x="270.0" y="38" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600" text-anchor="middle">hears</text>
+<text x="178.0" y="60" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="middle">guest 0</text>
+<text x="270.0" y="60" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="middle">guest 1</text>
+<text x="362.0" y="60" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="middle">guest 2</text>
+<text x="24" y="96" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">guest 0</text>
+<rect x="132" y="70" width="92" height="40" fill="#ffffff" stroke="#111111" stroke-width="1.2"/>
+<text x="178.0" y="96" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">1.00</text>
+<rect x="224" y="70" width="92" height="40" fill="url(#day04-shares-hatch)" stroke="#111111" stroke-width="1.2"/>
+<rect x="258.0" y="80" width="24" height="20" fill="#ffffff"/>
+<text x="270.0" y="96" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0</text>
+<rect x="316" y="70" width="92" height="40" fill="url(#day04-shares-hatch)" stroke="#111111" stroke-width="1.2"/>
+<rect x="350.0" y="80" width="24" height="20" fill="#ffffff"/>
+<text x="362.0" y="96" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0</text>
+<text x="424" y="96" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">(nobody before it)</text>
+<text x="24" y="136" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">guest 1</text>
+<rect x="132" y="110" width="92" height="40" fill="#ffffff" stroke="#111111" stroke-width="1.2"/>
+<text x="178.0" y="136" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.27</text>
+<rect x="224" y="110" width="92" height="40" fill="#ffffff" stroke="#111111" stroke-width="1.2"/>
+<text x="270.0" y="136" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0.73</text>
+<rect x="316" y="110" width="92" height="40" fill="url(#day04-shares-hatch)" stroke="#111111" stroke-width="1.2"/>
+<rect x="350.0" y="120" width="24" height="20" fill="#ffffff"/>
+<text x="362.0" y="136" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">0</text>
+<text x="424" y="136" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">(guest 2 masked: future)</text>
+<text x="24" y="176" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">guest 2</text>
+<rect x="132" y="150" width="92" height="40" fill="#cfcfcf" stroke="#111111" stroke-width="1.2"/>
+<text x="178.0" y="176" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600" text-anchor="middle">0.21</text>
+<rect x="224" y="150" width="92" height="40" fill="#cfcfcf" stroke="#111111" stroke-width="1.2"/>
+<text x="270.0" y="176" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600" text-anchor="middle">0.21</text>
+<rect x="316" y="150" width="92" height="40" fill="#cfcfcf" stroke="#111111" stroke-width="1.2"/>
+<text x="362.0" y="176" font-size="17" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-weight="600" text-anchor="middle">0.58</text>
+<text x="424" y="176" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"></text>
+<text x="132" y="214" font-size="16" fill="#575757" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">each row sums to 1; guest 2&#x27;s row is the stage 4 shares</text>
+<line x1="24" y1="234" x2="696" y2="234" stroke="#8c8c8c" stroke-width="1"/>
+<rect x="24" y="248" width="28" height="20" fill="url(#day04-shares-hatch)" stroke="#111111" stroke-width="1.2"/>
+<text x="62" y="263" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">the future: masked, so its share is exactly 0</text>
+</svg>

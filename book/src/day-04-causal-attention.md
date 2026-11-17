@@ -194,31 +194,23 @@ They nudge the numbers without changing the flow.
 **Stage 1: one card becomes three slips.** Three translators read guest
 2's card:
 
-```text
-guest 2's prepped card            x2 = [0.3, -1.2, 0.8, 0.5, -0.4, 1.1, 0.2, -0.7]      [1, 8]
-        │
-        │ three translators (each is a matmul: every output number
-        │ is a blend of all 8 input numbers)
-        │      q translator:  8 numbers in → 8 out (4 ears × 2)
-        │      k translator:  8 numbers in → 4 out (2 shared cards × 2)
-        │      v translator:  8 numbers in → 4 out (2 shared cards × 2)
-        ▼
-question      q2 = [1, 1 │ 0.4, -0.2 │ 0.9, 0.1 │ -0.5, 0.3]      [1, 8] = 4 ears × 2
-topic card    k2 = [1, 1 │ 0.2, 0.6]                              [1, 4] = 2 shared pairs × 2
-statement     v2 = [5, 5 │ -1, 3]                                 [1, 4] = 2 shared pairs × 2
-```
+<figure class="book-figure">
+  <img src="figures/day04-one-guest-1.svg" alt="Guest 2's prepped card x2, eight numbers [0.3, -1.2, 0.8, 0.5, -0.4, 1.1, 0.2, -0.7], shape [1, 8], goes through three translators. The q translator makes 8 numbers out (4 ears × 2): question q2 in four ear slices, [1, 1], [0.4, -0.2], [0.9, 0.1] and [-0.5, 0.3]. The k and v translators make 4 out (2 shared cards × 2): topic card k2 in two pairs, [1, 1] and [0.2, 0.6], and statement v2 in two pairs, [5, 5] and [-1, 3]. Pair 0 is shared by ears 0 and 1, pair 1 by ears 2 and 3.">
+  <figcaption>Figure 4.1 — Stage 1: one [1, 8] card becomes an 8-number question and two 4-number slips.</figcaption>
+</figure>
 
 The question is 8 numbers: 4 ears × 2. The topic card and statement are
 only 4 numbers: 2 shared pairs × 2, because pairs of ears share them. Each
-`│` marks where one slice ends.
+gap between groups of cells marks where one slice ends.
 
 **Stage 2: cut into ears.** This stage is bookkeeping and computes
 nothing. Ear 0 takes question slice 0. Ears 0 and 1 share pair 0 of the
 topic card and statement:
 
-```text
-ear 0 holds   question [1, 1]   topic card [1, 1]   statement [5, 5]     each [1, 2]
-```
+<figure class="book-figure">
+  <img src="figures/day04-one-guest-2.svg" alt="Ear 0 holds three slices, each [1, 2]: question [1, 1], topic card [1, 1] and statement [5, 5].">
+  <figcaption>Figure 4.2 — Stage 2: ear 0's slices of guest 2's three slips.</figcaption>
+</figure>
 
 **Stage 3: collect everyone's slips.** Ear 0 is about to meet the other
 guests, so first list what they bring. Every guest ran stages 1 and 2 on
@@ -240,31 +232,18 @@ below.
 matching positions and add them up. Then softmax turns the scores into
 shares. `exp(1)` is 2.72 and `exp(2)` is 7.39:
 
-```text
-guest 2's question [1, 1]
-        │ dot it with each guest's topic card
-        │   guest 0's [1, 0]:   1×1 + 1×0 = 1
-        │   guest 1's [0, 1]:   1×0 + 1×1 = 1
-        │   its own   [1, 1]:   1×1 + 1×1 = 2
-        ▼
-scores        [1, 1, 2]           one score per guest it can hear        [1, 3]
-        │ mask the future (nobody sits after guest 2: nothing hidden)
-        │ softmax: exp each score → [2.72, 2.72, 7.39], total 12.83,
-        │          then divide each by the total
-        ▼
-shares        [0.21, 0.21, 0.58]  how much to listen to each guest       [1, 3]
-```
+<figure class="book-figure">
+  <img src="figures/day04-one-guest-4.svg" alt="Guest 2's question [1, 1] is dotted with each guest's topic card: guest 0's [1, 0] gives 1, guest 1's [0, 1] gives 1, its own [1, 1] gives 2. The scores [1, 1, 2] have shape [1, 3]. Nothing is masked, because nobody sits after guest 2. Softmax exponentiates to [2.72, 2.72, 7.39], total 12.83, and divides by the total, giving shares 0.21, 0.21 and 0.58, drawn as one bar that sums to 1.">
+  <figcaption>Figure 4.3 — Stage 4: three dot products become scores, and softmax turns them into shares that sum to 1.</figcaption>
+</figure>
 
 **Stage 5: blend the statements.** Each guest's pair-0 statement is
 weighted by its share, and the weighted statements are added:
 
-```text
-0.21 × [10, 0]  =  [2.1, 0.0]     guest 0's statement
-0.21 × [0, 10]  =  [0.0, 2.1]     guest 1's statement
-0.58 × [5, 5]   =  [2.9, 2.9]     guest 2's own statement
-                   ──────────
-ear 0 heard        [5.0, 5.0]                                            [1, 2]
-```
+<figure class="book-figure">
+  <img src="figures/day04-one-guest-5.svg" alt="0.21 × [10, 0] = [2.1, 0.0] for guest 0's statement, 0.21 × [0, 10] = [0.0, 2.1] for guest 1's, 0.58 × [5, 5] = [2.9, 2.9] for guest 2's own. They add up to [5.0, 5.0], what ear 0 heard, shape [1, 2].">
+  <figcaption>Figure 4.4 — Stage 5: the share-weighted statements add up to what ear 0 heard.</figcaption>
+</figure>
 
 **Stage 6: the other ears, then stitch.** Ear 1 repeats stages 4 and 5
 with its own question slice, `[0.4, -0.2]`, against the same pair-0 cards.
@@ -272,13 +251,10 @@ Its scores are `[0.4, -0.2, 0.2]`, its shares `[0.42, 0.23, 0.35]`, and it
 hears `[5.95, 4.05]`. Ears 2 and 3 use pair 1 the same way. The walk
 leaves their numbers out, shown as `·`:
 
-```text
-stitched      [5.0, 5.0 │ 5.95, 4.05 │ ·, · │ ·, ·]                    [1, 8] = 4 ears × 2
-        │
-        │ o translator (8 in → 8 out): re-mix the 4 ears' findings into one card
-        ▼
-guest 2 carries away   a new [1, 8] card                                 same shape it started with
-```
+<figure class="book-figure">
+  <img src="figures/day04-one-guest-6.svg" alt="The four ears' results are stitched into one [1, 8] row: ear 0 [5.0, 5.0], ear 1 [5.95, 4.05], ears 2 and 3 left out as dots. The o translator, 8 in and 8 out, re-mixes them into a new [1, 8] card: what guest 2 carries away, the same shape it started with.">
+  <figcaption>Figure 4.5 — Stage 6: stitch the four ears, then re-mix with o into a new card of the same shape.</figcaption>
+</figure>
 
 Only stages 3 to 5 involve anyone else. Before and after them, guest 2
 works on its own card:
@@ -299,29 +275,18 @@ topic card and 1 against its own, and guest 2 is masked as the future. So
 its shares are `exp(0)` and `exp(1)` (1 and 2.72) divided by their total
 of 3.72. Guest 0 can hear only itself. Here is ear 0:
 
-```text
-               hears guest 0   guest 1   guest 2
-guest 0            1.00          0         0        (nobody before it)
-guest 1            0.27         0.73       0        (guest 2 masked: future)
-guest 2            0.21         0.21      0.58
-```
+<figure class="book-figure">
+  <img src="figures/day04-shares.svg" alt="A 3 by 3 grid of ear 0's shares. Guest 0 hears guest 0 with 1.00 and nobody else, since nobody sits before it. Guest 1 hears guest 0 with 0.27 and itself with 0.73; guest 2 is masked as the future. Guest 2 hears 0.21, 0.21 and 0.58. Every cell above the diagonal is hatched: the masked future, share exactly 0.">
+  <figcaption>Figure 4.6 — Ear 0's shares for the whole table: each row sums to 1, and the future gets exactly 0.</figcaption>
+</figure>
 
 Each round makes four such tables, one per ear. Here is the round in
 shapes:
 
-```text
-x [3, 8]           3 guests × 8 numbers on each prepped card
-    │ three translators: q (questions), k (topic cards), v (statements)
-    ▼
-q [3, 8]           4 ears × 2 numbers of question per guest
-k, v [3, 4]        only 2 SHARED topic/statement pairs — half the table space
-    │ per ear: stamp seats onto q and k, match, mask the future, split shares
-    ▼
-shares [3, 3] ×4   who listens to whom, one table per ear — rows sum to 1, zeros above the diagonal
-    │ blend each ear's statements by its shares, stitch the ears, re-mix (o)
-    ▼
-[3, 8]             what each guest carries away from the conversation
-```
+<figure class="book-figure">
+  <img src="figures/day04-round-shapes.svg" alt="A top-to-bottom flow of shapes. x [3, 8], 3 guests × 8 numbers, goes through three translators to q [3, 8], 4 ears × 2 numbers of question per guest, and k, v [3, 4], only 2 shared topic/statement pairs. Per ear, seats are stamped onto q and k, then match, mask the future and split shares give shares [3, 3] four times, rows summing to 1 with zeros above the diagonal. Blending, stitching and re-mixing with o give [3, 8], what each guest carries away.">
+  <figcaption>Figure 4.7 — The round in shapes: [3, 8] in, [3, 8] out, with k and v at half width.</figcaption>
+</figure>
 
 The reading rule is the same as yesterday: every shape is `[how many
 guests, how many numbers each]`. Tomorrow covers what each guest *does*

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 720 216" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="day04-one-guest-6-title day04-one-guest-6-desc" id="day04-one-guest-6-root">
+<title id="day04-one-guest-6-title">Stage 6: the other ears, then stitch</title>
+<desc id="day04-one-guest-6-desc">The four ears&#x27; [1, 2] results are stitched into [1, 8] and the o translator re-mixes them into a new [1, 8] card for guest 2.</desc>
+<defs>
+      <style>#day04-one-guest-6-root { --color-paper: #ffffff;
+      --color-ink: #111111;
+      --color-muted: #3d3d3d;
+      --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+      --font-mono: 'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace; }
+      #day04-one-guest-6-root { font-family: var(--font-sans); color: var(--color-ink); }
+      #day04-one-guest-6-root .diagram-container { width: 100%; overflow-x: auto; }
+      #day04-one-guest-6-root .caption { font-size: 0.9rem; color: var(--color-muted); margin-bottom: 1.2rem; line-height: 1.45; }
+      @media print {
+#day04-one-guest-6-root .diagram-container { overflow-x: visible; }
+}</style>
+  <marker id="day04-one-guest-6-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 10 4, 0 8" fill="#575757"/></marker>
+  <marker id="day04-one-guest-6-arrow-accent" markerWidth="12" markerHeight="10" refX="11" refY="5" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0 0, 12 5, 0 10" fill="#111111"/></marker>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<line x1="212" y1="78" x2="212" y2="138" stroke="#575757" stroke-width="1.5" marker-end="url(#day04-one-guest-6-arrow)"/>
+<text x="230.0" y="38" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">ear 0</text>
+<text x="330.0" y="38" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">ear 1</text>
+<text x="430.0" y="38" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">ear 2</text>
+<text x="530.0" y="38" font-size="16" fill="#575757" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">ear 3</text>
+<text x="24" y="60" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">stitched</text>
+<text x="24" y="80" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[1, 8]</text>
+<rect x="184" y="46" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="207.0" y="66.6" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">5.0</text>
+<rect x="230" y="46" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="253.0" y="66.6" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">5.0</text>
+<rect x="284" y="46" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="307.0" y="66.6" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">5.95</text>
+<rect x="330" y="46" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="353.0" y="66.6" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">4.05</text>
+<rect x="384" y="46" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="407.0" y="66.6" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">·</text>
+<rect x="430" y="46" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="453.0" y="66.6" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">·</text>
+<rect x="484" y="46" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="507.0" y="66.6" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">·</text>
+<rect x="530" y="46" width="46" height="30" fill="#ffffff" stroke="#8c8c8c" stroke-width="1.2"/>
+<text x="553.0" y="66.6" font-size="16" fill="#111111" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" text-anchor="middle">·</text>
+<text x="696" y="66" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" text-anchor="end">4 ears × 2</text>
+<text x="228" y="102" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic"><tspan font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-style="normal">o</tspan> translator (8 in → 8 out):</text>
+<text x="228" y="122" font-size="16" fill="#3d3d3d" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">re-mix the 4 ears&#x27; findings into one card</text>
+<text x="24" y="158" font-size="17" fill="#111111" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="600">a new card</text>
+<text x="24" y="178" font-size="16" fill="#3d3d3d" font-family="'Geist Mono', Menlo, Consolas, 'DejaVu Sans Mono', monospace">[1, 8]</text>
+<rect x="184" y="144" width="50" height="32" fill="#ececec" stroke="#111111" stroke-width="1.6"/>
+<rect x="234" y="144" width="50" height="32" fill="#ececec" stroke="#111111" stroke-width="1.6"/>
+<rect x="284" y="144" width="50" height="32" fill="#ececec" stroke="#111111" stroke-width="1.6"/>
+<rect x="334" y="144" width="50" height="32" fill="#ececec" stroke="#111111" stroke-width="1.6"/>
+<rect x="384" y="144" width="50" height="32" fill="#ececec" stroke="#111111" stroke-width="1.6"/>
+<rect x="434" y="144" width="50" height="32" fill="#ececec" stroke="#111111" stroke-width="1.6"/>
+<rect x="484" y="144" width="50" height="32" fill="#ececec" stroke="#111111" stroke-width="1.6"/>
+<rect x="534" y="144" width="50" height="32" fill="#ececec" stroke="#111111" stroke-width="1.6"/>
+<text x="184" y="198" font-size="16" fill="#575757" font-family="'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-style="italic">what guest 2 carries away: the same shape it started with</text>
+</svg>
