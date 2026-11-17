@@ -53,18 +53,7 @@ point — nothing says a "day" must fit in one.
 
 </div>
 
-## 1. What you will have running
-
-You will have a new `cargo run -- layers` subcommand. It walks a tiny
-prompt through every *layer* that a **transformer** applies *before*
-**attention**. A layer is a processing station the data flows through on
-its way to a prediction. Two more words deserve a definition right away. A
-*transformer* is the neural-network design behind every modern LLM. It is a
-stack of identical blocks: in each one, tokens first exchange information,
-then each token thinks over what it collected. *Attention* is the
-exchanging step. Every token looks at the tokens before it and decides
-which ones matter to it right now. Attention is Day 4's whole subject, and
-today you build what it consumes.
+## 1. Why we need it
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=wjZofJX0v4M">▶ Transformers, visually (3Blue1Brown)</a>
@@ -72,54 +61,16 @@ today you build what it consumes.
 <a href="https://www.deeplearning.ai/short-courses/how-transformer-llms-work/">full course: How Transformer LLMs Work (DeepLearning.AI) ↗</a>
 </div>
 
-## 2. What you will be seeing in the output
-
-Here is a sneak peek: the exact output you will produce today, with a
-plain-English note under each line. Don't worry if a note doesn't fully
-click yet. The rest of the day builds each piece, and when you run this
-yourself at the end, every line will read like an old friend:
-
-```text
-text "aa" -> ids [97, 97]
-embed:   [2, 8]
-row 0 starts [7.76, 7.77, 7.78, ...]
-rmsnorm: [2, 8]  rms of row 0 = 1.000
-linear:  [2, 4]
-rope:    [2, 4]
-same token, same vector?  before rope: true, after rope: false
-```
-
-- `text "aa" -> ids [97, 97]` — the same letter twice, on purpose. Two
-  identical tokens make today's problem visible.
-
-- `embed:   [2, 8]` — each token trades its single number for a *list of
-  8 numbers*. That list has room to carry meaning, not only identity. Read
-  `[2, 8]` as 2 tokens × 8 numbers each.
-
-- `row 0 starts [7.76, ...]` — a peek at the first token's numbers.
-  (Made-up today; real learned numbers arrive on Day 6.)
-
-- `rmsnorm: [2, 8]  rms of row 0 = 1.000` — this is a volume control. It
-  rescales every token's numbers to the same overall loudness, so stacking
-  many steps can't blow the numbers up or fade them out.
-
-- `linear:  [2, 4]` — this is a re-mixer. It blends each token's 8 numbers
-  down into 4 new ones. The shape change is the visible part, and the
-  chapter explains the *why*.
-
-- `rope:    [2, 4]` — the shape stays the same, but the information is new.
-  Each token's numbers are twisted by *where that token sits* in the
-  sentence.
-
-- `before rope: true, after rope: false` — here is the punch line. Until
-  that last step, the two identical letters carried *identical* numbers, so
-  the model literally could not tell first from second. Position fixed it.
-
-## 3. Why we need it
-
 Your Day 2 [bigram](story.md#bigram) works, but it sees exactly **one token of context**. The root cause is
 its representation. A one-hot row is an ID badge: it says *which* token this
 is, and nothing else.
+
+Every modern LLM is a *transformer*: a stack of identical blocks. In each
+block, tokens first exchange information (that step is *attention*, Day
+4's subject), then each token thinks over what it collected. Today you
+build the *layers*, the processing stations, that come before attention,
+and a new `cargo run -- layers` subcommand that walks a tiny prompt
+through them.
 
 **The story so far** — remember [the restaurant](story.md): Day 1 built the kitchen,
 and Day 2 taught the cook to choose each course from the last. Today the
@@ -155,13 +106,13 @@ ingredient:
 - **C. RoPE** stamps each guest's *position* onto their card, so "dog bites
   man" finally stops being the same input as "man bites dog".
 
-## 4. Mental model
+## 2. Mental model
 
 <div class="callout">
 
 **Reading tip:** this walk and the "Inference concepts" section after it
 are the day's densest reading: all ideas, no code. If they start to blur,
-that is normal, and nothing is lost. Jump ahead to section 6 and *build*
+that is normal, and nothing is lost. Jump ahead to section 4 and *build*
 the thing, then come back. The ideas are far easier to hold once you have
 watched the demo print them.
 
@@ -209,11 +160,14 @@ Now walk the dining room in order, one host's move per layer:
 
 - **RoPE — stamp the seat number, as clock dials.** Identical twins still
   carry identical cards, so the host records *where each guest sits*.
-  Every pair of numbers on the card is a little dial. Sitting in seat N
-  winds each dial forward N clicks. The first dial spins fast and later
-  dials spin slower, like second, minute, and hour hands. Here is the
-  clever part. Comparing two guests' dials reveals only *how many seats
-  apart* they are, never the absolute row number. And "how far apart" is
+  Every pair of numbers on the card is a little dial: read the pair as a
+  point (x, y). Sitting in seat N winds each dial forward N clicks, and
+  winding rotates that point around the center. The first dial spins fast
+  and later dials spin slower, like second, minute, and hour hands. Two
+  guests *compare* cards with a dot product: multiply the numbers pairwise
+  and add them up. Here is the clever part. Comparing two guests' wound
+  dials reveals only *how many seats apart* they are, never the absolute
+  row number. And "how far apart" is
   precisely what a conversation cares about.
 
 Tomorrow, **attention** is the conversation itself. Every guest compares
@@ -239,7 +193,7 @@ ids [97, 97]     two guests — so far just badge numbers
 Read every shape the same way all course long: `[how many guests, how many
 numbers each]`. In engine terms, that is `[sequence length, features]`.
 
-## 5. Inference concepts introduced
+## 3. Inference concepts introduced
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=viZrOnJclY0">▶ word embeddings (StatQuest)</a>
@@ -257,7 +211,7 @@ numbers each]`. In engine terms, that is `[sequence length, features]`.
   of times, and repeated multiplication snowballs. Numbers either grow
   without bound or fade toward zero. Re-leveling every token to volume 1.0
   between steps is what makes depth survivable. RMSNorm is the lighter
-  cousin of LayerNorm, and it is what the Llama/Qwen family actually ships.
+  cousin of LayerNorm (an older normalizer that also subtracts the mean), and it is what the Llama/Qwen family actually ships.
 
 - **Positional information.** Attention on its own treats a sentence as a
   *bag* of words: shuffle them, and nothing would change. RoPE adds order
@@ -265,7 +219,7 @@ numbers each]`. In engine terms, that is `[sequence length, features]`.
   attention compares two tokens, only the *distance between them* shows
   through. Today's tests prove that property rather than assume it.
 
-## 6. Build it, section by section
+## 4. Build it, section by section
 
 You will see almost no new Rust today. Day 3's difficulty is math, not
 language (only section C's strip has entries). All three layers accumulate
@@ -398,15 +352,32 @@ fn run_layers_demo() -> Result<()> {
 }
 ```
 
-Wire it into the CLI `match`, and add the line to the usage message:
+Wire it into the CLI `match` in `main`, as a new arm right above the `_`
+arm:
 
 ```rust,ignore
         ["layers"] => run_layers_demo(),
 ```
 
-Add `cargo run --quiet -- layers` as a second smoke command in
-`scripts/check.sh`. From today on, the green bar exercises both
-subcommands. Then run it:
+In the same `_` arm, add a second usage line under the existing one, so a
+wrong command shows both subcommands:
+
+```rust,ignore
+            eprintln!("usage: cargo run -- generate <prompt> [steps]");
+            eprintln!("       cargo run -- layers");
+```
+
+Last, add the new subcommand to the green bar. In `scripts/check.sh`, find
+the smoke command `cargo run --quiet -- generate "ru" 40` and add one line
+under it (the comment above it now says "commands", plural):
+
+```bash
+# The day's smoke commands — update them whenever the CLI's shape changes.
+cargo run --quiet -- generate "ru" 40
+cargo run --quiet -- layers
+```
+
+From today on, the green bar exercises both subcommands. Then run it:
 
 ```bash
 cargo run -- layers
@@ -614,6 +585,16 @@ print:
     println!("linear:  {:?}", x.dims());
 ```
 
+Then add one line right above the `rows equal` print, so it compares the
+newest cards, not the embedding's. The function now ends like this:
+
+```rust,ignore
+    let rows = x.to_vec2::<f32>()?;
+    println!("rows equal: {}", rows[0] == rows[1]);
+    Ok(())
+}
+```
+
 (One cosmetic touch: give the `embed:` label one extra space,
 `"embed:   {:?}"`, so its column lines up with `rmsnorm:`.) Notice the
 `let x =` shadowing. Reusing the name for each stage is idiomatic Rust for
@@ -731,7 +712,8 @@ Read it line by line, against what each piece does:
 - `iter_mut()` hands out *exclusive* (`&mut`) references, so each row can
   be edited in place.
 
-- The two assignment lines are the 2×2 rotation matrix, written out.
+- The two assignment lines rotate the point `(a, b)` by the angle. They are
+  the standard 2×2 rotation matrix, written out.
 
 - The math runs in `f64` so repeated trig doesn't erode `f32` precision.
 
@@ -815,10 +797,20 @@ stays the same. Position is encoded, but only *relative* position leaks
 into dot products.
 
 One last stretch of **wiring** remains, so copy freely. Time to finish the
-demo. In `src/main.rs`, at the end of `run_layers_demo`, find the final
-`rows equal` print: its last two lines before `Ok(())`. Replace them with
-a remember-then-compare ending. It captures whether the rows match
-*before* the rotation, then prints one verdict line after it:
+demo. In `src/main.rs`, `run_layers_demo` ends with the two lines you
+added in section B, just before `Ok(())`:
+
+```rust,ignore
+    let rows = x.to_vec2::<f32>()?;
+    println!("rows equal: {}", rows[0] == rows[1]);
+    Ok(())
+}
+```
+
+Keep everything above them, including the `linear:` print. Replace only
+those two lines (`let rows = …` and the `rows equal` print) with a
+remember-then-compare ending. It captures whether the rows match *before*
+the rotation, then prints one verdict line after it:
 
 ```rust,ignore
     let rows = x.to_vec2::<f32>()?;
@@ -852,13 +844,13 @@ fn layers_demo_is_deterministic() {
 **Section checkpoint:** `./scripts/compare.sh v1-day-03c`. It is identical
 to `v1-day-03`, because the last section of a day *is* the day.
 
-## 7. Run it
+## 5. Run it
 
 ```bash
 cargo run -- layers
 ```
 
-## 8. Expected result
+## 6. Expected result
 
 ```text
 text "aa" -> ids [97, 97]
@@ -894,11 +886,14 @@ Read it line by line. You can check every number:
   seat stamp finally told the twins apart, and position has entered the
   representation.
 
-## 9. Test it
+## 7. Test it
 
 Ten new tests bring the suite to 24 (21 unit, 3 integration): two for the
 lookup, one for `Linear`, two for RMSNorm, four for RoPE's properties,
-and one command-line test:
+and one command-line test. Count them: Day 2 left 14 tests (12 unit, 2
+integration). Today adds 9 unit tests in `layers.rs` and 1 integration test
+in `tests/cli.rs`. That makes 21 unit (12 + 9) and 3 integration (2 + 1),
+24 in all.
 
 ```bash
 cargo test layers
@@ -919,7 +914,12 @@ test layers::tests::lookup_equals_one_hot_matmul ... ok
 test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 12 filtered out; finished in 0.00s
 ```
 
-## 10. Break it deliberately
+The filter `layers` keeps only tests whose names contain it. In the unit
+tests, those are the 9 in `layers.rs`. The other 12 unit tests are the
+`12 filtered out`. Cargo then runs `tests/cli.rs` as a second block, where
+the filter matches `layers_demo_is_deterministic` (not shown above).
+
+## 8. Break it deliberately
 
 Flip one sign in `rope`. It is the classic transcription slip when you
 copy a rotation matrix from paper:
@@ -950,7 +950,7 @@ computes the wrong thing, and a set of property tests is the only
 tripwire. Flip the sign back by hand and confirm `cargo test` is green
 again.
 
-## 11. Checkpoint
+## 9. Checkpoint
 
 Every checkpoint — each section and the day — is done only when the full
 green bar passes:
@@ -984,7 +984,7 @@ as one diff:
 git diff v1-day-02 v1-day-03
 ```
 
-## 12. Recap
+## 10. Recap
 
 **What changed today:** you added a new `src/layers.rs` with the four
 pre-attention building blocks:

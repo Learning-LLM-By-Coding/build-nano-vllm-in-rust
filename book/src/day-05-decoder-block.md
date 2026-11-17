@@ -35,19 +35,18 @@ everything you already built into one unit.
 
 </div>
 
-## 1. What you will have running
+## 1. Why we need it
 
-Yesterday ended with tokens that can finally listen to each other. Today
-you finish the machine around them. `cargo run -- block` sends the
-three-token prompt through one complete **transformer decoder block**,
-the unit real LLMs are made of.
+**The story so far** — remember [the restaurant](story.md): the kitchen (Day 1), the
+cook who learns from old tickets (Day 2), the dining room where [guests](story.md#guest) (one per token of your
+prompt) got their [profile cards](story.md#embedding) (Day 3). And last
+night, at last, came the [table conversation](story.md#attention): every guest walked away with a card full of borrowed
+information (Day 4). Today the evening becomes something the restaurant
+can *repeat*, night after night, forty rounds deep.
 
-Where does that unit sit in a finished model? Follow a prompt through the
-whole machine. Tokens walk in through Day 3's embedding. They pass through
-dozens of identical blocks, copies of the one you build today. Then they
-leave through a single scoring layer that names the next token. Day 6
-builds that entrance and that exit, so today is all about the block
-itself. Here is the whole machine, with the day each part arrives:
+Why repeat it? One round of conversation is not a model. A real LLM runs
+dozens of rounds in a row, each with its own learned weights. Here is the
+whole machine, with the day each part arrives:
 
 ```text
 token ids           the prompt as numbers (Day 1's tokenizer)
@@ -64,124 +63,66 @@ next token          highest score wins (Day 1's greedy pick) — and
                     Day 2's loop feeds it back in for the token after
 ```
 
-You are closer to the block than you might think. Yesterday you already
-built its biggest part, the conversation. Only two pieces are missing,
-and you build one per section:
+The repeating unit in the middle is the **transformer decoder block**, or
+**block** for short. Your first instinct might be to make Day 4's
+`Attention` the block and stack it forty times. Three things go wrong:
 
-- **The digest** is a small per-token network (the SwiGLU
-  **feed-forward**). It lets each token quietly make something of what
-  attention handed it. No token sees any other token during this step.
+- **Nobody digests what they heard.** Attention moves information
+  *between* guests, but each guest only walks away with a share-weighted
+  average of other guests' statements. Embedding and `Linear` are weighted
+  sums too, and stacked weighted sums collapse: algebra can fold any
+  number of purely linear steps into one equivalent step. Softmax and
+  RMSNorm are not linear, but neither bends the card's numbers one by one.
+  Softmax only decides *how much* of each guest to blend, and RMSNorm
+  scales the whole card by one number. So forty rounds could only keep
+  re-mixing what is already on the cards.
 
-- **The packaging** is the `Block`, which runs the evening's whole ritual
-  in order. It levels the volume, holds the conversation, and adds what
-  was heard. Then it levels again, digests, and adds the conclusions. Each
-  step's result is *added onto* the token instead of replacing it, and
-  that is called a **residual connection**.
+  The fix is a **digest**: a small
+  network each guest runs alone on its own card, with a curve in the
+  middle. That curve, a **nonlinearity**, is the block's only *per-feature*
+  nonlinearity: the one step that sends each of the card's numbers through
+  a bend of its own. It is what lets round two learn something round one
+  could not.
 
-The demo saves the best for last: a tiny experiment. It runs the block
-twice, once on `"abc"` and once on `"abz"`, the same prompt except for
-the last token. Then it compares the two outputs, token by token. The
-first two tokens come out identical, down to the last bit, because
-changing a token can never affect the tokens *before* it. That
-one-way-street rule is called **causality**, and today you watch the
-whole block prove it on your screen.
+- **Rounds erase the cards.** Suppose every round *replaced* each guest's
+  card with that round's output. The original guest would be gone within
+  a few rounds, and forty rounds deep, the model would long ago have
+  erased its own input. The fix is to *add* each round's output onto the
+  card instead, like a note penciled onto it. That addition is a
+  **residual connection**.
+
+- **The notes snowball.** Each round now adds more onto the card, so the
+  card's numbers can grow round after round. A step that reads bigger
+  numbers writes bigger notes, and the growth feeds itself. The fix is
+  Day 3's [volume knob](story.md#rmsnorm) (`RmsNorm`), turned before every
+  step on the copy that step reads. Leveling first is called
+  **pre-norm**.
+
+You build these fixes in two sections. Section A builds the digest (the
+SwiGLU **feed-forward**). Section B packages the conversation, the digest,
+two volume knobs, and two residual additions into one `Block`. Along the
+way the demo grows into `cargo run -- block`, which ends with a live
+experiment: it changes the last token and checks that the earlier tokens'
+results do not move.
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=aircAruvnKk">▶ what a per-token network is (3Blue1Brown)</a>
 <a href="https://nn.labml.ai/transformers/feed_forward.html">gated feed-forward networks, formally (labml)</a>
 </div>
 
-## 2. What you will be seeing in the output
-
-Here is a sneak peek. Today's run keeps everything from Day 4 and adds
-exactly two new lines at the very end. Below is the full run, with a
-plain-English note under each new line. If the notes don't fully click
-yet, that's fine. The rest of the day is there to make them click:
-
-```text
-text "abc" -> ids [97, 98, 99]
-cards:  [3, 8]
-scores (how well each question matches each topic card):
-           seat 0  seat 1  seat 2
-  seat 0 |  2.828   2.502   1.820
-  seat 1 |  2.502   2.828   2.502
-  seat 2 |  1.820   2.502   2.828
-masked (etiquette: every score in the future becomes -inf):
-           seat 0  seat 1  seat 2
-  seat 0 |  2.828    -inf    -inf
-  seat 1 |  2.502   2.828    -inf
-  seat 2 |  1.820   2.502   2.828
-who listens to whom (each row sums to 1; 0.000 = the future):
-           seat 0  seat 1  seat 2
-  seat 0 |  1.000   0.000   0.000
-  seat 1 |  0.419   0.581   0.000
-  seat 2 |  0.175   0.346   0.479
-heard:  [3, 8]
-q proj: 8 in -> 8 out (4 heads x 2);  k,v proj: 8 in -> 4 out (2 SHARED heads x 2)
-attn:   [3, 8]
-───────────── everything above: Day 4's output, unchanged ─────────────
-block:  [3, 8]
-swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2 moved: true
-```
-
-- `block:  [3, 8]` — the complete unit runs end to end. 3 tokens go in
-  and 3 tokens come out, each still carrying 8 numbers. The size never
-  changes, and that is exactly what lets a real model stack this unit
-  dozens of times.
-
-- The swap line is the day's proof, and it is worth a moment. The model
-  reads strictly left to right, the way you read a sentence one word at a
-  time. Everything it makes of `a` is finished before it has even seen
-  `c`. If that is *really* true, then editing the ending must leave the
-  beginning untouched, the way changing a novel's last page cannot
-  rewrite its first chapter. So the demo tests exactly that. It runs the
-  block on `"abc"`, runs it again on `"abz"` (same prompt, different last
-  token), and compares the outputs token by token. The first two tokens
-  come out identical to the bit, and only the swapped token's own output
-  moved. Here is why the engine cares. Generation adds one token at a
-  time. If earlier tokens' work stays valid no matter what comes next,
-  the engine can compute that work once and *keep* it instead of redoing
-  it. Day 8 turns exactly that into the engine's biggest speed trick.
-
-## 3. Why we need it
-
-**The story so far** — remember [the restaurant](story.md): the kitchen (Day 1), the
-cook who learns from old tickets (Day 2), the dining room where [guests](story.md#guest) (one per token of your
-prompt) got their [profile cards](story.md#embedding) (Day 3). And last
-night, at last, came the [table conversation](story.md#attention): every guest walked away with a card full of borrowed
-information (Day 4). Today the evening becomes something the restaurant
-can *repeat*, night after night, forty rounds deep.
-
-Two things stand between yesterday's conversation and a repeatable
-evening:
-
-- **Everything so far is re-mixing.** Embedding, `Linear`, and
-  attention's blend are each a weighted sum, and stacked weighted sums
-  collapse. Algebra can fold any number of purely linear steps into a
-  single equivalent one. So forty rounds of them would teach the model
-  nothing a single round couldn't. The digest brings the one ingredient no
-  matmul can imitate, a **nonlinearity** (the gate). That is what lets
-  round two learn something round one could not.
-
-- **Nothing protects the cards.** Suppose every round *replaced* each
-  guest's card with that round's output. The original guest would be gone
-  within a few rounds, and forty rounds deep, the model would long ago
-  have erased its own input. Residual connections make every round an
-  *annotation* on the card instead of a rewrite. The [volume knob](story.md#rmsnorm) (Day 3's `RmsNorm`)
-  re-levels before every step, so the annotations can't snowball.
-
-## 4. Mental model
+## 2. Mental model
 
 Tonight the evening earns its rhythm. Walk its last two rituals, then
 watch the whole thing get packaged:
 
 - **Think it over, alone.** After the conversation, each guest digests.
-  They take two fresh readings of their card and squash one into a 0-to-1
-  **gate**. The gate decides how much of the other reading gets through,
-  and the result is mixed back down to card size. That is the SwiGLU
-  feed-forward, all per-guest, with no cross-talk. (The conversation
-  decides *where* information flows. The digest is where each guest
-  *makes something of it*.)
+  They take two fresh readings of their card. One reading goes through a
+  soft switch (`silu`, defined in section A) and becomes the **gate**.
+  Each gate number decides how much of the matching number in the other
+  reading gets through. The result is mixed back down to card size. That
+  is the SwiGLU feed-forward, all per-guest, with no cross-talk. (The
+  conversation decides *where* information flows. The digest is where
+  each guest *makes something of it*.)
 
 - **Pencil, never rewrite.** Neither the conversation nor the digestion
   *replaces* a guest's card. Their output is *added on*, like notes
@@ -190,19 +131,19 @@ watch the whole thing get packaged:
   recognizably themselves, only heavily annotated.
 
 - **The knob turns before every activity.** Before the conversation, and
-  again before the digestion, the familiar volume knob levels the card.
-  Knob-first is called **pre-norm**, and it is what the Llama/Qwen family
-  actually runs.
+  again before the digestion, the familiar volume knob levels the copy of
+  the card that the activity reads. Knob-first is **pre-norm**, and it is
+  what the Llama/Qwen family actually runs.
 
 - **One evening, packaged.** A **block** is that whole sequence (knob,
-  conversation, pencil; knob, digestion, pencil) as a single struct. And a
-  real model? It runs this same evening dozens of times in a row, and
-  that is the whole trick. The choreography never changes, but every round carries its own
-  learned weights, so every round looks for something new. If you could
-  watch one card travel down the stack, you would see it grow richer
-  round by round. The early rounds pick up surface things, like spellings
-  and word endings, and the later rounds begin to catch meaning. Today you
-  build one round, and Day 6 stacks them.
+  conversation, pencil; knob, digestion, pencil) as a single struct. A
+  real model runs this same evening dozens of times in a row. The
+  choreography never changes, but every round carries its own learned
+  weights, so every round looks for something new. If you could watch one
+  card travel down the stack, you would see it grow richer round by round.
+  The early rounds pick up surface things, like spellings and word
+  endings, and the later rounds begin to catch meaning. Today you build
+  one round, and Day 6 stacks them.
 
 ```text
 x [3, 8]            3 guests × 8 numbers on each card
@@ -220,7 +161,7 @@ The reading rule is the same as always: every shape is `[how many
 guests, how many numbers each]`. A block never changes the shape, and
 that is exactly what makes it stackable.
 
-## 5. Inference concepts introduced
+## 3. Inference concepts introduced
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://nn.labml.ai/transformers/feed_forward.html">gated feed-forward networks (labml)</a>
@@ -229,27 +170,30 @@ that is exactly what makes it stackable.
 
 - **Nonlinearity is why depth exists.** Without it, stacking layers is
   cosmetic, because any pile of linear steps collapses into one. The
-  `silu` gate is the block's only nonlinear moment. It is what lets each
-  stacked block capture patterns the previous one couldn't.
+  `silu` gate is the block's only per-feature nonlinearity. It is what
+  lets each stacked block capture patterns the previous one couldn't.
 
 - **Residuals + pre-norm are why depth survives.** Each sublayer only
-  *adds* its contribution to an already-leveled input. So signals can't
-  explode or vanish across dozens of blocks. That is the same reason
-  RMSNorm existed at all, now applied at the block scale.
+  *adds* its contribution, and it computes that contribution from a
+  leveled copy. So signals can't explode or vanish across dozens of
+  blocks. That is the same reason RMSNorm existed at all, now applied at
+  the block scale.
 
 - **The feed-forward is where most of the model lives.** It expands each
   card to a wider hidden size and back (8 → 16 → 8 here). Those two fat
   matrices dominate the parameter count. In today's toy, the digest holds
-  384 weights against attention's 192. Real models keep the digest the
-  biggest part too: in Qwen3-0.6B it holds about 1.5 weights for every
-  attention weight. When Day 9 measures where the time goes, remember where the
-  weights are.
+  384 weights (three matrices of 8 × 16 = 128) against attention's 192
+  (8 × 8 + 8 × 4 + 8 × 4 + 8 × 8). Real models keep the digest the biggest
+  part too. In Qwen3-0.6B it holds about 1.5 weights for every attention
+  weight: 3 × 1024 × 3072 ≈ 9.4 million against about 6.3 million (Day 6
+  prints these shapes). When Day 9 measures where the time goes, remember
+  where the weights are.
 
 - **"A 28-layer model" means 28 of these blocks.** The whole engine will
   be organized around the block. Day 6 stacks them, and Day 8's KV cache
   will be bookkept *per block*.
 
-## 6. Build it, section by section
+## 4. Build it, section by section
 
 Today you add one new file, `src/block.rs`, which holds the digestion and
 the packaging. You compose it entirely from pieces you already built.
@@ -313,12 +257,24 @@ one control value per scratch slot. And `down_proj` shrinks the finished
 thought back to card size. The flow in `forward` is exactly that: widen,
 gate, shrink.
 
+The `*` in `gate * self.up_proj.forward(x)?` is not a matmul. Both sides
+have the same shape, and `*` multiplies them slot by slot: gate number 0
+times scratch number 0, gate number 1 times scratch number 1, and so on.
+
+Now the soft switch itself. It is built from **sigmoid**,
+`sigmoid(g) = 1 / (1 + e^(-g))`, which squashes any number into the range
+0 to 1. `silu(g) = g × sigmoid(g)` is a **soft switch**, not a 0-to-1
+value. A large positive `g` passes through almost unchanged, a large
+negative `g` comes out near 0, and in between the curve bends smoothly
+(its lowest point is about −0.28).
+
 So why a *gate*, instead of squashing the widened card with some fixed
 function? A fixed squash treats every slot the same way, every time. The
-gate decides *per slot, per card*. `silu` sends a strongly negative gate
-reading toward zero, and multiplying by nearly-zero erases that slot's
-thought. A confident reading lets its thought through almost unchanged.
-So the network learns not just *what to compute* but *what to keep*.
+gate is computed from its own reading of the card, so it decides *per
+slot, per card*. `silu` sends a strongly negative gate reading toward
+zero, and multiplying by nearly-zero erases that slot's thought. A
+confident reading lets its thought through almost unchanged. So the
+network learns not just *what to compute* but *what to keep*.
 That gate-times-value pattern is the "GLU" family. The `silu`-gated
 variant is the one the Llama/Qwen models actually ship, and Candle
 provides `silu()` ready-made.
@@ -331,7 +287,9 @@ mod block;
 ```
 
 Pin it with one hand-checked test at the bottom of `src/block.rs`. The
-numbers are small enough to verify on a napkin:
+numbers are small enough to verify on a napkin. With every weight 1, all
+three translators copy the input, so the output is `silu(1) × 1`. And
+`sigmoid(1) = 1 / (1 + 1/e) = 1 / 1.368 = 0.731`:
 
 ```rust,ignore
 #[cfg(test)]
@@ -414,6 +372,10 @@ attn:   [3, 8]
 mlp:    [3, 8]
 ```
 
+`mlp:    [3, 8]` is the digest's result: 3 guests × 8 numbers, the same
+shape attention handed it. Inside, each card was widened to 16 numbers,
+gated, and shrunk back to 8.
+
 **Section checkpoint:** `./scripts/compare.sh v1-day-05a`
 
 ### Section B — the decoder block
@@ -493,6 +455,16 @@ Look at the shape of both lines in `forward`: `x + something`. That little
 `+` is the residual, the pencil. Whatever the conversation or the digest
 produces gets *added onto* the card, and the card itself is never
 replaced.
+
+The two lines are written slightly differently, for Rust reasons. Every
+Candle addition returns a `Result`. In the first line, `x` is the
+function's argument, already a borrowed `&Tensor`, so `x + …` only reads
+it. The `( … )?` unwraps the `Result`, and the new `x` is a plain `Tensor`
+that replaces the old name. In the second line, `x` is that owned
+`Tensor`. Writing `x + …` would *move* it into the addition while the
+right-hand side still needs to read it, so the line *borrows* it with
+`&x`. That line needs no `?`, because its `Result` is exactly what
+`forward` returns.
 
 One subtlety is worth slowing down for. Each sublayer *reads* a leveled
 copy of the card. That is the `self.attn_norm.forward(x)?` tucked inside
@@ -681,13 +653,13 @@ fn block_demo_shows_causality() {
 **Section checkpoint:** `./scripts/compare.sh v1-day-05b` (identical to
 `v1-day-05`, because the last section of a day *is* the day).
 
-## 7. Run it
+## 5. Run it
 
 ```bash
 cargo run -- block
 ```
 
-## 8. Expected result
+## 6. Expected result
 
 ```text
 text "abc" -> ids [97, 98, 99]
@@ -722,14 +694,24 @@ shapes. Read the two new lines against what you built:
   same size they arrived, which is the stackability guarantee, live.
 
 - `swap guest 3 "c"->"z": row 0 moved: false, row 1 moved: false, row 2
-  moved: true` — the demo ran the block twice on prompts that differ only
-  in the last guest, then compared rows. Rows 0 and 1 are bit-identical
-  across the two runs, because `mask_future` gives the changed guest
-  exactly zero share in them. Only the swapped guest's own row moved. You
-  observed causality through the complete block instead of taking it on
-  faith.
+  moved: true` — the demo ran the block on `"abc"`, ran it again on
+  `"abz"`, and compared the outputs row by row. The label counts guests
+  from 1, the way you'd say it aloud, so guest 3 is the third token, `c`.
+  The rows count from 0, like Day 4's seats, so guest 3's output is row 2.
+  Rows 0 and 1 are bit-identical across the two runs, because
+  `mask_future` gives the changed guest exactly zero share in them, and
+  every other step in the block works on each guest alone. Only row 2
+  moved.
 
-## 9. Test it
+This one-way-street rule is **causality**: a token can never affect the
+tokens before it, the way changing a novel's last page cannot rewrite its
+first chapter. You observed it through the complete block instead of
+taking it on faith. The engine cares because generation adds one token at
+a time. If earlier tokens' work stays valid whatever comes next, the
+engine can compute that work once and *keep* it. Day 8 turns exactly that
+into the engine's biggest speed trick.
+
+## 7. Test it
 
 Your five new tests (one for the digest, three for the block, one CLI
 pin) bring the suite to 36 (32 unit, 4 integration):
@@ -753,7 +735,7 @@ test block_demo_shows_causality ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.23s
 ```
 
-## 10. Break it deliberately
+## 8. Break it deliberately
 
 Now remove one pencil. In `Block::forward`, drop the second residual, so
 the block returns the digest's output *instead of* adding it on:
@@ -778,12 +760,13 @@ entirely.
 That is precisely what "rewrite instead of annotate" does. A 28-block
 model built this way would overwrite its own input 28 times before
 predicting anything. Notice what stayed green, too. The causality test
-still passes, because erasing every guest uniformly is still per-guest.
+still passes. The digest works on each guest alone and never mixes
+guests, so even a broken digest can't carry the future backward.
 One property can be perfectly healthy while another is catastrophically
 broken. That is why the block carries three independent guarantees
 instead of one. Restore the `&x +` and confirm `cargo test` is green.
 
-## 11. Checkpoint
+## 9. Checkpoint
 
 Every checkpoint, each section and the day alike, is done only when the
 full green bar passes:
@@ -817,10 +800,10 @@ diff:
 git diff v1-day-04 v1-day-05
 ```
 
-## 12. Recap
+## 10. Recap
 
 **What changed today:** you wrote `src/block.rs`. It holds the SwiGLU
-`Mlp` (`down(silu(gate(x)) * up(x))`, the model's only nonlinearity) and
+`Mlp` (`down(silu(gate(x)) * up(x))`, the block's only per-feature nonlinearity) and
 the pre-norm decoder `Block` with residual connections. The demo grew
 into `cargo run -- block`, and it now demonstrates causality through the
 complete block, pinned by a CLI test. You also wrote five tests, including
@@ -831,6 +814,24 @@ bit-identical).
 dozens (Day 6). The weights are still ramp-filled fakes (Day 6). Qwen's
 extra per-head q/k normalization also waits for the real checkpoint
 (Day 6).
+
+**Takeaways:**
+
+- A block is attention plus a digest, wrapped in two volume knobs and two
+  residual additions. It keeps the card size, so a model can stack it
+  dozens of times.
+
+- Without a per-feature nonlinearity, stacked rounds collapse into one.
+  The `silu` gate in the SwiGLU feed-forward is that nonlinearity.
+
+- Add each sublayer's result onto the card instead of replacing it. The
+  residual is why the original token survives forty rounds.
+
+- Level the copy a sublayer reads, never the card itself (pre-norm). That
+  keeps the numbers from snowballing as notes pile up.
+
+- Only attention mixes guests, and its mask points backward. So the whole
+  block is causal, and Day 8 can keep earlier tokens' work.
 
 **Tomorrow's limitation, resolved on Day 6:** the machine is complete,
 but the mind is fake. Ramp weights make grammatical-looking shapes and

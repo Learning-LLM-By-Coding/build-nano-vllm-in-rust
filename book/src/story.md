@@ -273,7 +273,7 @@ real model runs that unit dozens of times in a row.
 
 **Feed-forward (SwiGLU) — the digest** · [Day 5, section A](day-05-decoder-block.md)
 
-*What it is:* a small network applied to each token separately. It makes two projections and squashes one into a 0-to-1 gate that decides how much of the other passes through. A final projection brings the result back down.
+*What it is:* a small network applied to each token separately. It makes two projections and passes one through a soft switch (silu), the gate, which decides how much of the other passes through. A final projection brings the result back down.
 
 *In the story:* after the conversation, each guest digests what they heard alone, with no cross-talk.
 

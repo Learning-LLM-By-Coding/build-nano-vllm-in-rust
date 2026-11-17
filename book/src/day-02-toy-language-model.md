@@ -33,44 +33,15 @@ point — nothing says a "day" must fit in one.
 
 </div>
 
-## 1. What you will have running
-
-By the end of today, `cargo run -- generate "ru" 40` prints the engine's
-first self-generated text. It is a complete language model, end to end. Its
-weights are **learned from data** (by counting). An **autoregressive loop**
-feeds each predicted token back in as input. And a **CLI** wraps it, so you
-can hand it to someone else. Run it a hundred times, and you get the same
-output a hundred times. It is also hilariously dumb. This chapter measures
-those dumbnesses precisely, because they are exactly what the next thirteen
-days repair.
-
-## 2. What you will be seeing in the output
-
-Here is a sneak peek: the exact output you will produce today, with a
-plain-English note under each line. Don't worry if a note doesn't fully
-click yet. The rest of the day builds each piece, and when you run this
-yourself at the end, every line will read like an old friend:
-
-```text
-"rust. rust. rust. rust. rust. rust. rust. "
-```
-
-- It is one line, but the model built it one character at a time. It
-  predicts a single next character and glues it onto the end of the text.
-  Then it asks *what comes next?* again, 40 times here. That feedback loop
-  is the day's real product.
-
-- The looping is honest, not a bug. This model remembers only *one*
-  character back. So after `.` it always picks space, after space it always
-  picks `r`, and the same six-character groove repeats forever. Today you
-  build exactly that loop, and you measure exactly that dumbness.
-
-## 3. Why we need it
+## 1. Why we need it
 
 Your Day 1 pipeline works, but it predicts **one** token with **fake**
 weights: a hard-coded "next byte in ASCII order" matrix. Two things
 separate that from a language model, and today's two sections build one
-each:
+each. By the end, `cargo run -- generate "ru" 40` prints the engine's
+first self-generated text. It is complete and deterministic. It is also
+hilariously dumb. This chapter measures that dumbness precisely, because
+the next thirteen days repair it.
 
 - **Section A** gives you weights that come from *data*. Over a training
   text, you count how often each byte follows each byte. The counts *are*
@@ -88,7 +59,7 @@ tickets. Section B has the cook serve a whole tasting menu, choosing every
 next course by looking at the last. So A builds the model, and B wraps the
 loop around it.
 
-## 4. Mental model
+## 2. Mental model
 
 Walk the story in its two halves. First see how the cook learns, then what
 happens when the cook starts serving:
@@ -100,8 +71,8 @@ training text, once. For every adjacent pair, the cook puts a tally mark in
 cell (current, next). To suggest the next jar, the cook looks up the
 current row and takes the column with the most marks. Counting is
 **training, in miniature**. Real training also adjusts numbers in matrices
-based on data. Gradient descent is a smarter version of "+1 per sighting",
-not a different kind of thing.
+based on data. Its usual method, *gradient descent*, is a smarter version
+of "+1 per sighting", not a different kind of thing.
 
 **Serving course after course (section B).** The cook looks at the last jar
 used, consults the tally sheet, cooks the winner, and repeats. Every course
@@ -127,7 +98,7 @@ next token          the judge's pick — appended to the end of `ids`
 The model still answers only one question, "what comes after this byte?",
 asked over and over.
 
-## 5. Inference concepts introduced
+## 3. Inference concepts introduced
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=PaCmpygFfXo">▶ build a bigram language model (Karpathy)</a>
@@ -148,7 +119,7 @@ asked over and over.
   history. That is why its output locks into a cycle. Everything in Days 3–5
   (embeddings, attention) exists to widen this to thousands of tokens.
 
-## 6. Build it, section by section
+## 4. Build it, section by section
 
 ### Section A — a bigram model learned by counting
 
@@ -239,8 +210,9 @@ impl Bigram {
   into one `Vec`. It is row-major, the same layout `Tensor::from_vec`
   expects.
 
-- `from_text` returns `Self`. It is an associated function used as a
-  constructor, called as `Bigram::from_text(...)`.
+- `from_text` returns `Self`, which means "the type being defined", here
+  `Bigram`. It is an *associated function* (it belongs to the type, not to
+  one value), used as a constructor and called as `Bigram::from_text(...)`.
 
 - `forward` is your Day 1 pipeline fragment turned into a method:
   `[1, 256] × [256, 256] → [1, 256]`, one-hot row lookup and all.
@@ -533,11 +505,21 @@ fn main() -> Result<()> {
 - `std::env::args()` yields the command-line arguments, and `.skip(1)` drops
   the binary's own name.
 
+- Why two lists? `raw` owns the arguments as `String`s. The slice pattern
+  below compares against literals like `"generate"`, which are `&str`. So
+  `args` borrows each `String` as a `&str` (`String::as_str`), and `raw`
+  stays alive to own the text.
+
 - `match args.as_slice()` with `["generate", prompt]` is a **slice
   pattern**. It matches a two-element slice whose first element is exactly
   `"generate"`, and it binds the second to `prompt`. The `_` arm catches
   everything else, because `match` refuses to compile unless every case is
   covered.
+
+- `steps.parse()` can produce many types. Rust picks the target from where
+  the result goes: `run_generate` takes `steps: usize`, so `parse` reads a
+  `usize`. Text like `"ten"` fails, and `expect` stops with "steps must be a
+  number".
 
 - A bad invocation prints usage to **stderr** and exits with code 2, the
   Unix convention for misused arguments. (We add no dependencies yet.
@@ -577,6 +559,12 @@ The CLI is now a user-facing contract, so give it the course's first
 outside, exactly like a user would. They live in `tests/cli.rs`, inside a
 new top-level `tests/` directory. (Cargo compiles each file there as its
 own separate test program.)
+
+Where does the binary's path come from? When Cargo builds integration
+tests, it sets `CARGO_BIN_EXE_<name>` to the built binary's path, where
+`<name>` is the binary's name. Yours is `nano-vllm-rs`, the package `name`
+in `Cargo.toml`. The `env!` macro reads that variable *at compile time*, so
+the test always runs the binary Cargo just built.
 
 ```rust,ignore
 //! Integration tests: drive the compiled binary exactly like a user would.
@@ -619,7 +607,7 @@ when it is gone.
 **Section checkpoint:** `./scripts/compare.sh v1-day-02b`. It is identical
 to `v1-day-02`, because the last section of a day *is* the day.
 
-## 7. Run it
+## 5. Run it
 
 ```bash
 cargo run -- generate "ru" 40
@@ -627,7 +615,7 @@ cargo run -- generate "ru" 40
 
 (`generate <prompt>` alone defaults to 40 steps.)
 
-## 8. Expected result
+## 6. Expected result
 
 ```text
 "rust. rust. rust. rust. rust. rust. rust. "
@@ -640,10 +628,12 @@ greedy costs you. The corpus contains `rush`, but greedy *never* takes a
 minority branch, so this model will say `rust.` forever and `rush.` never.
 (Temperature sampling, on Day 10, is exactly the fix for "never".)
 
-## 9. Test it
+## 7. Test it
 
 Fourteen tests now pin the engine: Day 1's seven survivors, section A's three
-counting tests, section B's two loop tests, and two integration tests.
+counting tests, section B's two loop tests, and two integration tests. Cargo
+reports them in two groups: 12 unit tests (7 + 3 + 2), then the 2
+integration tests.
 
 ```bash
 cargo test
@@ -676,7 +666,7 @@ test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 The second `running 2 tests` block is `tests/cli.rs`. Cargo builds and runs
 it as its own binary, after the unit tests.
 
-## 10. Break it deliberately
+## 8. Break it deliberately
 
 You need no code change today. The engine breaks from the *outside*:
 
@@ -708,7 +698,7 @@ and subword vocabularies. You will meet all three in time.
 Also try `cargo run -- oops`. The usage message comes with exit code 2,
 which the integration test pins.
 
-## 11. Checkpoint
+## 9. Checkpoint
 
 Every checkpoint — each section and the day — is done only when the full
 green bar passes:
@@ -742,7 +732,7 @@ as one diff:
 git diff v1-day-01 v1-day-02
 ```
 
-## 12. Recap
+## 10. Recap
 
 **What changed today:** your engine gained `src/model.rs`, with its first
 weights learned from data (a counted bigram). It gained an autoregressive

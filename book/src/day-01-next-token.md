@@ -34,46 +34,12 @@ point — nothing says a "day" must fit in one.
 
 </div>
 
-## 1. What you will have running
+## 1. Why we need it
 
-By the end of today, `cargo run` will take the text `"hi"` and turn it into
-token ids. It scores all 256 possible next tokens with one matrix
-multiplication, greedily picks the winner, and turns it back into text.
-
-That is the complete skeleton of an LLM, in about 60 lines:
-**text → numbers → scores → choice → text**. Only one thing is fake: the
-weights. They always predict the next byte in ASCII order, so after `"hi"`
-comes `"j"`. Everything else has exactly the shape of the real thing.
-
-## 2. What you will be seeing in the output
-
-Here is a sneak peek: the exact output you will produce today, with a
-plain-English note under each line. Don't worry if a note doesn't fully
-click yet. The rest of the day builds each piece, and when you run this
-yourself at the end, every line will read like an old friend:
-
-```text
-text "hi" -> token ids [104, 105]
-logits shape: [1, 256]
-greedy next token: 106 -> "j"
-```
-
-- `text "hi" -> token ids [104, 105]` — computers don't read letters, so
-  the first step gives every possible character a number. `h` is 104, and
-  `i` is 105. The prompt becomes a list of numbers.
-
-- `logits shape: [1, 256]` — the model answers one question: *what comes
-  next?* Its answer is 256 scores, one for every character it could say
-  next. (Today's scores come from a made-up rulebook. The shape is the
-  real part.)
-
-- `greedy next token: 106 -> "j"` — the model makes the simplest possible
-  choice and takes the highest score. Number 106 wins, and 106 is the
-  letter `j`. That is the prediction, turned back into text.
-
-## 3. Why we need it
-
-Your engine from yesterday (`v1-day-00`) computes nothing yet. Everything
+Your engine from yesterday (`v1-day-00`) computes nothing yet. By the end
+of today, `cargo run` takes the text `"hi"`, scores all 256 possible next
+tokens, picks the winner, and prints `"j"`. That is the complete skeleton
+of an LLM in about 60 lines. Only the weights are fake. Everything
 an inference engine will ever do for us is a loop wrapped around three
 primitives. That covers serving a chatbot, batching hundreds of requests,
 and juggling GPU memory:
@@ -89,13 +55,13 @@ single pipeline. Each section stands alone, with its own runnable finish and
 its own checkpoint tag, but together they tell one story. This whole course
 keeps telling it: **the running story, for all 15 days, is a little
 restaurant, built one scene at a time.** Today you build its kitchen. Your
-text is the order slip, and the engine is the cook. Section B stocks the
-pantry, section A builds the recipe board, and section C hires the judge.
+text is the order slip, and the engine is the cook. Section A builds the
+recipe board, section B stocks the pantry, and section C hires the judge.
 (On Day 2, the cook starts *learning* from old order tickets.) The whole
 story, scene by scene, lives on one page that grows by one scene every day:
 [The restaurant: an analogy to help you build the right mental model](story.md).
 
-## 4. Mental model
+## 2. Mental model
 
 Walk the kitchen, one station per section:
 
@@ -107,8 +73,11 @@ Walk the kitchen, one station per section:
 - **The recipe board (section A's matmul).** A recipe is a column of
   amounts: this much from jar A, this much from jar B. Cooking is
   multiply-and-sum, and one matmul cooks *every recipe on the board at
-  once*. When the input `[1, 2, 3]` goes through the `[3, 2]` recipe board,
-  it yields two dish scores: `[4.0, 5.0]`.
+  once*. Section A's board is `[3, 2]`: three jars in, two recipes out.
+  Recipe 1 takes one scoop each from jars A and C, and recipe 2 takes one
+  scoop each from jars B and C. Feed it the amounts `[1, 2, 3]`, and you get
+  two dish scores: `[4.0, 5.0]` (1 + 3 and 2 + 3). You check this by hand
+  in section A.
 
 - **The judge (section C's greedy pick).** Every candidate dish gets a
   score, and those scores are the *logits*. The judge always picks the
@@ -131,7 +100,7 @@ order slip "hi"     the incoming text
 "j"                 the next letter, served
 ```
 
-## 5. Inference concepts introduced
+## 3. Inference concepts introduced
 
 <div class="dl-concepts"><span>LLM concepts used here:</span>
 <a href="https://www.youtube.com/watch?v=wjZofJX0v4M">▶ tokens &amp; logits, visually (3Blue1Brown)</a>
@@ -144,11 +113,11 @@ order slip "hi"     the incoming text
   ids drawn from a fixed vocabulary. Ours is the 256 possible bytes.
 
 - **Logits and greedy sampling**: the model's output is one score per
-  vocabulary entry (the logits). *Greedy* sampling deterministically picks
-  the argmax. We stay deterministic until correctness is proven (Day 7).
+  vocabulary entry (the logits). *Greedy* sampling always picks the
+  *argmax*: the id with the highest score. We stay deterministic until correctness is proven (Day 7).
   Temperature sampling arrives with per-request `SamplingParams` on Day 10.
 
-## 6. Build it, section by section
+## 4. Build it, section by section
 
 Each section opens with a **Rust used here** strip: the language concepts its
 code leans on, linked to the matching pages of Google's
@@ -216,7 +185,12 @@ Four lines are doing all the work here:
   device to be multiplied. That rule starts to matter on Day 9.
 
 - Because `main` returns `Result<()>`, `?` works at the top level. Any
-  tensor error stops the program and prints the error.
+  tensor error stops the program and prints the error. `()` is Rust's empty
+  value: on success, `main` has nothing to hand back.
+
+One small mark in the `println!` lines: `{:?}` prints a value in *debug*
+form, with brackets and quotes kept. That is how you print shapes, vectors,
+and strings throughout the course.
 
 Run `cargo run`. The first run compiles Candle's ~140 crates, so give it a
 minute:
@@ -338,10 +312,18 @@ Notice three things here:
   iterator chain, with no loop counter to get wrong.
 
 - `decode` can fail in two ways: an id over 255, or bytes that are not
-  valid UTF-8. So it returns `Option<String>`. The
+  valid UTF-8. (A character like `é` spans several bytes. The bytes after
+  the first are *continuation bytes*, and one on its own is not text.) So
+  it returns `Option<String>`. The
   `collect::<Option<Vec<u8>>>()` trick gathers per-item `Option`s into one,
   and a single `None` poisons the whole collection. The `?` after it works
   on `Option` the same way it works on `Result`.
+
+- `|&id| u8::try_from(id).ok()` is a *closure*: a small unnamed function
+  that `map` calls once per item. `|&id|` names its argument, and the `&`
+  unwraps the reference the iterator hands out. `try_from` returns a
+  `Result`, and `.ok()` turns it into an `Option`: `Ok(byte)` becomes
+  `Some(byte)`, and any error becomes `None`.
 
 - Encoding is about *bytes*, not characters. `"héllo"` is 5 characters but
   **6** tokens, because `é` is two bytes in UTF-8.
@@ -499,6 +481,11 @@ fn one_hot(id: u32, device: &Device) -> Result<Tensor> {
   *candidate next* byte. Row `b` holds a single `1.0` in column `b + 1`
   (wrapping at 255). It is a made-up model, and honestly labeled as such.
 
+- `w` is that 256 × 256 matrix stored as one flat `Vec`, row after row,
+  which is the form `Tensor::from_vec` takes. Row `b` starts at index
+  `b × 256`, so `w[b * VOCAB_SIZE + c]` is row `b`, column `c`. Here
+  `c = (b + 1) % VOCAB_SIZE`, and the `%` (remainder) wraps 256 back to 0.
+
 - A *one-hot* row is the simplest possible encoding of "which one?". It
   holds 256 zeros with a single 1 at position `id`. Picture a strip of 256
   light switches with exactly one flipped on (the "hot" one). When you
@@ -530,7 +517,10 @@ fn greedy_pick(logits: &Tensor) -> Result<u32> {
 ```
 
 Ties break toward the lowest id (`>` not `>=`). The rule is arbitrary, but
-it is *fixed*. Determinism is a feature we defend with a test.
+it is *fixed*. Determinism is a feature we defend with a test. The `*` in
+`*score` reads the number behind a reference (`iter()` hands out
+references, not copies). You'll see the same `*` in `main` below, on
+`*ids.last()`.
 
 Finally, replace `main` with the pipeline. The warm-up matmul and the
 round-trip demo leave `main`. You don't lose them: the tests from sections
@@ -643,13 +633,13 @@ demands id 0. It pins the determinism rule, not only the happy path.
 **Section checkpoint:** `./scripts/compare.sh v1-day-01c`. It is identical
 to `v1-day-01`, because the last section of a day *is* the day.
 
-## 7. Run it
+## 5. Run it
 
 ```bash
 cargo run
 ```
 
-## 8. Expected result
+## 6. Expected result
 
 ```text
 text "hi" -> token ids [104, 105]
@@ -662,7 +652,7 @@ weights score byte 106 highest, and byte 106 is `"j"`. Run it five times,
 and you get the same answer five times. Greedy decoding is deterministic,
 and it stays that way until the engine has a correctness oracle (Day 7).
 
-## 9. Test it
+## 7. Test it
 
 Eight tests now pin today's behavior. Section A covers the warm-up matmul
 and its shape-mismatch rejection. Section B covers the tokenizer
@@ -687,7 +677,7 @@ test tests::toy_model_predicts_the_next_ascii_byte ... ok
 test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 ```
 
-## 10. Break it deliberately
+## 8. Break it deliberately
 
 Send the engine an empty prompt:
 
@@ -716,7 +706,7 @@ already met it on Day 1.
 
 Restore `"hi"` and confirm `cargo test` is green again.
 
-## 11. Checkpoint
+## 9. Checkpoint
 
 Every checkpoint — each section and the day — is done only when the full
 green bar passes:
@@ -725,13 +715,18 @@ green bar passes:
 ./scripts/check.sh
 ```
 
-(One wrinkle is good to know. `mdbook test` compiles the book's code blocks
-against our built dependencies. But clippy leaves `.rmeta` metadata files
-next to the `.rlib` libraries, and rustdoc refuses that ambiguity with
-error E0464. The check script has staged clean libraries into
-`target/doctest-libs` since Day 0. Today is the first day that staging
-actually matters, because `candle-core` is our first dependency. Read the
-script: it is a few commented lines, and nothing else is hidden in it.)
+<details>
+<summary>Optional: why the check script stages libraries</summary>
+
+`mdbook test` compiles the book's code blocks against your built
+dependencies. Clippy leaves extra `.rmeta` metadata files next to the
+`.rlib` libraries, and rustdoc refuses to choose between them (error
+E0464). So the check script has copied clean libraries into
+`target/doctest-libs` since Day 0. Today is the first day that matters,
+because `candle-core` is your first dependency. The script is a few
+commented lines, and nothing else is hidden in it.
+
+</details>
 
 Then close out the day in whichever mode you are following:
 
@@ -758,7 +753,7 @@ as one diff:
 git diff v1-day-00 v1-day-01
 ```
 
-## 12. Recap
+## 10. Recap
 
 **What changed today:** your project gained a tensor library (pinned
 `candle-core =0.11.0`) and a byte tokenizer module with lossless
