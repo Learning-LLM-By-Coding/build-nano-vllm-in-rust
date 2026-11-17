@@ -178,7 +178,7 @@ the math.
 
 ## The 15 days
 
-Roughly 25–30 hours end to end. Each day is one theme built as two to four
+Roughly 30–32 hours end to end. Each day is one theme built as two to four
 related sections, and every section ends at a runnable, tagged checkpoint —
 the per-section breakdown lives in the book's
 [introduction](book/src/introduction.md).

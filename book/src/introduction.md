@@ -108,7 +108,7 @@ checkpoint.
 | 14 | Survive pressure | Preemption with recomputation · chunked prefill · prefix caching · zero-leak cancellation | 2.5 h |
 | 15 | Turn it into a service | HTTP endpoint · SSE streaming · backpressure & 429s · observability · final benchmark & v0.1 | 3 h |
 
-Plan on roughly 25–30 hours end to end.
+Plan on roughly 30–32 hours end to end.
 
 Two rules keep the course honest:
 
