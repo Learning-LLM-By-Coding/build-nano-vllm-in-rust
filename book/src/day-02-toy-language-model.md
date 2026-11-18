@@ -1,38 +1,5 @@
 # Day 2: A complete toy language model
 
-> **Day 2 of 15** · builds on `v1-day-01` · ≈ 1–1.5 h
-
-| Section | Builds | Checkpoint |
-|---------|--------|------------|
-| A | A bigram model learned by counting | `v1-day-02a` |
-| B | Autoregressive generation & the `generate` CLI | `v1-day-02b` = `v1-day-02` |
-
-**Pick your mode before starting** (explained fully in
-[Setup](setup.md#4-choose-how-you-follow-along)):
-
-```bash
-# Build mode — start (or restart) your branch from yesterday's checkpoint.
-# Already on my-engine from Day 1? Just keep going — no command needed.
-git switch -c my-engine v1-day-01
-
-# Inspect mode — read along with the finished code instead:
-git switch --detach v1-day-02a         # then 02b as you pass each section
-```
-
-<div class="callout">
-
-**Today's typing budget** — so nothing sneaks up on you:
-
-| Section | The learning | Wiring & tests (copy-friendly) |
-|---------|--------------|--------------------------------|
-| A | `CORPUS`, `Bigram`, `from_text`, `forward` · ~28 lines | import edit, move `one_hot`, a new `main`, 3 tests |
-| B | `generate` · ~12 lines | the CLI `main`, 2 tests, 2 CLI tests |
-
-Two sections are two natural sittings, and every checkpoint is a save
-point — nothing says a "day" must fit in one.
-
-</div>
-
 ## 1. Why we need it
 
 Your Day 1 pipeline works, but it predicts **one** token with **fake**

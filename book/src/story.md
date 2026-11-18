@@ -91,6 +91,7 @@ next piece, and choose one.
 
 </div>
 
+
 ## Day 2 — the cook learns
 
 On Day 1 the kitchen followed a made-up rulebook. On Day 2 the cook
@@ -127,6 +128,7 @@ language model.
 *In the story:* the cook serves a course (one new token, added to the end of the text), looks at what was just served, and uses it to choose the next one — again and again.
 
 </div>
+
 
 ## Day 3 — the dining room opens
 
@@ -195,6 +197,7 @@ stamped on.
 *In the story:* each pair of numbers on a card is a little dial, and sitting in seat N turns every dial N clicks. The first dial moves like a second hand, later ones like minute and hour hands, so comparing two guests' dials tells how many seats apart they sit.
 
 </div>
+
 
 ## Day 4 — the table conversation
 

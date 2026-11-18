@@ -1,40 +1,5 @@
 # Day 5: The decoder block
 
-> **Day 5 of 15** · builds on `v1-day-04` · ≈ 1 h
-
-| Section | Builds | Checkpoint |
-|---------|--------|------------|
-| A | The SwiGLU feed-forward | `v1-day-05a` |
-| B | The decoder block | `v1-day-05b` = `v1-day-05` |
-
-**Pick your mode before starting** (explained fully in
-[Setup](setup.md#4-choose-how-you-follow-along)):
-
-```bash
-# Build mode — start (or restart) your branch from yesterday's checkpoint.
-# Already on my-engine from Day 4? Just keep going — no command needed.
-git switch -c my-engine v1-day-04
-
-# Inspect mode — read along with the finished code instead:
-git switch --detach v1-day-05a         # then 05b as you pass the section
-```
-
-<div class="callout">
-
-**Today's typing budget** — so nothing sneaks up on you:
-
-| Section | The layer (the learning) | Wiring & tests (copy-friendly) |
-|---------|--------------------------|--------------------------------|
-| A | `Mlp` · ~20 lines | `mod` line, 1 demo addition, 1 test |
-| B | `Block` · ~25 lines | a demo rename (4 small edits), demo finish, 3 tests, 1 CLI test |
-
-Two sections are two natural sittings, and every checkpoint is a save
-point — nothing says a "day" must fit in one. After yesterday's climb,
-today is a short walk downhill. You write two small structs that snap
-everything you already built into one unit.
-
-</div>
-
 ## 1. Why we need it
 
 **The story so far** — remember [the restaurant](story.md): the kitchen

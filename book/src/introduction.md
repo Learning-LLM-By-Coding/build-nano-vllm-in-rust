@@ -22,8 +22,10 @@ By Day 15 your engine will have:
 
 - an HTTP server with token streaming, overload handling, and metrics,
 
-- a reproducible benchmark comparing it against Transformers, nano-vllm, and
-  vLLM.
+- a reproducible benchmark of that service against the engine it wraps,
+
+- and the model cut two ways — pipeline stages and tensor-parallel
+  shards — proven token-identical, ready to spread over many machines.
 
 ## Who this is for
 
@@ -106,13 +108,13 @@ checkpoint.
 | 6 | A real model skeleton | Stacked blocks & LM head · config & safetensors inspection · loading real weights | 2.5 h |
 | 7 | Real text, proven correct | Real tokenizer & pinned checkpoint · Python correctness oracle | 2 h |
 | 8 | The KV cache | Prefill/decode split · contiguous KV cache · cache correctness tests | 2 h |
-| 9 | Measure it, then GPU it | TTFT/TPOT/memory/throughput benchmarks · CUDA backend with CPU fallback | 1.5 h |
+| 9 | Measure it, then GPU it | TTFT/TPOT/memory/throughput benchmarks · Metal & CUDA backends with CPU fallback · two measured GPU fixes | 2.5 h |
 | 10 | Many requests, one engine | Sequence state machine & per-request SamplingParams · temperature sampling (greedy = temperature 0, seeded) · FIFO scheduler · round-robin interleaving | 2 h |
 | 11 | Continuous batching | True batched decode · continuous admission & a load generator | 2 h |
-| 12 | Paged KV memory | Fixed-size BlockPool · per-sequence block tables · CPU reference paged-KV store | 2 h |
-| 13 | Attention over pages | Block-table attention (reference) · GPU paged attention · VRAM-measured pool sizing & memory-aware admission | 2 h |
+| 12 | Paged KV memory | Fixed-size page pool (vLLM's BlockPool) · per-sequence page tables (block tables) · CPU reference paged-KV store | 2 h |
+| 13 | Attention over pages | Block-table attention (reference) · GPU paged attention · VRAM-measured pool sizing & memory-aware admission | 2.5 h |
 | 14 | Survive pressure | Preemption with recomputation · chunked prefill · prefix caching · zero-leak cancellation | 2.5 h |
-| 15 | Turn it into a service | HTTP endpoint · SSE streaming · backpressure & 429s · observability · final benchmark & v0.1 | 3 h |
+| 15 | Turn it into a service | HTTP endpoint · SSE streaming · backpressure & 429s · observability · final benchmark & v0.1 · ready for many machines (pipeline & tensor parallel) | 3.5 h |
 
 Plan on roughly 30–32 hours end to end.
 

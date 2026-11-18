@@ -1,39 +1,5 @@
 # Day 1: From text to the next token
 
-> **Day 1 of 15** · builds on `v1-day-00` · ≈ 1.5–2 h
-
-| Section | Builds | Checkpoint |
-|---------|--------|------------|
-| A | Tensors & matmul | `v1-day-01a` |
-| B | A byte tokenizer | `v1-day-01b` |
-| C | Logits & the greedy choice | `v1-day-01c` = `v1-day-01` |
-
-**Pick your mode before starting** (explained fully in
-[Setup](setup.md#4-choose-how-you-follow-along)):
-
-```bash
-# Build mode — type today's code yourself, on your own branch:
-git switch -c my-engine v1-day-00      # branch off the Day 0 scaffold
-
-# Inspect mode — read along with the finished code instead:
-git switch --detach v1-day-01a         # then 01b, 01c as you pass each section
-```
-
-<div class="callout">
-
-**Today's typing budget** — so nothing sneaks up on you:
-
-| Section | The learning | Wiring & tests (copy-friendly) |
-|---------|--------------|--------------------------------|
-| A | the warm-up matmul `main` · ~18 lines | 2 tests |
-| B | `encode` + `decode` · ~19 lines | `mod` line, 1 demo edit, 4 tests |
-| C | `one_hot` + `greedy_pick` · ~29 lines | a new `main`, 2 tests |
-
-Three sections are three natural sittings, and every checkpoint is a save
-point — nothing says a "day" must fit in one.
-
-</div>
-
 ## 1. Why we need it
 
 Your engine from yesterday (`v1-day-00`) computes nothing yet. By the end

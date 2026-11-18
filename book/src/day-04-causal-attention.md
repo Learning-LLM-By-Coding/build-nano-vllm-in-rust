@@ -1,58 +1,5 @@
 # Day 4: Causal attention
 
-> **Day 4 of 15** · builds on `v1-day-03` · ≈ 1.5 h
-
-| Section | Builds | Checkpoint |
-|---------|--------|------------|
-| A | Attention scores, causal mask, softmax | `v1-day-04a` |
-| B | Grouped-query attention | `v1-day-04b` = `v1-day-04` |
-
-**Pick your mode before starting** (explained fully in
-[Setup](setup.md#4-choose-how-you-follow-along)):
-
-```bash
-# Build mode — start (or restart) your branch from yesterday's checkpoint.
-# Already on my-engine from Day 3? Just keep going — no command needed.
-git switch -c my-engine v1-day-03
-
-# Inspect mode — read along with the finished code instead:
-git switch --detach v1-day-04a         # then 04b as you pass the section
-```
-
-<div class="callout">
-
-**Theory-density warning — and a promise.** Today is the summit: attention
-itself, the one mechanism everything else in this book serves. It is also
-the steepest math of the whole book, and the climb ends today. Day 5
-assembles the finished transformer block with barely any new math.
-
-From Day 6 on, the work shifts back to this book's real subject:
-engineering the machine you now hold. Yesterday's promise still holds.
-Every block tells you *what* it is and *why* the engine needs it. The math
-of *how* it works inside is optional, and typing can always become
-copying.
-
-Whenever you want more, the teal chips open a video or the formal
-write-up. One extra comfort: you never have to take today's ideas on
-faith. Each property gets its own test, and you will watch the machine
-prove itself.
-
-</div>
-
-<div class="callout">
-
-**Today's typing budget** — so nothing sneaks up on you:
-
-| Section | The layer (the learning) | Wiring & tests (copy-friendly) |
-|---------|--------------------------|--------------------------------|
-| A | 4 small functions · ~45 lines | mod line, demo subcommand, 4 tests |
-| B | `Attention` · ~55 lines | 1 import edit, 2 demo additions, 3 tests |
-
-Two sections are two natural sittings, and every checkpoint is a save
-point — nothing says a "day" must fit in one.
-
-</div>
-
 ## 1. Why we need it
 
 **The story so far** — remember [the restaurant](story.md): Day 1 built
