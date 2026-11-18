@@ -161,23 +161,23 @@ Each day's chapter starts with its title and goes straight to
 time, so it is written down once, here:
 
 - **Two to four sections, A to D.** Each section ends at a checkpoint,
-  a git tag named after the day and the section: `v1-day-07a`,
-  `v1-day-07b`, …. The last section's tag is also the day tag
-  (`v1-day-07`). A checkpoint is a good place to stop, so a day does not
+  a git tag named after the day and the section: `v1-day-03a`,
+  `v1-day-03b`, …. The last section's tag is also the day tag
+  (`v1-day-03`). A checkpoint is a good place to stop, so a day does not
   have to fit in one sitting.
 - **Starting a day in Build mode.** Keep working on your `my-engine`
   branch. To start (or restart) it from the end of the previous day, say
-  before Day 7:
+  before Day 3:
 
   ```bash
-  git switch -c my-engine v1-day-06    # the previous day's tag
+  git switch -c my-engine v1-day-02    # the previous day's tag
   ```
 
 - **Starting a day in Inspect mode.** Jump to the first section's
   checkpoint, then to the next one as you pass each section:
 
   ```bash
-  git switch --detach v1-day-07a       # then v1-day-07b, v1-day-07c, …
+  git switch --detach v1-day-03a       # then v1-day-03b, v1-day-03c, …
   cargo test
   ```
 
