@@ -64,7 +64,7 @@ ingredient:
 
 **Reading tip:** this walk and the "Inference concepts" section after it
 are the day's densest reading: all ideas, no code. If they start to blur,
-that is normal, and nothing is lost. Jump ahead to section 4 and *build*
+that is normal, and nothing is lost. Jump ahead to Build it and *build*
 the thing, then come back. The ideas are far easier to hold once you have
 watched the demo print them.
 
@@ -138,8 +138,8 @@ Now walk the dining room in order, one move per layer:
 
 Tomorrow, **attention** is the conversation itself. Every guest compares
 cards with everyone seated before them and decides whom to listen to.
-Today ends with the cards ready. The figure follows the demo you build in
-section 4. Its prompt is `"aa"`: two guests with the same badge, 97, like
+Today ends with the cards ready. The figure follows the demo you build
+below. Its prompt is `"aa"`: two guests with the same badge, 97, like
 the twins above. Its translator turns 8 numbers into 4:
 
 <figure class="book-figure">

@@ -62,7 +62,7 @@ same grid with the future silenced, and the who-listens-to-whom shares.
 
 **Reading tip:** this section and the "Inference concepts" section after
 it are the day's densest reading: all ideas, no code. If they start to
-blur, that is normal, and nothing is lost. Jump ahead to section 4 and
+blur, that is normal, and nothing is lost. Jump ahead to Build it and
 *build* the thing, then come back. The ideas are far easier to hold once
 you have watched the demo print them.
 

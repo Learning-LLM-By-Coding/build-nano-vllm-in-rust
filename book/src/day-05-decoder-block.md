@@ -110,7 +110,7 @@ watch the whole thing get packaged:
   spellings and word endings, and the later rounds begin to catch meaning.
   Today you build one round, and Day 6 stacks them.
 
-The figure uses the demo's numbers from section 4: the prompt `"abc"`, so 3
+The figure uses the demo's numbers from Build it: the prompt `"abc"`, so 3
 guests, each with Day 3's 8-number card.
 
 <figure class="book-figure">
@@ -131,7 +131,7 @@ that is exactly what makes it stackable.
 
 - **Nonlinearity is why depth exists.** Without the `silu` bend, the
   stacked blocks could only re-blend what is already on the cards (the
-  `[1, −2]` example in section 1).
+  `[1, −2]` example in Why we need it).
 
 - **Residuals + pre-norm are why depth survives.** Each sublayer only
   *adds* its contribution, and it computes that contribution from a
